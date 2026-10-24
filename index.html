@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Dashboard & Sistem Alumni PJN96 (Supabase Connected)</title>
+<title>Dashboard & Sistem Alumni PJN96</title>
 
 <!-- CDN SheetJS (XLSX) untuk Impor Excel/CSV -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -20,7 +20,6 @@
   box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* PRESET TEMA WARNA */
 [data-theme="emerald"] {
   --bg: #f3f6f4; --card: #ffffff; --ink: #17261f; --mute: #5d6e65; --line: #d5ded9;
   --accent: #0f6b4f; --accent-ink: #ffffff; --sidebar-bg: #11221b;
@@ -56,7 +55,7 @@ aside {
 }
 .sidebar-menu a:hover, .sidebar-menu a.active { background: var(--accent); color: var(--accent-ink); }
 
-/* Submenu Dropdown Styling */
+/* Submenu Dropdown */
 .submenu-container { margin-bottom: 4px; }
 .submenu-toggle {
   display: flex; justify-content: space-between; align-items: center; padding: 11px 15px; color: #b0c4ba; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: 0.2s; background: transparent; width: 100%; border: none; text-align: left;
@@ -64,9 +63,7 @@ aside {
 .submenu-toggle:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
 .submenu-toggle .arrow { transition: transform 0.2s; font-size: 0.8rem; }
 .submenu-container.open .submenu-toggle .arrow { transform: rotate(180deg); }
-.submenu-items {
-  list-style: none; padding: 0 0 0 16px; margin: 4px 0 0 0; display: none;
-}
+.submenu-items { list-style: none; padding: 0 0 0 16px; margin: 4px 0 0 0; display: none; }
 .submenu-container.open .submenu-items { display: block; }
 .submenu-items a { padding: 8px 12px; font-size: 0.85rem; color: #93a69b; }
 .submenu-items a:hover, .submenu-items a.active { background: var(--accent); color: var(--accent-ink); }
@@ -94,7 +91,6 @@ h2 { font-size: 1.3rem; margin: 0 0 12px; color: var(--accent); }
 label { display: block; font-weight: 600; font-size: .88rem; margin: 10px 0 4px; }
 input, textarea, select { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; }
 input:focus, textarea:focus, select:focus, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-textarea { resize: vertical; min-height: 70px; }
 
 .photo { display: flex; gap: 12px; align-items: center; margin-top: 4px; }
 .preview { width: 72px; height: 72px; border-radius: 12px; border: 1px dashed var(--line); background: var(--bg) center/cover no-repeat; display: grid; place-items: center; color: var(--mute); font-size: .75rem; text-align: center; flex: none; }
@@ -120,93 +116,67 @@ tr:last-child td { border-bottom: none; }
 .avatar-cell { display: flex; align-items: center; gap: 10px; }
 .avatar-cell img, .avatar-cell .ph { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--bg); display: grid; place-items: center; font-weight: 700; color: var(--mute); flex: none; }
 
-/* Modal Styling */
+/* Modal */
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; place-items: center; z-index: 1000; padding: 16px; }
 .modal-overlay.active { display: grid; }
-.modal { background: var(--card); border: 1px solid var(--line); border-radius: 14px; width: 100%; max-width: 550px; padding: 20px; max-height: 90vh; overflow-y: auto; }
-.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-bottom: 14px; }
-.modal-header h2 { margin: 0; font-size: 1.2rem; }
+.modal { background: var(--card); border: 1px solid var(--line); border-radius: 14px; width: 100%; max-width: 450px; padding: 20px; }
 
-/* Drag Drop Zone */
-.drop-zone { border: 2px dashed var(--line); border-radius: 12px; padding: 30px; text-align: center; background: var(--bg); cursor: pointer; transition: 0.2s; }
-.drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: rgba(15, 107, 79, 0.05); }
+/* Admin Only Elements */
+.admin-only { display: none !important; }
+body.is-admin .admin-only { display: inline-flex !important; }
+body.is-admin tr .admin-only { display: inline-block !important; }
+body.is-admin div.admin-only { display: block !important; }
 
-/* WordPress CMS Toolbar & Editable Elements */
-.cms-toolbar {
-  background: #1e1e1e; color: #fff; padding: 8px 12px; border-radius: 10px; margin-bottom: 16px; display: none; gap: 8px; flex-wrap: wrap; align-items: center;
-}
-.cms-toolbar.active { display: flex; }
-.cms-toolbar button { background: #333; color: #fff; border: 1px solid #555; padding: 4px 10px; font-size: 0.82rem; }
-.cms-toolbar button:hover { background: var(--accent); border-color: var(--accent); }
-.editable-active [contenteditable="true"] { outline: 2px dashed var(--accent); outline-offset: 4px; background: rgba(15, 107, 79, 0.03); }
-
-/* Selector Tema Header */
-.theme-selector { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
-.theme-selector select { padding: 4px 8px; font-size: 0.85rem; width: auto; }
-
-/* Responsive Sidebar Mobile */
-@media(max-width: 768px) {
-  body { flex-direction: column; }
-  aside { width: 100%; }
-  .sidebar-menu { display: flex; overflow-x: auto; padding: 10px; flex-wrap: wrap; }
-  .sidebar-menu li { margin-bottom: 0; margin-right: 6px; }
-  .submenu-container { width: 100%; }
-  .submenu-items { padding-left: 0; }
-}
+.header-right { display: flex; align-items: center; gap: 12px; }
 </style>
 </head>
-<body>
+<body class="">
 
-  <!-- Sidebar Menu -->
+  <!-- Sidebar -->
   <aside>
     <div class="sidebar-brand">
       ALUMNI JAMNAS 1996
-      <span>"Satu Masa, Satu Cerita, Satu Persaudaraan"</span>
+      <span>"Satu Masa, Satu Persaudaraan"</span>
     </div>
     <ul class="sidebar-menu">
-      <li><a href="#" class="nav-link active" data-target="page-beranda">BERANDA & PROFILE</a></li>
-      
-      <!-- SUBMENU 1: DIREKTORI ALUMNI -->
+      <li><a href="#" class="nav-link active" data-target="page-beranda">Beranda & Profil</a></li>
       <li class="submenu-container open" id="menu-alumni-container">
         <button class="submenu-toggle" id="btn-alumni-toggle" type="button">
-          <span>DIREKTORI ALUMNI</span>
-          <span class="arrow">▼</span>
+          <span>Direktori Alumni</span><span class="arrow">▼</span>
         </button>
         <ul class="submenu-items">
           <li><a href="#" class="nav-link" data-target="page-data-alumni">Data Informasi Alumni</a></li>
-          <li><a href="#" class="nav-link" data-target="page-tambah-alumni">Tambah Alumni (Manual)</a></li>
+          <li><a href="#" class="nav-link admin-only" data-target="page-tambah-alumni">Tambah Alumni (Manual)</a></li>
         </ul>
       </li>
-
-      <li><a href="#" class="nav-link" data-target="page-market">ALUMNI MARKET & SERVICE</a></li>
+      <li><a href="#" class="nav-link" data-target="page-market">Alumni Market & Service</a></li>
       <li><a href="#" class="nav-link" data-target="page-jamnas-connect">JAMNAS96 CONNECT</a></li>
       <li><a href="#" class="nav-link" data-target="page-alumni-stories">ALUMNI STORIES</a></li>
-      <li><a href="#" class="nav-link" data-target="page-berbagi">ALUMNI SOCIAL MOVEMENT</a></li>
-
-      <!-- SUBMENU 2: TOOLS -->
-      <li class="submenu-container" id="menu-tools-container">
-        <button class="submenu-toggle" id="btn-tools-toggle" type="button">
-          <span>TOOLS</span>
-          <span class="arrow">▼</span>
+      <li><a href="#" class="nav-link" data-target="page-berbagi">PJ96 Berbagi (Sosial)</a></li>
+      
+      <li class="submenu-container admin-only" id="menu-tools-container" style="display:none;">
+        <button class="submenu-toggle admin-only" id="btn-tools-toggle" type="button">
+          <span>Tools (Admin)</span><span class="arrow">▼</span>
         </button>
         <ul class="submenu-items">
-          <li><a href="#" class="nav-link" data-target="page-impor-data">Impor Data (Excel/CSV)</a></li>
-          <li><a href="#" class="nav-link" data-target="page-absensi">Absensi Event Reuni</a></li>
+          <li><a href="#" class="nav-link" data-target="page-impor-data">Impor Data (Excel)</a></li>
+          <li><a href="#" class="nav-link" data-target="page-absensi">Absensi Reuni</a></li>
         </ul>
       </li>
     </ul>
   </aside>
 
-  <!-- Main Container -->
+  <!-- Main Content -->
   <div class="main-wrapper">
     <header>
       <span id="header-title">Menu: Beranda & Profil Jamnas 1996</span>
-      
-      <!-- Pemilih Tema Visual -->
-      <div class="theme-selector">
-        <label for="select-theme" style="margin:0; font-weight:normal;">🎨 Tema:</label>
-        <select id="select-theme">
-          <option value="emerald">Emerald Green (Default)</option>
+      <div class="header-right">
+        <div id="auth-status-container">
+          <button class="small primary" id="btn-open-login">🔐 Login Admin</button>
+          <button class="small del admin-only" id="btn-logout">🚪 Logout Admin</button>
+        </div>
+        <select id="select-theme" style="width: auto; padding: 4px 8px; font-size: 0.85rem;">
+          <option value="emerald">Emerald Green</option>
           <option value="ocean">Ocean Blue</option>
           <option value="sunset">Sunset Orange</option>
           <option value="dark">Dark Night Mode</option>
@@ -215,87 +185,51 @@ tr:last-child td { border-bottom: none; }
     </header>
     
     <main>
-      <!-- PAGE 0: BERANDA & PROFIL -->
+      <!-- BERANDA -->
       <section id="page-beranda" class="page active">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; flex-wrap: wrap; gap:10px;">
-          <div style="display:flex; gap:8px;">
-            <button class="small primary" id="btn-toggle-cms">📝 Edit Beranda (WordPress Mode)</button>
-            <button class="small" id="btn-reset-cms" style="display:none;">🔄 Reset Tampilan Awal</button>
-          </div>
-          <span id="cms-status" style="font-size:0.85rem; color:var(--mute);"></span>
+        <div class="admin-only" style="margin-bottom: 12px;">
+          <button class="small primary" id="btn-toggle-cms">📝 Edit Beranda (WordPress Mode)</button>
         </div>
-
-        <div class="cms-toolbar" id="cms-toolbar">
-          <span style="font-weight:bold; font-size:0.8rem; color:#aaa; margin-right:6px;">WYSIWYG:</span>
-          <button type="button" onclick="execCmsCmd('bold')"><b>B</b></button>
-          <button type="button" onclick="execCmsCmd('italic')"><i>I</i></button>
-          <button type="button" onclick="execCmsCmd('underline')"><u>U</u></button>
-          <button type="button" onclick="execCmsCmd('justifyLeft')">⬅️ Kiri</button>
-          <button type="button" onclick="execCmsCmd('justifyCenter')">↔️ Tengah</button>
-          <button type="button" onclick="execCmsCmd('justifyRight')">➡️ Kanan</button>
-          <button type="button" onclick="addCmsCard()">➕ Tambah Blok Kartu Baru</button>
-          <button type="button" onclick="addCmsImage()">🖼️ Sisipkan Gambar</button>
-          <button type="button" class="primary" onclick="saveCmsContent()" style="margin-left:auto;">💾 Simpan ke Supabase</button>
-        </div>
-
         <div id="beranda-editable-area">
-          <h1 class="cms-editable" id="beranda-main-title">Alumni Jambore Nasional 1996</h1>
-          <p class="sub cms-editable" id="beranda-main-sub">Jambore Nasional Pramuka tahun 1996 bukan sekadar sebuah kegiatan kepramukaan yang mempertemukan para Penggalang dari berbagai daerah di Indonesia. Bagi para pesertanya, Jamnas 1996 merupakan bagian dari perjalanan kehidupan yang meninggalkan pengalaman, persahabatan, kebersamaan, dan kenangan yang terus melekat hingga puluhan tahun kemudian.</p>
-          
+          <h1 class="cms-editable">Alumni Jambore Nasional VI 1996</h1>
+          <p class="sub cms-editable">Wadah komunikasi, silaturahmi, dan kolaborasi Purna Jamnas VI 1996 Cibubur, Jakarta.</p>
           <div class="grid-stats">
-            <div class="stat-card">
-              <h3 class="cms-editable">28.847</h3>
-              <p class="cms-editable">Total Peserta Jamnas '96</p>
-            </div>
-            <div class="stat-card">
-              <h3 class="cms-editable">12.102</h3>
-              <p class="cms-editable">Penggalang Putra</p>
-            </div>
-            <div class="stat-card">
-              <h3 class="cms-editable">12.078</h3>
-              <p class="cms-editable">Penggalang Putri</p>
-            </div>
-            <div class="stat-card">
-              <h3 class="cms-editable">3.947</h3>
-              <p class="cms-editable">Pembina & Pendamping</p>
-            </div>
+            <div class="stat-card"><h3>28.847</h3><p>Total Peserta</p></div>
+            <div class="stat-card"><h3>12.102</h3><p>Penggalang Putra</p></div>
+            <div class="stat-card"><h3>12.078</h3><p>Penggalang Putri</p></div>
+            <div class="stat-card"><h3>3.947</h3><p>Pembina</p></div>
           </div>
-
-          <div id="dynamic-cards-container">
-            <div class="card cms-card-item">
-              <h2 class="cms-editable">Tentang PJN96</h2>
-              <div class="cms-editable">
-                <p>Situs ini didedikasikan sebagai ruang silaturahmi terbuka, positif, dan produktif bagi seluruh alumni Jambore Nasional VI Gerakan Pramuka Tahun 1996. Melalui nilai <b>"Taqwa, Terampil, dan Terpercaya"</b>, wadah ini bertujuan untuk merekatkan kembali tali persaudaraan sesama anggota Pramuka Penggalang dari seluruh Indonesia yang pernah berjuang bersama di Bumi Perkemahan Cibubur.</p>
-              </div>
-            </div>
-
-            <div class="card cms-card-item">
-              <h2 class="cms-editable">Kumpul Lagi, Jalin Silaturahmi</h2>
-              <div class="cms-editable">
-                <p>Setelah puluhan tahun berlalu, kita kembali bersama melalui berbagai kegiatan reuni, aksi kepedulian sosial, serta dukungan jejaring ekonomi antar-alumni di seluruh nusantara.</p>
-              </div>
-            </div>
+          <div class="card">
+            <h2>Tentang PJN96</h2>
+            <p>Situs ruang silaturahmi terbuka bagi seluruh alumni Jambore Nasional VI Gerakan Pramuka Tahun 1996.</p>
           </div>
         </div>
       </section>
 
-      <!-- PAGE 1: DIREKTORI INFORMASI ALUMNI -->
+      <!-- DIREKTORI ALUMNI -->
       <section id="page-data-alumni" class="page">
         <h1>Direktori Data Alumni</h1>
-        <p class="sub">Kelola, filter pencarian, edit data, dan cetak laporan PDF alumni.</p>
+        <p class="sub">Pencarian informasi purna peserta Jamnas 1996.</p>
         
         <div class="card">
+          <!-- PENGATURAN PRIVASI KHUSUS ADMIN -->
+          <div class="admin-only card" style="background:var(--bg); margin-bottom:16px; padding:12px;">
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin:0;">
+              <input type="checkbox" id="toggle-hide-contact" style="width:auto;">
+              <b>🔒 Sembunyikan Nomor Kontak/HP dari Tampilan Member / Publik</b>
+            </label>
+            <small style="color:var(--mute); margin-top:2px; display:block;">Jika dicentang, member hanya melihat nomor HP yang disamarkan (****).</small>
+          </div>
+
           <div class="bar">
-            <input id="cari-alumni" type="search" placeholder="Cari nama, kontak, atau domisili...">
-            <select id="filter-kontingen">
-              <option value="">-- Semua Kontingen --</option>
-            </select>
+            <input id="cari-alumni" type="search" placeholder="Cari nama, kontingen, atau domisili...">
+            <select id="filter-kontingen"><option value="">-- Semua Kontingen --</option></select>
             <button class="primary" id="btn-export-pdf">📄 Download PDF</button>
           </div>
           
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
             <p class="count" id="count-alumni" style="margin:0;">Total Alumni: 0</p>
-            <button class="small del" id="btn-reset-alumni">Reset / Hapus Semua Data</button>
+            <button class="small del admin-only" id="btn-reset-alumni">Reset / Hapus Semua Data</button>
           </div>
 
           <div class="table-responsive">
@@ -305,308 +239,201 @@ tr:last-child td { border-bottom: none; }
                   <th>No</th>
                   <th>Nama Alumni</th>
                   <th>Asal Kontingen</th>
-                  <th>Kontak</th>
+                  <th>Kontak / No. HP</th>
                   <th>Domisili Saat Ini</th>
-                  <th style="text-align: center;">Aksi</th>
+                  <th class="admin-only" style="text-align: center;">Aksi</th>
                 </tr>
               </thead>
               <tbody id="tbody-alumni">
-                <tr><td colspan="6" style="text-align:center;">Memuat data dari Supabase...</td></tr>
+                <tr><td colspan="6" style="text-align:center;">Memuat data...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
       </section>
 
-      <!-- PAGE 2: TAMBAH DATA ALUMNI MANUAL -->
+      <!-- TAMBAH ALUMNI (ADMIN ONLY) -->
       <section id="page-tambah-alumni" class="page">
         <h1>Tambah Data Alumni Manual</h1>
-        <p class="sub">Masukkan informasi lengkap profil alumni satu per satu ke database Supabase.</p>
         <div class="card" style="max-width: 600px; margin: 0 auto;">
           <form id="form-alumni">
-            <label for="alumni-nama">Nama Lengkap</label>
-            <input id="alumni-nama" placeholder="Contoh: A.A.Istri Inten D. Sawitri" required>
-
-            <label for="alumni-kontingen">Asal Kontingen</label>
-            <input id="alumni-kontingen" placeholder="Contoh: Bali / Jember / Jakarta" required>
-
-            <label for="alumni-kontak">Kontak / No. HP</label>
-            <input id="alumni-kontak" placeholder="Contoh: 08123456789" required>
-
-            <label for="alumni-domisili">Domisili Saat Ini</label>
-            <input id="alumni-domisili" placeholder="Contoh: Gianyar, Bali 80522" required>
-
-            <label for="alumni-foto">Foto Profil Alumni (Opsional)</label>
-            <div class="photo">
-              <div class="preview" id="preview-alumni">Belum ada foto</div>
-              <div>
-                <input type="file" id="alumni-foto" accept="image/*" style="padding:6px">
-              </div>
-            </div>
-
-            <button class="primary full" type="submit">Simpan ke Supabase</button>
-            <p class="msg" id="msg-alumni" role="status"></p>
+            <label>Nama Lengkap</label><input id="alumni-nama" required>
+            <label>Asal Kontingen</label><input id="alumni-kontingen" required>
+            <label>Kontak / No. HP</label><input id="alumni-kontak" required>
+            <label>Domisili Saat Ini</label><input id="alumni-domisili" required>
+            <button class="primary full" type="submit" style="margin-top:14px;">Simpan ke Supabase</button>
+            <p class="msg" id="msg-alumni"></p>
           </form>
         </div>
       </section>
 
-      <!-- PAGE 3: MARKET -->
-      <section id="page-market" class="page">
-        <h1>Alumni Market & Service</h1>
-        <p class="sub">Pemberdayaan ekonomi dan jejaring bisnis antar-alumni Jamnas 1996.</p>
-        <div class="card">
-          <h2>Sektor Usaha & Kolaborasi Bisnis</h2>
-          <p>Wadah ini memfasilitasi promosi produk, layanan jasa, dan sinergi bisnis antar sesama alumni dari berbagai bidang dan wilayah.</p>
-        </div>
-      </section>
-
-      <!-- PAGE 4: CONNECT -->
-      <section id="page-jamnas-connect" class="page">
-        <h1>JAMNAS96 CONNECT</h1>
-        <p class="sub">Jaringan penghubung dan komunikasi antar alumni Jamnas 1996 di seluruh wilayah.</p>
-        <div class="card">
-          <h2>Koneksi & Networking Alumni</h2>
-          <p>Temukan kawan se-pasukan, kawan satu kontingen, atau sesama alumni Jamnas 1996 yang berdomisili dekat dengan lokasi Anda saat ini.</p>
-        </div>
-      </section>
-
-      <!-- PAGE 5: STORIES -->
-      <section id="page-alumni-stories" class="page">
-        <h1>ALUMNI STORIES</h1>
-        <p class="sub">Kisah kenangan, cerita inspiratif, dan rekam jejak perjuangan Alumni Jamnas 1996.</p>
-        <div class="card">
-          <h2>Galeri Cerita & Kenangan Cibubur '96</h2>
-          <p>Ruang untuk berbagi nostalgia saat kegiatan Jambore Nasional 1996 serta kisah sukses para purna peserta di bidangnya masing-masing hari ini.</p>
-        </div>
-      </section>
-
-      <!-- PAGE 6: BERBAGI -->
-      <section id="page-berbagi" class="page">
-        <h1>PJ96 Berbagi (Sosial)</h1>
-        <p class="sub">Gerakan kepedulian sosial dan bantuan kemanusiaan dari Alumni Jamnas 1996.</p>
-        <div class="card">
-          <h2>Bantuan Bencana & Aksi Kemanusiaan</h2>
-          <p>Gerakan PJ96 Berbagi merupakan wujud nyata penerapan nilai Darna dan Dasa Darma Pramuka. Alumni PJN96 secara aktif menggalang bantuan sosial untuk tanggap bencana alam, bantuan sembako, serta aksi kepedulian di berbagai wilayah Indonesia.</p>
-        </div>
-      </section>
-
-      <!-- PAGE 7: IMPOR DATA -->
-      <section id="page-impor-data" class="page">
-        <h1>Impor Data Alumni (Tools)</h1>
-        <p class="sub">Unggah file Excel (.xlsx, .xls) atau CSV untuk memasukkan data ke Supabase secara masal.</p>
-        
-        <div class="card">
-          <div class="drop-zone" id="drop-zone">
-            <p style="margin:0 0 8px; font-weight:600;">Pilih atau Tarik File Excel / CSV ke Sini</p>
-            <span style="font-size:0.85rem; color:var(--mute);">Format kolom: NAMA, ASAL KONTINGEN, CONTACT, DOMISILI SAAT INI</span>
-            <input type="file" id="file-excel" accept=".xlsx, .xls, .csv" style="display: none;">
-            <br>
-            <button class="primary" style="margin-top:14px;" onclick="document.getElementById('file-excel').click()">Pilih File</button>
-          </div>
-          <p class="msg" id="msg-impor"></p>
-        </div>
-
-        <div id="preview-impor-card" class="card" style="display: none;">
-          <h3>Preview Data Impor</h3>
-          <p id="count-preview" class="sub"></p>
-          <div class="table-responsive" style="max-height: 350px;">
-            <table>
-              <thead>
-                <tr><th>No</th><th>Nama</th><th>Asal Kontingen</th><th>Contact</th><th>Domisili Saat Ini</th></tr>
-              </thead>
-              <tbody id="tbody-preview"></tbody>
-            </table>
-          </div>
-          <button class="primary full" id="btn-simpan-impor">Simpan Semua ke Supabase</button>
-        </div>
-      </section>
-
-      <!-- PAGE 8: ABSENSI -->
-      <section id="page-absensi" class="page">
-        <h1>Absensi Event Reuni (Tools)</h1>
-        <p class="sub">Absensi peserta tersimpan langsung di database Supabase.</p>
-        <div class="grid">
-          <section class="card">
-            <div>
-              <label for="nama">Nama lengkap</label>
-              <input id="nama" autocomplete="name" placeholder="Contoh: Budi Santoso">
-              <label for="kota">Asal kota</label>
-              <input id="kota" placeholder="Contoh: Bandung">
-              <label for="alamat">Alamat</label>
-              <textarea id="alamat" placeholder="Jalan, nomor, kelurahan"></textarea>
-              <label for="kontak">Kontak (no. HP / email)</label>
-              <input id="kontak" inputmode="tel" placeholder="Contoh: 0812xxxxxxx">
-              <label for="foto">Foto peserta</label>
-              <div class="photo">
-                <div class="preview" id="preview">Belum ada foto</div>
-                <div><input type="file" id="foto" accept="image/*" capture="user" style="padding:6px"></div>
-              </div>
-              <button class="primary full" id="simpan" type="button">Simpan Kehadiran</button>
-              <p class="msg" id="msg" role="status"></p>
-            </div>
-          </section>
-
-          <section class="card">
-            <p class="count" id="count">Peserta hadir: 0</p>
-            <div class="bar"><input id="cari" type="search" placeholder="Cari nama, kota, atau kontak"></div>
-            <div class="list" id="list"><div class="empty">Memuat data absensi...</div></div>
-          </section>
-        </div>
-      </section>
+      <!-- MENU LAINNYA -->
+      <section id="page-market" class="page"><h1>Alumni Market & Service</h1></section>
+      <section id="page-jamnas-connect" class="page"><h1>JAMNAS96 CONNECT</h1></section>
+      <section id="page-alumni-stories" class="page"><h1>ALUMNI STORIES</h1></section>
+      <section id="page-berbagi" class="page"><h1>PJ96 Berbagi (Sosial)</h1></section>
+      <section id="page-impor-data" class="page"><h1>Impor Data Excel</h1></section>
+      <section id="page-absensi" class="page"><h1>Absensi Reuni</h1></section>
     </main>
   </div>
 
-  <!-- MODAL EDIT ALUMNI -->
+  <!-- MODAL LOGIN ADMIN -->
+  <div class="modal-overlay" id="modal-login">
+    <div class="modal">
+      <h2>Login Administrator</h2>
+      <form id="form-login-admin">
+        <label>Password Admin</label>
+        <input type="password" id="admin-password" placeholder="Masukkan password..." required>
+        <p class="msg" id="msg-login"></p>
+        <button class="primary full" type="submit" style="margin-top:14px;">Login</button>
+        <button class="full" type="button" onclick="document.getElementById('modal-login').classList.remove('active')" style="margin-top:8px;">Batal</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL EDIT -->
   <div class="modal-overlay" id="modal-edit">
     <div class="modal">
-      <div class="modal-header">
-        <h2>Edit Data Alumni</h2>
-        <button class="small" onclick="closeEditModal()">✕</button>
-      </div>
+      <h2>Edit Data Alumni</h2>
       <form id="form-edit-alumni">
         <input type="hidden" id="edit-id">
-        <label for="edit-nama">Nama Lengkap</label>
-        <input id="edit-nama" required>
-        <label for="edit-kontingen">Asal Kontingen</label>
-        <input id="edit-kontingen" required>
-        <label for="edit-kontak">Kontak / No. HP</label>
-        <input id="edit-kontak" required>
-        <label for="edit-domisili">Domisili Saat Ini</label>
-        <input id="edit-domisili" required>
-        <label for="edit-foto">Ubah Foto Profil</label>
-        <div class="photo">
-          <div class="preview" id="preview-edit-alumni">Foto</div>
-          <div><input type="file" id="edit-foto" accept="image/*" style="padding:6px"></div>
-        </div>
-        <button class="primary full" type="submit">Perbarui di Supabase</button>
+        <label>Nama Lengkap</label><input id="edit-nama" required>
+        <label>Asal Kontingen</label><input id="edit-kontingen" required>
+        <label>Kontak</label><input id="edit-kontak" required>
+        <label>Domisili</label><input id="edit-domisili" required>
+        <button class="primary full" type="submit" style="margin-top:14px;">Simpan Perubahan</button>
       </form>
     </div>
   </div>
 
 <script>
-  /* --- SETUP SUPABASE --- */
-  const SUPABASE_URL = 'https://birhkgknxzcvujdahlwt.supabase.co'; // Ganti dengan URL Supabase Anda
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpcmhrZ2tueHpjdnVqZGFobHd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4MzMxODksImV4cCI6MjEwODQwOTE4OX0.VjHQQfIWh3s1IjEjFbmy4n2FSYJpOXmPrLkH_EkqODc'; // Ganti dengan Anon/Public Key Supabase Anda
-  
+  const SUPABASE_URL = 'https://YOUR_SUPABASE_URL.supabase.co';
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const ADMIN_SECRET_PASSWORD = "pjn96adminpassword";
 
   let alumniData = [];
-  let absensiData = [];
-  let importedPreviewData = [];
+  let hideContactForMember = localStorage.getItem('hide_contact_member') === 'true';
 
-  /* --- AMBIL DATA DARI SUPABASE SAAT HALAMAN DIMUAT --- */
-  async function loadDataFromSupabase() {
-    try {
-      // 1. Load Alumni
-      const { data: alumniRes, error: alumniErr } = await supabaseClient.from('alumni').select('*');
-      if (!alumniErr && alumniRes) {
-        alumniData = alumniRes;
-      }
-      populateKontingenFilter();
+  document.getElementById('toggle-hide-contact').checked = hideContactForMember;
+
+  // Cek Status Admin
+  if (localStorage.getItem('is_pjn96_admin') === 'true') {
+    document.body.classList.add('is-admin');
+  }
+
+  // Tombol Login Admin
+  document.getElementById('btn-open-login').addEventListener('click', () => {
+    document.getElementById('admin-password').value = '';
+    document.getElementById('msg-login').textContent = '';
+    document.getElementById('modal-login').classList.add('active');
+  });
+
+  document.getElementById('form-login-admin').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (document.getElementById('admin-password').value === ADMIN_SECRET_PASSWORD) {
+      localStorage.setItem('is_pjn96_admin', 'true');
+      document.body.classList.add('is-admin');
+      document.getElementById('modal-login').classList.remove('active');
+      alert("Berhasil masuk sebagai Admin!");
       renderAlumniTable();
-
-      // 2. Load Absensi
-      const { data: absensiRes, error: absensiErr } = await supabaseClient.from('absensi').select('*');
-      if (!absensiErr && absensiRes) {
-        absensiData = absensiRes;
-      }
-      renderAbsensi();
-
-      // 3. Load CMS Beranda Content
-      const { data: cmsRes, error: cmsErr } = await supabaseClient.from('cms_settings').select('*').eq('key', 'beranda_html').single();
-      if (!cmsErr && cmsRes && cmsRes.value) {
-        document.getElementById('beranda-editable-area').innerHTML = cmsRes.value;
-        document.getElementById('btn-reset-cms').style.display = 'inline-flex';
-      }
-    } catch (err) {
-      console.error("Gagal terhubung ke Supabase:", err);
-    }
-  }
-
-  /* --- TEMA --- */
-  const selectTheme = document.getElementById('select-theme');
-  const savedTheme = localStorage.getItem('app_theme') || 'emerald';
-  selectTheme.value = savedTheme;
-  document.documentElement.setAttribute('data-theme', savedTheme);
-
-  selectTheme.addEventListener('change', (e) => {
-    const selected = e.target.value;
-    document.documentElement.setAttribute('data-theme', selected);
-    localStorage.setItem('app_theme', selected);
-  });
-
-  /* --- CMS EDITABLE WORDPRESS LOGIC --- */
-  let isCmsActive = false;
-  const btnToggleCms = document.getElementById('btn-toggle-cms');
-  const btnResetCms = document.getElementById('btn-reset-cms');
-  const cmsToolbar = document.getElementById('cms-toolbar');
-  const cmsStatus = document.getElementById('cms-status');
-  const editableArea = document.getElementById('beranda-editable-area');
-
-  btnToggleCms.addEventListener('click', () => {
-    isCmsActive = !isCmsActive;
-    if (isCmsActive) {
-      cmsToolbar.classList.add('active');
-      document.body.classList.add('editable-active');
-      btnToggleCms.textContent = "✖️ Keluar Mode Edit";
-      btnToggleCms.className = "small del";
-      cmsStatus.textContent = "Mode WordPress Aktif: Klik teks untuk mengedit.";
-      editableArea.querySelectorAll('.cms-editable').forEach(el => el.setAttribute('contenteditable', 'true'));
     } else {
-      cmsToolbar.classList.remove('active');
-      document.body.classList.remove('editable-active');
-      btnToggleCms.textContent = "📝 Edit Beranda (WordPress Mode)";
-      btnToggleCms.className = "small primary";
-      cmsStatus.textContent = "";
-      editableArea.querySelectorAll('.cms-editable').forEach(el => el.removeAttribute('contenteditable'));
+      document.getElementById('msg-login').textContent = "Password salah!";
     }
   });
 
-  function execCmsCmd(command) { document.execCommand(command, false, null); }
-
-  function addCmsCard() {
-    const container = document.getElementById('dynamic-cards-container');
-    const newCard = document.createElement('div');
-    newCard.className = 'card cms-card-item';
-    newCard.innerHTML = `
-      <h2 class="cms-editable" ${isCmsActive ? 'contenteditable="true"' : ''}>Judul Blok Baru</h2>
-      <div class="cms-editable" ${isCmsActive ? 'contenteditable="true"' : ''}><p>Tuliskan konten artikel baru...</p></div>
-    `;
-    container.appendChild(newCard);
-  }
-
-  function addCmsImage() {
-    const url = prompt("Masukkan URL Gambar:", "https://picsum.photos/800/300");
-    if (url) document.execCommand('insertImage', false, url);
-  }
-
-  async function saveCmsContent() {
-    btnToggleCms.click();
-    const htmlContent = editableArea.innerHTML;
-    
-    // Simpan ke Supabase tabel cms_settings
-    const { error } = await supabaseClient
-      .from('cms_settings')
-      .upsert({ key: 'beranda_html', value: htmlContent }, { onConflict: 'key' });
-
-    if (error) {
-      alert("Gagal menyimpan ke Supabase: " + error.message);
-    } else {
-      btnResetCms.style.display = 'inline-flex';
-      alert("Beranda berhasil disimpan ke Supabase secara online!");
-    }
-  }
-
-  btnResetCms.addEventListener('click', async () => {
-    if (confirm("Reset konten ke default?")) {
-      await supabaseClient.from('cms_settings').delete().eq('key', 'beranda_html');
-      location.reload();
+  document.getElementById('btn-logout').addEventListener('click', () => {
+    if (confirm("Keluar dari Mode Admin?")) {
+      localStorage.removeItem('is_pjn96_admin');
+      document.body.classList.remove('is-admin');
+      document.querySelector('[data-target="page-beranda"]').click();
+      renderAlumniTable();
     }
   });
 
-  /* --- SUBMENU & NAV --- */
+  // Pengaturan Sembunyikan Kontak oleh Admin
+  document.getElementById('toggle-hide-contact').addEventListener('change', (e) => {
+    hideContactForMember = e.target.checked;
+    localStorage.setItem('hide_contact_member', hideContactForMember);
+    renderAlumniTable();
+  });
+
+  // Ambil Data Supabase
+  async function loadData() {
+    const { data } = await supabaseClient.from('alumni').select('*');
+    if (data) alumniData = data;
+    renderAlumniTable();
+    populateKontingenFilter();
+  }
+
+  // Fungsi Format Kontak (Menyamarkan nomor HP jika member dan fitur aktif)
+  function formatKontakDisplay(kontak) {
+    const isAdmin = document.body.classList.contains('is-admin');
+    if (isAdmin || !hideContactForMember) {
+      return kontak || '-';
+    }
+    // Jika member & fitur sembunyikan aktif, samarkan nomor HP
+    if (!kontak) return '-';
+    const str = String(kontak).trim();
+    if (str.length > 6) {
+      return str.substring(0, 4) + '****' + str.substring(str.length - 3);
+    }
+    return '****';
+  }
+
+  function renderAlumniTable() {
+    const tbody = document.getElementById('tbody-alumni');
+    const countEl = document.getElementById('count-alumni');
+    const keyword = document.getElementById('cari-alumni').value.toLowerCase();
+    const filterKontingen = document.getElementById('filter-kontingen').value;
+
+    const filtered = alumniData.filter(item => {
+      const matchKeyword = (item.nama || '').toLowerCase().includes(keyword) ||
+                           (item.domisili || '').toLowerCase().includes(keyword);
+      const matchKontingen = !filterKontingen || item.kontingen === filterKontingen;
+      return matchKeyword && matchKontingen;
+    });
+
+    countEl.textContent = `Menampilkan ${filtered.length} dari ${alumniData.length} Alumni`;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px;">Tidak ada data ditemukan.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map((item, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td>
+          <div class="avatar-cell">
+            ${item.foto ? `<img src="${item.foto}">` : `<div class="ph">${(item.nama || 'A').charAt(0)}</div>`}
+            <b>${item.nama}</b>
+          </div>
+        </td>
+        <td>${item.kontingen || '-'}</td>
+        <td>${formatKontakDisplay(item.kontak)}</td>
+        <td>${item.domisili || '-'}</td>
+        <td class="admin-only" style="text-align: center; whitespace: nowrap;">
+          <button class="small edit" onclick="openEditModal('${item.id}')">Edit</button>
+          <button class="small del" onclick="hapusAlumni('${item.id}')">Hapus</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('cari-alumni').addEventListener('input', renderAlumniTable);
+  document.getElementById('filter-kontingen').addEventListener('change', renderAlumniTable);
+
+  function populateKontingenFilter() {
+    const select = document.getElementById('filter-kontingen');
+    const kontingens = [...new Set(alumniData.map(a => a.kontingen).filter(Boolean))].sort();
+    select.innerHTML = `<option value="">-- Semua Kontingen (${kontingens.length}) --</option>` +
+      kontingens.map(k => `<option value="${k}">${k}</option>`).join('');
+  }
+
+  // Navigasi Standar
   document.getElementById('btn-alumni-toggle').addEventListener('click', () => document.getElementById('menu-alumni-container').classList.toggle('open'));
-  document.getElementById('btn-tools-toggle').addEventListener('click', () => document.getElementById('menu-tools-container').classList.toggle('open'));
+  document.getElementById('btn-tools-toggle')?.addEventListener('click', () => document.getElementById('menu-tools-container').classList.toggle('open'));
 
   const navLinks = document.querySelectorAll('.nav-link');
   const pages = document.querySelectorAll('.page');
@@ -623,346 +450,11 @@ tr:last-child td { border-bottom: none; }
     });
   });
 
-  /* --- DATA ALUMNI DIRECTORY --- */
-  function populateKontingenFilter() {
-    const filterSelect = document.getElementById('filter-kontingen');
-    const selectedVal = filterSelect.value;
-    const kontingens = [...new Set(alumniData.map(a => a.kontingen).filter(Boolean))].sort();
-    filterSelect.innerHTML = `<option value="">-- Semua Kontingen (${kontingens.length}) --</option>` +
-      kontingens.map(k => `<option value="${k}" ${k === selectedVal ? 'selected' : ''}>${k}</option>`).join('');
-  }
-
-  function renderAlumniTable() {
-    const tbody = document.getElementById('tbody-alumni');
-    const countEl = document.getElementById('count-alumni');
-    const keyword = document.getElementById('cari-alumni').value.toLowerCase();
-    const filterKontingen = document.getElementById('filter-kontingen').value;
-
-    const filtered = alumniData.filter(item => {
-      const matchKeyword = (item.nama || '').toLowerCase().includes(keyword) ||
-                           (item.kontak || '').toLowerCase().includes(keyword) ||
-                           (item.domisili || '').toLowerCase().includes(keyword);
-      const matchKontingen = !filterKontingen || item.kontingen === filterKontingen;
-      return matchKeyword && matchKontingen;
-    });
-
-    countEl.textContent = `Menampilkan ${filtered.length} dari ${alumniData.length} Alumni`;
-
-    if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color: var(--mute);">Tidak ada data alumni.</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = filtered.map((item, index) => `
-      <tr>
-        <td>${index + 1}</td>
-        <td>
-          <div class="avatar-cell">
-            ${item.foto ? `<img src="${item.foto}" alt="Foto">` : `<div class="ph">${(item.nama || 'A').charAt(0)}</div>`}
-            <b>${item.nama}</b>
-          </div>
-        </td>
-        <td>${item.kontingen || '-'}</td>
-        <td>${item.kontak || '-'}</td>
-        <td>${item.domisili || '-'}</td>
-        <td style="text-align: center; whitespace: nowrap;">
-          <button class="small edit" onclick="openEditModal('${item.id}')">Edit</button>
-          <button class="small del" onclick="hapusAlumni('${item.id}')">Hapus</button>
-        </td>
-      </tr>
-    `).join('');
-  }
-
-  document.getElementById('cari-alumni').addEventListener('input', renderAlumniTable);
-  document.getElementById('filter-kontingen').addEventListener('change', renderAlumniTable);
-
-  document.getElementById('btn-reset-alumni').addEventListener('click', async () => {
-    if (confirm("Hapus SELURUH data alumni di Supabase?")) {
-      await supabaseClient.from('alumni').delete().neq('id', '0');
-      alumniData = [];
-      populateKontingenFilter();
-      renderAlumniTable();
-    }
+  document.getElementById('select-theme').addEventListener('change', (e) => {
+    document.documentElement.setAttribute('data-theme', e.target.value);
   });
 
-  window.hapusAlumni = async function(id) {
-    if (confirm("Hapus data alumni ini?")) {
-      await supabaseClient.from('alumni').delete().eq('id', id);
-      alumniData = alumniData.filter(a => a.id !== id);
-      populateKontingenFilter();
-      renderAlumniTable();
-    }
-  };
-
-  /* --- MODAL EDIT ALUMNI --- */
-  let editFotoBase64 = "";
-  window.openEditModal = function(id) {
-    const item = alumniData.find(a => a.id === id);
-    if (!item) return;
-    document.getElementById('edit-id').value = item.id;
-    document.getElementById('edit-nama').value = item.nama || '';
-    document.getElementById('edit-kontingen').value = item.kontingen || '';
-    document.getElementById('edit-kontak').value = item.kontak || '';
-    document.getElementById('edit-domisili').value = item.domisili || '';
-    editFotoBase64 = item.foto || '';
-    const prev = document.getElementById('preview-edit-alumni');
-    if (editFotoBase64) { prev.style.backgroundImage = `url(${editFotoBase64})`; prev.textContent = ""; }
-    else { prev.style.backgroundImage = ""; prev.textContent = "Foto"; }
-    document.getElementById('modal-edit').classList.add('active');
-  };
-
-  function closeEditModal() { document.getElementById('modal-edit').classList.remove('active'); }
-
-  document.getElementById('edit-foto').addEventListener('change', function() {
-    const file = this.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        editFotoBase64 = e.target.result;
-        const prev = document.getElementById('preview-edit-alumni');
-        prev.style.backgroundImage = `url(${editFotoBase64})`;
-        prev.textContent = "";
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  document.getElementById('form-edit-alumni').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const id = document.getElementById('edit-id').value;
-    const updated = {
-      nama: document.getElementById('edit-nama').value.trim(),
-      kontingen: document.getElementById('edit-kontingen').value.trim(),
-      kontak: document.getElementById('edit-kontak').value.trim(),
-      domisili: document.getElementById('edit-domisili').value.trim(),
-      foto: editFotoBase64
-    };
-
-    const { error } = await supabaseClient.from('alumni').update(updated).eq('id', id);
-    if (error) {
-      alert("Gagal memperbarui: " + error.message);
-    } else {
-      const index = alumniData.findIndex(a => a.id === id);
-      if (index !== -1) alumniData[index] = { id, ...updated };
-      populateKontingenFilter();
-      renderAlumniTable();
-      closeEditModal();
-      alert("Berhasil diperbarui di Supabase!");
-    }
-  });
-
-  /* --- EXPORT PDF --- */
-  document.getElementById('btn-export-pdf').addEventListener('click', () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('landscape');
-    doc.setFontSize(16);
-    doc.text("Laporan Data Alumni PJN96", 14, 15);
-    const tableRows = alumniData.map((a, i) => [i + 1, a.nama || '', a.kontingen || '', a.kontak || '', a.domisili || '']);
-    doc.autoTable({ head: [['No', 'Nama Alumni', 'Kontingen', 'Contact', 'Domisili']], body: tableRows, startY: 22, theme: 'grid' });
-    doc.save(`Alumni_PJN96_${Date.now()}.pdf`);
-  });
-
-  /* --- TAMBAH MANUAL ALUMNI --- */
-  let alumniFotoBase64 = "";
-  document.getElementById('alumni-foto').addEventListener('change', function() {
-    const file = this.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        alumniFotoBase64 = e.target.result;
-        const prev = document.getElementById('preview-alumni');
-        prev.style.backgroundImage = `url(${alumniFotoBase64})`;
-        prev.textContent = "";
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  document.getElementById('form-alumni').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const newAlumni = {
-      id: Date.now().toString(),
-      nama: document.getElementById('alumni-nama').value.trim(),
-      kontingen: document.getElementById('alumni-kontingen').value.trim(),
-      kontak: document.getElementById('alumni-kontak').value.trim(),
-      domisili: document.getElementById('alumni-domisili').value.trim(),
-      foto: alumniFotoBase64
-    };
-
-    const { error } = await supabaseClient.from('alumni').insert([newAlumni]);
-    if (error) {
-      alert("Gagal menyimpan ke Supabase: " + error.message);
-    } else {
-      alumniData.unshift(newAlumni);
-      e.target.reset();
-      alumniFotoBase64 = "";
-      document.getElementById('preview-alumni').style.backgroundImage = "";
-      document.getElementById('preview-alumni').textContent = "Belum ada foto";
-      document.getElementById('msg-alumni').textContent = "Berhasil disimpan ke Supabase!";
-      document.getElementById('msg-alumni').className = "msg ok";
-      populateKontingenFilter();
-      renderAlumniTable();
-    }
-  });
-
-  /* --- IMPOR EXCEL/CSV KE SUPABASE --- */
-  const fileInput = document.getElementById('file-excel');
-  const dropZone = document.getElementById('drop-zone');
-
-  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-  dropZone.addEventListener('drop', e => {
-    e.preventDefault();
-    dropZone.classList.remove('dragover');
-    if (e.dataTransfer.files.length) handleFileImport(e.dataTransfer.files[0]);
-  });
-  fileInput.addEventListener('change', e => { if (e.target.files.length) handleFileImport(e.target.files[0]); });
-
-  function handleFileImport(file) {
-    const reader = new FileReader();
-    const msg = document.getElementById('msg-impor');
-    msg.textContent = "Membaca file...";
-    reader.onload = async e => {
-      try {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-
-        importedPreviewData = jsonData.map((row, idx) => ({
-          id: Date.now().toString() + '_' + idx,
-          nama: row['NAMA'] || row['Nama'] || row['nama'] || '',
-          kontingen: row['ASAL KONTINGEN'] || row['Kontingen'] || '',
-          kontak: String(row['CONTACT'] || row['Contact'] || row['kontak'] || ''),
-          domisili: row['DOMISILI SAAT INI'] || row['Domisili'] || '',
-          foto: ''
-        })).filter(a => a.nama !== '');
-
-        msg.textContent = "File siap diimpor!";
-        msg.className = "msg ok";
-        
-        document.getElementById('preview-impor-card').style.display = 'block';
-        document.getElementById('count-preview').textContent = `Ditemukan ${importedPreviewData.length} data.`;
-        document.getElementById('tbody-preview').innerHTML = importedPreviewData.slice(0, 20).map((r, i) => `
-          <tr><td>${i+1}</td><td><b>${r.nama}</b></td><td>${r.kontingen}</td><td>${r.kontak}</td><td>${r.domisili}</td></tr>
-        `).join('');
-      } catch (err) {
-        msg.textContent = "Gagal memproses file!";
-        msg.className = "msg";
-      }
-    };
-    reader.readAsArrayBuffer(file);
-  }
-
-  document.getElementById('btn-simpan-impor').addEventListener('click', async () => {
-    if (!importedPreviewData.length) return;
-    const { error } = await supabaseClient.from('alumni').insert(importedPreviewData);
-    if (error) {
-      alert("Gagal impor ke Supabase: " + error.message);
-    } else {
-      alert(`Berhasil menyimpan ${importedPreviewData.length} data ke Supabase!`);
-      importedPreviewData = [];
-      document.getElementById('preview-impor-card').style.display = 'none';
-      loadDataFromSupabase();
-      document.querySelector('[data-target="page-data-alumni"]').click();
-    }
-  });
-
-  /* --- ABSENSI SUPABASE --- */
-  let fotoBase64Absensi = "";
-  document.getElementById('foto').addEventListener('change', function() {
-    const file = this.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        fotoBase64Absensi = e.target.result;
-        const prev = document.getElementById('preview');
-        prev.style.backgroundImage = `url(${fotoBase64Absensi})`;
-        prev.textContent = "";
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  function renderAbsensi() {
-    const listEl = document.getElementById('list');
-    const countEl = document.getElementById('count');
-    const keyword = document.getElementById('cari').value.toLowerCase();
-    
-    const filtered = absensiData.filter(item => 
-      (item.nama || '').toLowerCase().includes(keyword) || 
-      (item.kota || '').toLowerCase().includes(keyword) || 
-      (item.kontak || '').toLowerCase().includes(keyword)
-    );
-
-    countEl.textContent = `Peserta hadir: ${absensiData.length}`;
-    if (filtered.length === 0) {
-      listEl.innerHTML = `<div class="empty">Tidak ada data absensi.</div>`;
-      return;
-    }
-
-    listEl.innerHTML = filtered.map(item => `
-      <div class="card" style="display:flex; gap:12px; align-items:center; margin-bottom:10px;">
-        ${item.foto ? `<img src="${item.foto}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">` : `<div class="ph" style="width:50px; height:50px; border-radius:50%; background:var(--bg); display:grid; place-items:center;">${(item.nama||'A').charAt(0)}</div>`}
-        <div style="flex:1;">
-          <b>${item.nama}</b><br>
-          <small style="color:var(--mute);">${item.kota} · ${item.kontak}</small><br>
-          <small style="color:var(--mute);">${item.alamat}</small>
-        </div>
-        <button class="small del" onclick="hapusAbsensi('${item.id}')">Hapus</button>
-      </div>
-    `).join('');
-  }
-
-  document.getElementById('simpan').addEventListener('click', async () => {
-    const nama = document.getElementById('nama').value.trim();
-    const kota = document.getElementById('kota').value.trim();
-    const alamat = document.getElementById('alamat').value.trim();
-    const kontak = document.getElementById('kontak').value.trim();
-    const msg = document.getElementById('msg');
-
-    if (!nama || !kontak) {
-      msg.textContent = "Nama dan kontak wajib diisi!";
-      msg.className = "msg";
-      return;
-    }
-
-    const newEntry = {
-      id: Date.now().toString(),
-      nama, kota, alamat, kontak,
-      foto: fotoBase64Absensi,
-      waktu: new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'short', hour: '2-digit', minute:'2-digit'})
-    };
-
-    const { error } = await supabaseClient.from('absensi').insert([newEntry]);
-    if (error) {
-      msg.textContent = "Gagal menyimpan absensi: " + error.message;
-      msg.className = "msg";
-    } else {
-      absensiData.unshift(newEntry);
-      document.getElementById('nama').value = "";
-      document.getElementById('kota').value = "";
-      document.getElementById('alamat').value = "";
-      document.getElementById('kontak').value = "";
-      fotoBase64Absensi = "";
-      document.getElementById('preview').style.backgroundImage = "";
-      document.getElementById('preview').textContent = "Belum ada foto";
-      msg.textContent = `${nama} tercatat hadir di Supabase.`;
-      msg.className = "msg ok";
-      renderAbsensi();
-    }
-  });
-
-  window.hapusAbsensi = async function(id) {
-    await supabaseClient.from('absensi').delete().eq('id', id);
-    absensiData = absensiData.filter(i => i.id !== id);
-    renderAbsensi();
-  };
-
-  document.getElementById('cari').addEventListener('input', renderAbsensi);
-
-  // Jalankan pemuatan data awal dari Supabase
-  loadDataFromSupabase();
+  loadData();
 </script>
 </body>
 </html>
