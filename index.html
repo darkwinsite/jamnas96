@@ -155,9 +155,10 @@ tr:last-child td { border-bottom: none; }
       </li>
 
       <li><a href="#" class="nav-link" data-target="page-market">Alumni Market & Service</a></li>
+      <li><a href="#" class="nav-link" data-target="page-berbagi">PJ96 Berbagi (Sosial)</a></li>
       <li><a href="#" class="nav-link" data-target="page-absensi">Absensi Event Reuni</a></li>
 
-      <!-- SUBMENU 2: TOOLS (Taruh Paling Bawah) -->
+      <!-- SUBMENU 2: TOOLS (Paling Bawah) -->
       <li class="submenu-container" id="menu-tools-container">
         <button class="submenu-toggle" id="btn-tools-toggle" type="button">
           <span>Tools</span>
@@ -165,7 +166,6 @@ tr:last-child td { border-bottom: none; }
         </button>
         <ul class="submenu-items">
           <li><a href="#" class="nav-link" data-target="page-impor-data">Impor Data (Excel/CSV)</a></li>
-          <li><a href="#" class="nav-link" data-target="page-berbagi">PJ96 Berbagi (Sosial)</a></li>
         </ul>
       </li>
     </ul>
@@ -252,7 +252,7 @@ tr:last-child td { border-bottom: none; }
         </div>
       </section>
 
-      <!-- PAGE 2: TAMBAH DATA ALUMNI MANUAL (SUB MENU DIREKTORI ALUMNI) -->
+      <!-- PAGE 2: TAMBAH DATA ALUMNI MANUAL -->
       <section id="page-tambah-alumni" class="page">
         <h1>Tambah Data Alumni Manual</h1>
         <p class="sub">Masukkan informasi lengkap profil alumni satu per satu.</p>
@@ -284,55 +284,7 @@ tr:last-child td { border-bottom: none; }
         </div>
       </section>
 
-      <!-- PAGE 3: TOOLS - IMPOR DATA EXCEL / CSV -->
-      <section id="page-impor-data" class="page">
-        <h1>Impor Data Alumni (Tools)</h1>
-        <p class="sub">Unggah file Excel (.xlsx, .xls) atau CSV untuk memasukkan data alumni secara masal.</p>
-        
-        <div class="card">
-          <div class="drop-zone" id="drop-zone">
-            <p style="margin:0 0 8px; font-weight:600;">Pilih atau Tarik File Excel / CSV ke Sini</p>
-            <span style="font-size:0.85rem; color:var(--mute);">Format kolom yang didukung: NO, NAMA, ASAL KONTINGEN, CONTACT, DOMISILI SAAT INI</span>
-            <input type="file" id="file-excel" accept=".xlsx, .xls, .csv" style="display: none;">
-            <br>
-            <button class="primary" style="margin-top:14px;" onclick="document.getElementById('file-excel').click()">Pilih File</button>
-          </div>
-          <p class="msg" id="msg-impor"></p>
-        </div>
-
-        <!-- Preview Impor -->
-        <div id="preview-impor-card" class="card" style="display: none;">
-          <h3>Preview Data Impor</h3>
-          <p id="count-preview" class="sub"></p>
-          <div class="table-responsive" style="max-height: 350px;">
-            <table>
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Nama</th>
-                  <th>Asal Kontingen</th>
-                  <th>Contact</th>
-                  <th>Domisili Saat Ini</th>
-                </tr>
-              </thead>
-              <tbody id="tbody-preview"></tbody>
-            </table>
-          </div>
-          <button class="primary full" id="btn-simpan-impor">Konfirmasi & Simpan ke Sistem</button>
-        </div>
-      </section>
-
-      <!-- PAGE 4: TOOLS - PJ96 BERBAGI -->
-      <section id="page-berbagi" class="page">
-        <h1>PJ96 Berbagi (Tools Sosial)</h1>
-        <p class="sub">Gerakan kepedulian sosial dan bantuan kemanusiaan dari Alumni Jamnas 1996.</p>
-        <div class="card">
-          <h2>Bantuan Bencana & Aksi Kemanusiaan</h2>
-          <p>Gerakan PJ96 Berbagi merupakan wujud nyata penerapan nilai Darna dan Dasa Darma Pramuka. Alumni PJN96 secara aktif menggalang bantuan sosial untuk tanggap bencana alam, bantuan sembako, serta aksi kepedulian di berbagai wilayah Indonesia.</p>
-        </div>
-      </section>
-
-      <!-- PAGE 5: ALUMNI MARKET & SERVICE -->
+      <!-- PAGE 3: ALUMNI MARKET & SERVICE -->
       <section id="page-market" class="page">
         <h1>Alumni Market & Service</h1>
         <p class="sub">Pemberdayaan ekonomi dan jejaring bisnis antar-alumni Jamnas 1996.</p>
@@ -342,7 +294,17 @@ tr:last-child td { border-bottom: none; }
         </div>
       </section>
 
-      <!-- PAGE 6: ABSENSI EVENT -->
+      <!-- PAGE 4: PJ96 BERBAGI (SOSIAL) -->
+      <section id="page-berbagi" class="page">
+        <h1>PJ96 Berbagi (Sosial)</h1>
+        <p class="sub">Gerakan kepedulian sosial dan bantuan kemanusiaan dari Alumni Jamnas 1996.</p>
+        <div class="card">
+          <h2>Bantuan Bencana & Aksi Kemanusiaan</h2>
+          <p>Gerakan PJ96 Berbagi merupakan wujud nyata penerapan nilai Darna dan Dasa Darma Pramuka. Alumni PJN96 secara aktif menggalang bantuan sosial untuk tanggap bencana alam, bantuan sembako, serta aksi kepedulian di berbagai wilayah Indonesia.</p>
+        </div>
+      </section>
+
+      <!-- PAGE 5: ABSENSI EVENT -->
       <section id="page-absensi" class="page">
         <h1>Absensi Event Reuni</h1>
         <p class="sub">Isi data peserta, ambil foto, lalu simpan kehadiran pada acara reuni/kegiatan alumni.</p>
@@ -378,6 +340,44 @@ tr:last-child td { border-bottom: none; }
               <div class="empty">Belum ada data kehadiran.</div>
             </div>
           </section>
+        </div>
+      </section>
+
+      <!-- PAGE 6: TOOLS - IMPOR DATA EXCEL / CSV -->
+      <section id="page-impor-data" class="page">
+        <h1>Impor Data Alumni (Tools)</h1>
+        <p class="sub">Unggah file Excel (.xlsx, .xls) atau CSV untuk memasukkan data alumni secara masal.</p>
+        
+        <div class="card">
+          <div class="drop-zone" id="drop-zone">
+            <p style="margin:0 0 8px; font-weight:600;">Pilih atau Tarik File Excel / CSV ke Sini</p>
+            <span style="font-size:0.85rem; color:var(--mute);">Format kolom yang didukung: NO, NAMA, ASAL KONTINGEN, CONTACT, DOMISILI SAAT INI</span>
+            <input type="file" id="file-excel" accept=".xlsx, .xls, .csv" style="display: none;">
+            <br>
+            <button class="primary" style="margin-top:14px;" onclick="document.getElementById('file-excel').click()">Pilih File</button>
+          </div>
+          <p class="msg" id="msg-impor"></p>
+        </div>
+
+        <!-- Preview Impor -->
+        <div id="preview-impor-card" class="card" style="display: none;">
+          <h3>Preview Data Impor</h3>
+          <p id="count-preview" class="sub"></p>
+          <div class="table-responsive" style="max-height: 350px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nama</th>
+                  <th>Asal Kontingen</th>
+                  <th>Contact</th>
+                  <th>Domisili Saat Ini</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-preview"></tbody>
+            </table>
+          </div>
+          <button class="primary full" id="btn-simpan-impor">Konfirmasi & Simpan ke Sistem</button>
         </div>
       </section>
     </main>
