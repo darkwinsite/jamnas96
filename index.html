@@ -13,28 +13,37 @@
 
 <style>
 :root {
-  --bg: #f3f6f4; --card: #fff; --ink: #17261f; --mute: #5d6e65; --line: #d5ded9; 
-  --accent: #0f6b4f; --accent-ink: #fff; --danger: #b3261e; --warning: #d97706; --sidebar-bg: #11221b;
+  --bg: #f3f6f4; --card: #ffffff; --ink: #17261f; --mute: #5d6e65; --line: #d5ded9; 
+  --accent: #0f6b4f; --accent-ink: #ffffff; --danger: #b3261e; --warning: #d97706; --sidebar-bg: #11221b;
   box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #101a15; --card: #18251e; --ink: #e8f1ec; --mute: #93a69b; --line: #2b3c33; 
-    --accent: #4cc79b; --accent-ink: #06261a; --danger: #ff8a80; --warning: #fbbf24; --sidebar-bg: #0b1410;
-  }
+
+/* PRESET TEMA WARNA */
+[data-theme="emerald"] {
+  --bg: #f3f6f4; --card: #ffffff; --ink: #17261f; --mute: #5d6e65; --line: #d5ded9;
+  --accent: #0f6b4f; --accent-ink: #ffffff; --sidebar-bg: #11221b;
 }
-:root[data-theme="dark"] {
+[data-theme="ocean"] {
+  --bg: #f0f4f8; --card: #ffffff; --ink: #102a43; --mute: #486581; --line: #d9e2ec;
+  --accent: #0969da; --accent-ink: #ffffff; --sidebar-bg: #0a2540;
+}
+[data-theme="sunset"] {
+  --bg: #fff8f6; --card: #ffffff; --ink: #2d1a15; --mute: #7a5c53; --line: #f0d7d0;
+  --accent: #c93b2b; --accent-ink: #ffffff; --sidebar-bg: #2b130e;
+}
+[data-theme="dark"] {
   --bg: #101a15; --card: #18251e; --ink: #e8f1ec; --mute: #93a69b; --line: #2b3c33; 
   --accent: #4cc79b; --accent-ink: #06261a; --danger: #ff8a80; --warning: #fbbf24; --sidebar-bg: #0b1410;
 }
+
 html { scroll-padding-top: env(safe-area-inset-top, 0px); }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; display: flex; min-height: 100vh; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; display: flex; min-height: 100vh; transition: background 0.3s, color 0.3s; }
 
 /* Sidebar Layout */
 aside {
   width: 270px; background: var(--sidebar-bg); color: #fff; display: flex; flex-direction: column; flex: none;
-  border-right: 1px solid var(--line);
+  border-right: 1px solid var(--line); transition: background 0.3s;
 }
 .sidebar-brand { padding: 20px; font-size: 1.15rem; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--accent); }
 .sidebar-brand span { display: block; font-size: 0.75rem; color: #93a69b; font-weight: normal; margin-top: 2px; }
@@ -62,7 +71,7 @@ aside {
 
 /* Main Content Layout */
 .main-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-header { background: var(--card); border-bottom: 1px solid var(--line); padding: 16px 24px; font-weight: 600; font-size: 1.1rem; }
+header { background: var(--card); border-bottom: 1px solid var(--line); padding: 16px 24px; font-weight: 600; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
 main { max-width: 1200px; width: 100%; margin: 0 auto; padding: 24px; flex: 1; }
 
 .page { display: none; }
@@ -87,7 +96,7 @@ textarea { resize: vertical; min-height: 70px; }
 
 .photo { display: flex; gap: 12px; align-items: center; margin-top: 4px; }
 .preview { width: 72px; height: 72px; border-radius: 12px; border: 1px dashed var(--line); background: var(--bg) center/cover no-repeat; display: grid; place-items: center; color: var(--mute); font-size: .75rem; text-align: center; flex: none; }
-button { font: inherit; font-weight: 600; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 8px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+button { font: inherit; font-weight: 600; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 8px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
 button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 button.full { width: 100%; justify-content: center; margin-top: 14px; padding: 11px; }
 button.small { padding: 5px 10px; font-size: .82rem; }
@@ -119,6 +128,19 @@ tr:last-child td { border-bottom: none; }
 /* Drag Drop Zone */
 .drop-zone { border: 2px dashed var(--line); border-radius: 12px; padding: 30px; text-align: center; background: var(--bg); cursor: pointer; transition: 0.2s; }
 .drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: rgba(15, 107, 79, 0.05); }
+
+/* WordPress CMS Toolbar & Editable Elements */
+.cms-toolbar {
+  background: #1e1e1e; color: #fff; padding: 8px 12px; border-radius: 10px; margin-bottom: 16px; display: none; gap: 8px; flex-wrap: wrap; align-items: center;
+}
+.cms-toolbar.active { display: flex; }
+.cms-toolbar button { background: #333; color: #fff; border: 1px solid #555; padding: 4px 10px; font-size: 0.82rem; }
+.cms-toolbar button:hover { background: var(--accent); border-color: var(--accent); }
+.editable-active [contenteditable="true"] { outline: 2px dashed var(--accent); outline-offset: 4px; background: rgba(15, 107, 79, 0.03); }
+
+/* Selector Tema Header */
+.theme-selector { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+.theme-selector select { padding: 4px 8px; font-size: 0.85rem; width: auto; }
 
 /* Responsive Sidebar Mobile */
 @media(max-width: 768px) {
@@ -175,42 +197,90 @@ tr:last-child td { border-bottom: none; }
 
   <!-- Main Container -->
   <div class="main-wrapper">
-    <header id="header-title">Menu: Beranda & Profil Jamnas 1996</header>
+    <header>
+      <span id="header-title">Menu: Beranda & Profil Jamnas 1996</span>
+      
+      <!-- Pemilih Tema Visual -->
+      <div class="theme-selector">
+        <label for="select-theme" style="margin:0; font-weight:normal;">🎨 Tema:</label>
+        <select id="select-theme">
+          <option value="emerald">Emerald Green (Default)</option>
+          <option value="ocean">Ocean Blue</option>
+          <option value="sunset">Sunset Orange</option>
+          <option value="dark">Dark Night Mode</option>
+          <option value="online">Database Online / API Tema</option>
+        </select>
+      </div>
+    </header>
     
     <main>
-      <!-- PAGE 0: BERANDA & PROFIL JAMNAS 1996 -->
+      <!-- PAGE 0: BERANDA & PROFIL JAMNAS 1996 (CMS EDITABLE WORDPRESS STYLE) -->
       <section id="page-beranda" class="page active">
-        <h1>Alumni Jambore Nasional 1996</h1>
-        <p class="sub">Wadah komunikasi, silaturahmi, dan kolaborasi Purna Jamnas VI Tahun 1996 Cibubur, Jakarta.</p>
         
-        <div class="grid-stats">
-          <div class="stat-card">
-            <h3>28.847</h3>
-            <p>Total Peserta Jamnas '96</p>
+        <!-- Controls Admin Editor Wordpress -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; flex-wrap: wrap; gap:10px;">
+          <div style="display:flex; gap:8px;">
+            <button class="small primary" id="btn-toggle-cms">📝 Edit Beranda (WordPress Mode)</button>
+            <button class="small" id="btn-reset-cms" style="display:none;">🔄 Reset Tampilan Awal</button>
           </div>
-          <div class="stat-card">
-            <h3>12.102</h3>
-            <p>Penggalang Putra</p>
+          <span id="cms-status" style="font-size:0.85rem; color:var(--mute);"></span>
+        </div>
+
+        <!-- WordPress Editor Toolbar -->
+        <div class="cms-toolbar" id="cms-toolbar">
+          <span style="font-weight:bold; font-size:0.8rem; color:#aaa; margin-right:6px;">WYSIWYG:</span>
+          <button type="button" onclick="execCmsCmd('bold')"><b>B</b></button>
+          <button type="button" onclick="execCmsCmd('italic')"><i>I</i></button>
+          <button type="button" onclick="execCmsCmd('underline')"><u>U</u></button>
+          <button type="button" onclick="execCmsCmd('justifyLeft')">⬅️ Kiri</button>
+          <button type="button" onclick="execCmsCmd('justifyCenter')">↔️ Tengah</button>
+          <button type="button" onclick="execCmsCmd('justifyRight')">➡️ Kanan</button>
+          <button type="button" onclick="addCmsCard()">➕ Tambah Blok Kartu Baru</button>
+          <button type="button" onclick="addCmsImage()">🖼️ Sisipkan Gambar</button>
+          <button type="button" class="primary" onclick="saveCmsContent()" style="margin-left:auto;">💾 Simpan Perubahan</button>
+        </div>
+
+        <!-- Content Area Editable -->
+        <div id="beranda-editable-area">
+          <h1 class="cms-editable" id="beranda-main-title">Alumni Jambore Nasional VI 1996</h1>
+          <p class="sub cms-editable" id="beranda-main-sub">Wadah komunikasi, silaturahmi, dan kolaborasi Purna Jamnas VI 1996 Cibubur, Jakarta.</p>
+          
+          <div class="grid-stats">
+            <div class="stat-card">
+              <h3 class="cms-editable">28.847</h3>
+              <p class="cms-editable">Total Peserta Jamnas '96</p>
+            </div>
+            <div class="stat-card">
+              <h3 class="cms-editable">12.102</h3>
+              <p class="cms-editable">Penggalang Putra</p>
+            </div>
+            <div class="stat-card">
+              <h3 class="cms-editable">12.078</h3>
+              <p class="cms-editable">Penggalang Putri</p>
+            </div>
+            <div class="stat-card">
+              <h3 class="cms-editable">3.947</h3>
+              <p class="cms-editable">Pembina & Pendamping</p>
+            </div>
           </div>
-          <div class="stat-card">
-            <h3>12.078</h3>
-            <p>Penggalang Putri</p>
-          </div>
-          <div class="stat-card">
-            <h3>3.947</h3>
-            <p>Pembina & Pendamping</p>
+
+          <div id="dynamic-cards-container">
+            <div class="card cms-card-item">
+              <h2 class="cms-editable">Tentang PJN96</h2>
+              <div class="cms-editable">
+                <p>Situs ini didedikasikan sebagai ruang silaturahmi terbuka, positif, dan produktif bagi seluruh alumni Jambore Nasional VI Gerakan Pramuka Tahun 1996. Melalui nilai <b>"Taqwa, Terampil, dan Terpercaya"</b>, wadah ini bertujuan untuk merekatkan kembali tali persaudaraan sesama anggota Pramuka Penggalang dari seluruh Indonesia yang pernah berjuang bersama di Bumi Perkemahan Cibubur.</p>
+              </div>
+            </div>
+
+            <div class="card cms-card-item">
+              <h2 class="cms-editable">Kumpul Lagi, Jalin Silaturahmi</h2>
+              <div class="cms-editable">
+                <p>Setelah puluhan tahun berlalu, kita kembali bersama melalui berbagai kegiatan reuni, aksi kepedulian sosial, serta dukungan jejaring ekonomi antar-alumni di seluruh nusantara.</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="card">
-          <h2>Tentang PJN96</h2>
-          <p>Situs ini didedikasikan sebagai ruang silaturahmi terbuka, positif, dan produktif bagi seluruh alumni Jambore Nasional VI Gerakan Pramuka Tahun 1996. Melalui nilai <b>"Taqwa, Terampil, dan Terpercaya"</b>, wadah ini bertujuan untuk merekatkan kembali tali persaudaraan sesama anggota Pramuka Penggalang dari seluruh Indonesia yang pernah berjuang bersama di Bumi Perkemahan Cibubur.</p>
-        </div>
-
-        <div class="card">
-          <h2>Kumpul Lagi, Jalin Silaturahmi</h2>
-          <p>Setelah puluhan tahun berlalu, kita kembali bersama melalui berbagai kegiatan reuni, aksi kepedulian sosial, serta dukungan jejaring ekonomi antar-alumni di seluruh nusantara.</p>
-        </div>
       </section>
 
       <!-- PAGE 1: DIREKTORI INFORMASI ALUMNI -->
@@ -445,6 +515,162 @@ tr:last-child td { border-bottom: none; }
   let absensiData = JSON.parse(localStorage.getItem('absensi_data')) || [];
   let importedPreviewData = [];
 
+  /* --- SINKRONISASI TEMA (LOCAL & ONLINE DATABASE) --- */
+  const selectTheme = document.getElementById('select-theme');
+  const savedTheme = localStorage.getItem('app_theme') || 'emerald';
+
+  function applyTheme(themeName, customColors = null) {
+    if (customColors) {
+      // Terapkan variabel warna custom dari API online
+      document.documentElement.style.setProperty('--bg', customColors.bg || '#f3f6f4');
+      document.documentElement.style.setProperty('--card', customColors.card || '#ffffff');
+      document.documentElement.style.setProperty('--ink', customColors.ink || '#17261f');
+      document.documentElement.style.setProperty('--mute', customColors.mute || '#5d6e65');
+      document.documentElement.style.setProperty('--line', customColors.line || '#d5ded9');
+      document.documentElement.style.setProperty('--accent', customColors.accent || '#0f6b4f');
+      document.documentElement.style.setProperty('--sidebar-bg', customColors.sidebar_bg || '#11221b');
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      // Hapus style custom inline jika menggunakan preset lokal
+      document.documentElement.style = '';
+      document.documentElement.setAttribute('data-theme', themeName);
+    }
+    localStorage.setItem('app_theme', themeName);
+  }
+
+  // Terapkan saat pertama dimuat
+  selectTheme.value = savedTheme;
+  if (savedTheme === 'online') {
+    const savedCustomColors = JSON.parse(localStorage.getItem('app_custom_theme_colors'));
+    applyTheme('online', savedCustomColors);
+  } else {
+    applyTheme(savedTheme);
+  }
+
+  selectTheme.addEventListener('change', (e) => {
+    const selected = e.target.value;
+    if (selected === 'online') {
+      const apiUrl = prompt("Masukkan URL Endpoint Database/API Tema Online:", "https://api.myjson.online/v1/records/sample-theme");
+      if (apiUrl) {
+        fetchThemeFromOnlineDatabase(apiUrl);
+      } else {
+        selectTheme.value = savedTheme;
+      }
+    } else {
+      applyTheme(selected);
+    }
+  });
+
+  function fetchThemeFromOnlineDatabase(url) {
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        // Ekspektasi respons JSON memiliki properti warna
+        const colors = data.data || data;
+        localStorage.setItem('app_custom_theme_colors', JSON.stringify(colors));
+        applyTheme('online', colors);
+        alert("Tema berhasil diunduh dan diterapkan dari database online!");
+      })
+      .catch(err => {
+        alert("Gagal mengunduh tema online. Menggunakan sampel tema bawaan API...");
+        // Fallback Sampel JSON Online
+        const sampleOnlineTheme = {
+          bg: "#f4f0ff", card: "#ffffff", ink: "#20123a", mute: "#67568c",
+          line: "#e2d9f3", accent: "#6200ee", sidebar_bg: "#1d0047"
+        };
+        localStorage.setItem('app_custom_theme_colors', JSON.stringify(sampleOnlineTheme));
+        applyTheme('online', sampleOnlineTheme);
+      });
+  }
+
+  /* --- CMS EDITABLE WORDPRESS LOGIC (BERANDA) --- */
+  let isCmsActive = false;
+  const btnToggleCms = document.getElementById('btn-toggle-cms');
+  const btnResetCms = document.getElementById('btn-reset-cms');
+  const cmsToolbar = document.getElementById('cms-toolbar');
+  const cmsStatus = document.getElementById('cms-status');
+  const editableArea = document.getElementById('beranda-editable-area');
+
+  // Load Simpanan CMS dari LocalStorage
+  const savedCmsHtml = localStorage.getItem('beranda_cms_content');
+  if (savedCmsHtml) {
+    editableArea.innerHTML = savedCmsHtml;
+    btnResetCms.style.display = 'inline-flex';
+  }
+
+  btnToggleCms.addEventListener('click', () => {
+    isCmsActive = !isCmsActive;
+    if (isCmsActive) {
+      enableCmsMode();
+    } else {
+      disableCmsMode();
+    }
+  });
+
+  function enableCmsMode() {
+    cmsToolbar.classList.add('active');
+    document.body.classList.add('editable-active');
+    btnToggleCms.textContent = "✖️ Keluar Mode Edit";
+    btnToggleCms.className = "small del";
+    cmsStatus.textContent = "Mode WordPress Aktif: Klik teks untuk mengedit langsung.";
+
+    const editables = editableArea.querySelectorAll('.cms-editable');
+    editables.forEach(el => {
+      el.setAttribute('contenteditable', 'true');
+    });
+  }
+
+  function disableCmsMode() {
+    cmsToolbar.classList.remove('active');
+    document.body.classList.remove('editable-active');
+    btnToggleCms.textContent = "📝 Edit Beranda (WordPress Mode)";
+    btnToggleCms.className = "small primary";
+    cmsStatus.textContent = "";
+
+    const editables = editableArea.querySelectorAll('.cms-editable');
+    editables.forEach(el => {
+      el.removeAttribute('contenteditable');
+    });
+  }
+
+  function execCmsCmd(command) {
+    document.execCommand(command, false, null);
+  }
+
+  function addCmsCard() {
+    const container = document.getElementById('dynamic-cards-container');
+    const newCard = document.createElement('div');
+    newCard.className = 'card cms-card-item';
+    newCard.innerHTML = `
+      <h2 class="cms-editable" ${isCmsActive ? 'contenteditable="true"' : ''}>Judul Blok Baru</h2>
+      <div class="cms-editable" ${isCmsActive ? 'contenteditable="true"' : ''}>
+        <p>Tuliskan deskripsi atau konten artikel baru Anda di sini...</p>
+      </div>
+    `;
+    container.appendChild(newCard);
+  }
+
+  function addCmsImage() {
+    const imageUrl = prompt("Masukkan URL Gambar yang ingin disisipkan:", "https://picsum.photos/800/300");
+    if (imageUrl) {
+      document.execCommand('insertImage', false, imageUrl);
+    }
+  }
+
+  function saveCmsContent() {
+    disableCmsMode();
+    localStorage.setItem('beranda_cms_content', editableArea.innerHTML);
+    btnResetCms.style.display = 'inline-flex';
+    alert("Perubahan halaman beranda berhasil disimpan!");
+  }
+
+  btnResetCms.addEventListener('click', () => {
+    if (confirm("Kembalikan konten halaman beranda ke versi default?")) {
+      localStorage.removeItem('beranda_cms_content');
+      location.reload();
+    }
+  });
+
   /* --- Submenu Toggle Logic --- */
   const alumniToggle = document.getElementById('btn-alumni-toggle');
   const alumniContainer = document.getElementById('menu-alumni-container');
@@ -474,7 +700,6 @@ tr:last-child td { border-bottom: none; }
       document.getElementById(targetId).classList.add('active');
       headerTitle.textContent = "Menu: " + link.textContent;
 
-      // Otomatis buka kontainer submenu terkait saat anak menu diklik
       if (link.closest('#menu-alumni-container')) {
         alumniContainer.classList.add('open');
       }
@@ -676,7 +901,6 @@ tr:last-child td { border-bottom: none; }
     if (e.target.files.length) handleFileImport(e.target.files[0]);
   });
 
-  // Fungsi penyesuaian nomor kontak (Menambahkan angka 0 jika terpotong)
   function formatNomorHP(kontak) {
     if (!kontak) return "";
     let strKontak = String(kontak).trim();
@@ -759,7 +983,6 @@ tr:last-child td { border-bottom: none; }
     populateKontingenFilter();
     renderAlumniTable();
 
-    // Pindah ke Halaman Data Alumni
     document.querySelector('[data-target="page-data-alumni"]').click();
   });
 
