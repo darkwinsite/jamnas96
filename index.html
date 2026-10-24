@@ -116,6 +116,10 @@ tr:last-child td { border-bottom: none; }
 .avatar-cell { display: flex; align-items: center; gap: 10px; }
 .avatar-cell img, .avatar-cell .ph { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--bg); display: grid; place-items: center; font-weight: 700; color: var(--mute); flex: none; }
 
+/* Drag Drop Zone */
+.drop-zone { border: 2px dashed var(--line); border-radius: 12px; padding: 30px; text-align: center; background: var(--bg); cursor: pointer; transition: 0.2s; }
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: rgba(15, 107, 79, 0.05); }
+
 /* Modal */
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; place-items: center; z-index: 1000; padding: 16px; }
 .modal-overlay.active { display: grid; }
@@ -126,6 +130,8 @@ tr:last-child td { border-bottom: none; }
 body.is-admin .admin-only { display: inline-flex !important; }
 body.is-admin tr .admin-only { display: inline-block !important; }
 body.is-admin div.admin-only { display: block !important; }
+body.is-admin li.admin-only-menu { display: block !important; }
+li.admin-only-menu { display: none; }
 
 .header-right { display: flex; align-items: center; gap: 12px; }
 </style>
@@ -154,13 +160,13 @@ body.is-admin div.admin-only { display: block !important; }
       <li><a href="#" class="nav-link" data-target="page-alumni-stories">ALUMNI STORIES</a></li>
       <li><a href="#" class="nav-link" data-target="page-berbagi">PJ96 Berbagi (Sosial)</a></li>
       
-      <li class="submenu-container admin-only" id="menu-tools-container" style="display:none;">
+      <li class="submenu-container admin-only-menu" id="menu-tools-container">
         <button class="submenu-toggle admin-only" id="btn-tools-toggle" type="button">
           <span>Tools (Admin)</span><span class="arrow">▼</span>
         </button>
         <ul class="submenu-items">
-          <li><a href="#" class="nav-link" data-target="page-impor-data">Impor Data (Excel)</a></li>
-          <li><a href="#" class="nav-link" data-target="page-absensi">Absensi Reuni</a></li>
+          <li><a href="#" class="nav-link admin-only" data-target="page-impor-data">Impor Data (Excel)</a></li>
+          <li><a href="#" class="nav-link admin-only" data-target="page-absensi">Absensi Reuni</a></li>
         </ul>
       </li>
     </ul>
@@ -212,7 +218,6 @@ body.is-admin div.admin-only { display: block !important; }
         <p class="sub">Pencarian informasi purna peserta Jamnas 1996.</p>
         
         <div class="card">
-          <!-- PENGATURAN PRIVASI KHUSUS ADMIN -->
           <div class="admin-only card" style="background:var(--bg); margin-bottom:16px; padding:12px;">
             <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin:0;">
               <input type="checkbox" id="toggle-hide-contact" style="width:auto;">
@@ -267,13 +272,48 @@ body.is-admin div.admin-only { display: block !important; }
         </div>
       </section>
 
-      <!-- MENU LAINNYA -->
+      <!-- MARKET & LAINNYA -->
       <section id="page-market" class="page"><h1>Alumni Market & Service</h1></section>
       <section id="page-jamnas-connect" class="page"><h1>JAMNAS96 CONNECT</h1></section>
       <section id="page-alumni-stories" class="page"><h1>ALUMNI STORIES</h1></section>
       <section id="page-berbagi" class="page"><h1>PJ96 Berbagi (Sosial)</h1></section>
-      <section id="page-impor-data" class="page"><h1>Impor Data Excel</h1></section>
-      <section id="page-absensi" class="page"><h1>Absensi Reuni</h1></section>
+
+      <!-- TOOLS: IMPOR DATA EXCEL -->
+      <section id="page-impor-data" class="page">
+        <h1>Impor Data Alumni (Tools)</h1>
+        <p class="sub">Unggah file Excel (.xlsx, .xls) atau CSV untuk memasukkan data secara masal.</p>
+        
+        <div class="card">
+          <div class="drop-zone" id="drop-zone">
+            <p style="margin:0 0 8px; font-weight:600;">Pilih atau Tarik File Excel / CSV ke Sini</p>
+            <span style="font-size:0.85rem; color:var(--mute);">Format kolom: NAMA, ASAL KONTINGEN, CONTACT, DOMISILI SAAT INI</span>
+            <input type="file" id="file-excel" accept=".xlsx, .xls, .csv" style="display: none;">
+            <br>
+            <button class="primary" style="margin-top:14px;" type="button" onclick="document.getElementById('file-excel').click()">Pilih File</button>
+          </div>
+          <p class="msg" id="msg-impor"></p>
+        </div>
+
+        <div id="preview-impor-card" class="card" style="display: none;">
+          <h3>Preview Data Impor</h3>
+          <p id="count-preview" class="sub"></p>
+          <div class="table-responsive" style="max-height: 350px;">
+            <table>
+              <thead>
+                <tr><th>No</th><th>Nama</th><th>Asal Kontingen</th><th>Contact</th><th>Domisili Saat Ini</th></tr>
+              </thead>
+              <tbody id="tbody-preview"></tbody>
+            </table>
+          </div>
+          <button class="primary full" id="btn-simpan-impor">Simpan Semua ke Supabase</button>
+        </div>
+      </section>
+
+      <!-- TOOLS: ABSENSI REUNI -->
+      <section id="page-absensi" class="page">
+        <h1>Absensi Event Reuni (Tools)</h1>
+        <p class="sub">Rekapitulasi kehadiran acara reuni.</p>
+      </section>
     </main>
   </div>
 
@@ -313,9 +353,11 @@ body.is-admin div.admin-only { display: block !important; }
   const ADMIN_SECRET_PASSWORD = "pjn96adminpassword";
 
   let alumniData = [];
+  let importedPreviewData = [];
   let hideContactForMember = localStorage.getItem('hide_contact_member') === 'true';
 
-  document.getElementById('toggle-hide-contact').checked = hideContactForMember;
+  const toggleHideContactEl = document.getElementById('toggle-hide-contact');
+  if (toggleHideContactEl) toggleHideContactEl.checked = hideContactForMember;
 
   // Cek Status Admin
   if (localStorage.getItem('is_pjn96_admin') === 'true') {
@@ -351,28 +393,30 @@ body.is-admin div.admin-only { display: block !important; }
     }
   });
 
-  // Pengaturan Sembunyikan Kontak oleh Admin
-  document.getElementById('toggle-hide-contact').addEventListener('change', (e) => {
-    hideContactForMember = e.target.checked;
-    localStorage.setItem('hide_contact_member', hideContactForMember);
-    renderAlumniTable();
-  });
+  if (toggleHideContactEl) {
+    toggleHideContactEl.addEventListener('change', (e) => {
+      hideContactForMember = e.target.checked;
+      localStorage.setItem('hide_contact_member', hideContactForMember);
+      renderAlumniTable();
+    });
+  }
 
   // Ambil Data Supabase
   async function loadData() {
-    const { data } = await supabaseClient.from('alumni').select('*');
-    if (data) alumniData = data;
-    renderAlumniTable();
-    populateKontingenFilter();
+    try {
+      const { data } = await supabaseClient.from('alumni').select('*');
+      if (data) alumniData = data;
+      renderAlumniTable();
+      populateKontingenFilter();
+    } catch (err) {
+      console.error("Gagal memuat data supabase:", err);
+    }
   }
 
-  // Fungsi Format Kontak (Menyamarkan nomor HP jika member dan fitur aktif)
+  // Format Kontak Member
   function formatKontakDisplay(kontak) {
     const isAdmin = document.body.classList.contains('is-admin');
-    if (isAdmin || !hideContactForMember) {
-      return kontak || '-';
-    }
-    // Jika member & fitur sembunyikan aktif, samarkan nomor HP
+    if (isAdmin || !hideContactForMember) return kontak || '-';
     if (!kontak) return '-';
     const str = String(kontak).trim();
     if (str.length > 6) {
@@ -394,7 +438,7 @@ body.is-admin div.admin-only { display: block !important; }
       return matchKeyword && matchKontingen;
     });
 
-    countEl.textContent = `Menampilkan ${filtered.length} dari ${alumniData.length} Alumni`;
+    if (countEl) countEl.textContent = `Menampilkan ${filtered.length} dari ${alumniData.length} Alumni`;
 
     if (filtered.length === 0) {
       tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px;">Tidak ada data ditemukan.</td></tr>`;
@@ -414,8 +458,8 @@ body.is-admin div.admin-only { display: block !important; }
         <td>${formatKontakDisplay(item.kontak)}</td>
         <td>${item.domisili || '-'}</td>
         <td class="admin-only" style="text-align: center; whitespace: nowrap;">
-          <button class="small edit" onclick="openEditModal('${item.id}')">Edit</button>
-          <button class="small del" onclick="hapusAlumni('${item.id}')">Hapus</button>
+          <button class="small edit" type="button" onclick="openEditModal('${item.id}')">Edit</button>
+          <button class="small del" type="button" onclick="hapusAlumni('${item.id}')">Hapus</button>
         </td>
       </tr>
     `).join('');
@@ -431,7 +475,92 @@ body.is-admin div.admin-only { display: block !important; }
       kontingens.map(k => `<option value="${k}">${k}</option>`).join('');
   }
 
-  // Navigasi Standar
+  /* --- LOGIKA IMPOR EXCEL/CSV (TOOLS) --- */
+  const fileInput = document.getElementById('file-excel');
+  const dropZone = document.getElementById('drop-zone');
+
+  if (dropZone && fileInput) {
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) handleFileImport(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length) handleFileImport(e.target.files[0]);
+    });
+  }
+
+  function handleFileImport(file) {
+    const reader = new FileReader();
+    const msg = document.getElementById('msg-impor');
+    msg.textContent = "Membaca file...";
+
+    reader.onload = function(e) {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+        if (!jsonData.length) {
+          msg.textContent = "File kosong atau tidak dapat dibaca!";
+          msg.className = "msg";
+          return;
+        }
+
+        importedPreviewData = jsonData.map((row, idx) => ({
+          id: Date.now().toString() + '_' + idx,
+          nama: row['NAMA'] || row['Nama'] || row['nama'] || '',
+          kontingen: row['ASAL KONTINGEN'] || row['Kontingen'] || row['KONTINGEN'] || '',
+          kontak: String(row['CONTACT'] || row['Contact'] || row['kontak'] || row['NO HP'] || ''),
+          domisili: row['DOMISILI SAAT INI'] || row['Domisili'] || row['DOMISILI'] || '',
+          foto: ''
+        })).filter(a => a.nama !== '');
+
+        msg.textContent = "File berhasil dibaca!";
+        msg.className = "msg ok";
+
+        document.getElementById('preview-impor-card').style.display = 'block';
+        document.getElementById('count-preview').textContent = `Ditemukan ${importedPreviewData.length} baris data alumni.`;
+        document.getElementById('tbody-preview').innerHTML = importedPreviewData.slice(0, 20).map((row, idx) => `
+          <tr>
+            <td>${idx + 1}</td>
+            <td><b>${row.nama}</b></td>
+            <td>${row.kontingen}</td>
+            <td>${row.kontak}</td>
+            <td>${row.domisili}</td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        msg.textContent = "Gagal memproses file. Pastikan format file Excel/CSV sesuai.";
+        msg.className = "msg";
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  const btnSimpanImpor = document.getElementById('btn-simpan-impor');
+  if (btnSimpanImpor) {
+    btnSimpanImpor.addEventListener('click', async () => {
+      if (!importedPreviewData.length) return;
+      const { error } = await supabaseClient.from('alumni').insert(importedPreviewData);
+      if (error) {
+        alert("Gagal menyimpan ke Supabase: " + error.message);
+      } else {
+        alert(`Berhasil mengimpor ${importedPreviewData.length} data alumni ke Supabase!`);
+        importedPreviewData = [];
+        document.getElementById('preview-impor-card').style.display = 'none';
+        document.getElementById('msg-impor').textContent = "";
+        loadData();
+        document.querySelector('[data-target="page-data-alumni"]').click();
+      }
+    });
+  }
+
+  /* --- NAVIGASI --- */
   document.getElementById('btn-alumni-toggle').addEventListener('click', () => document.getElementById('menu-alumni-container').classList.toggle('open'));
   document.getElementById('btn-tools-toggle')?.addEventListener('click', () => document.getElementById('menu-tools-container').classList.toggle('open'));
 
