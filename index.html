@@ -38,7 +38,7 @@
 }
 
 html { scroll-padding-top: env(safe-area-inset-top, 0px); }
-* { box-sizing: border-box; }
+*, *:before, *:after { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; display: flex; min-height: 100vh; transition: background 0.3s, color 0.3s; }
 
 /* Sidebar Layout */
@@ -167,6 +167,7 @@ li.admin-only-menu { display: none; }
         <ul class="submenu-items">
           <li><a href="#" class="nav-link admin-only" data-target="page-impor-data">Impor Data (Excel)</a></li>
           <li><a href="#" class="nav-link admin-only" data-target="page-absensi">Absensi Reuni</a></li>
+          <li><a href="#" class="nav-link admin-only" data-target="page-ubah-password">Pengaturan Password</a></li>
         </ul>
       </li>
     </ul>
@@ -218,12 +219,13 @@ li.admin-only-menu { display: none; }
         <p class="sub">Pencarian informasi purna peserta Jamnas 1996.</p>
         
         <div class="card">
+          <!-- Kontrol Admin untuk menyembunyikan/menampilkan nomor kontak -->
           <div class="admin-only card" style="background:var(--bg); margin-bottom:16px; padding:12px;">
             <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin:0;">
-              <input type="checkbox" id="toggle-hide-contact" style="width:auto;">
+              <input type="checkbox" id="toggle-hide-contact" style="width:auto;" checked>
               <b>🔒 Sembunyikan Nomor Kontak/HP dari Tampilan Member / Publik</b>
             </label>
-            <small style="color:var(--mute); margin-top:2px; display:block;">Jika dicentang, member hanya melihat nomor HP yang disamarkan (****).</small>
+            <small style="color:var(--mute); margin-top:2px; display:block;">Jika dicentang, member/publik hanya melihat nomor HP yang disamarkan (****), sedangkan Admin tetap melihat nomor asli secara utuh.</small>
           </div>
 
           <div class="bar">
@@ -314,6 +316,27 @@ li.admin-only-menu { display: none; }
         <h1>Absensi Event Reuni (Tools)</h1>
         <p class="sub">Rekapitulasi kehadiran acara reuni.</p>
       </section>
+
+      <!-- TOOLS: PENGATURAN / UBAH PASSWORD ADMIN -->
+      <section id="page-ubah-password" class="page">
+        <h1>Pengaturan Administrator</h1>
+        <p class="sub">Ubah password akses kontrol admin sistem.</p>
+        <div class="card" style="max-width: 500px; margin: 0 auto;">
+          <form id="form-ubah-password">
+            <label>Password Lama</label>
+            <input type="password" id="pass-lama" placeholder="Masukkan password lama..." required>
+            
+            <label>Password Baru</label>
+            <input type="password" id="pass-baru" placeholder="Masukkan password baru..." required>
+            
+            <label>Konfirmasi Password Baru</label>
+            <input type="password" id="pass-konfirmasi" placeholder="Ulangi password baru..." required>
+            
+            <p class="msg" id="msg-ubah-pass"></p>
+            <button class="primary full" type="submit" style="margin-top: 14px;">Simpan Password Baru</button>
+          </form>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -350,11 +373,15 @@ li.admin-only-menu { display: none; }
   const SUPABASE_URL = 'https://YOUR_SUPABASE_URL.supabase.co';
   const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const ADMIN_SECRET_PASSWORD = "pjn96adminpassword";
+  
+  // Password default admin disimpan di localStorage agar bisa diubah secara dinamis
+  if (!localStorage.getItem('pjn96_admin_pwd')) {
+    localStorage.setItem('pjn96_admin_pwd', 'pjn96adminpassword');
+  }
 
   let alumniData = [];
   let importedPreviewData = [];
-  let hideContactForMember = localStorage.getItem('hide_contact_member') === 'true';
+  let hideContactForMember = localStorage.getItem('hide_contact_member') !== 'false'; // Default true (disembunyikan)
 
   const toggleHideContactEl = document.getElementById('toggle-hide-contact');
   if (toggleHideContactEl) toggleHideContactEl.checked = hideContactForMember;
@@ -373,7 +400,8 @@ li.admin-only-menu { display: none; }
 
   document.getElementById('form-login-admin').addEventListener('submit', (e) => {
     e.preventDefault();
-    if (document.getElementById('admin-password').value === ADMIN_SECRET_PASSWORD) {
+    const currentAdminPwd = localStorage.getItem('pjn96_admin_pwd');
+    if (document.getElementById('admin-password').value === currentAdminPwd) {
       localStorage.setItem('is_pjn96_admin', 'true');
       document.body.classList.add('is-admin');
       document.getElementById('modal-login').classList.remove('active');
@@ -401,6 +429,40 @@ li.admin-only-menu { display: none; }
     });
   }
 
+  // Logika Ubah Password Admin
+  document.getElementById('form-ubah-password').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const passLama = document.getElementById('pass-lama').value;
+    const passBaru = document.getElementById('pass-baru').value;
+    const passKonfirmasi = document.getElementById('pass-konfirmasi').value;
+    const msgEl = document.getElementById('msg-ubah-pass');
+
+    const currentPwd = localStorage.getItem('pjn96_admin_pwd');
+
+    if (passLama !== currentPwd) {
+      msgEl.textContent = "Password lama salah!";
+      msgEl.className = "msg";
+      return;
+    }
+
+    if (passBaru !== passKonfirmasi) {
+      msgEl.textContent = "Konfirmasi password baru tidak cocok!";
+      msgEl.className = "msg";
+      return;
+    }
+
+    if (passBaru.length < 5) {
+      msgEl.textContent = "Password baru minimal terdiri dari 5 karakter!";
+      msgEl.className = "msg";
+      return;
+    }
+
+    localStorage.setItem('pjn96_admin_pwd', passBaru);
+    msgEl.textContent = "Password admin berhasil diubah!";
+    msgEl.className = "msg ok";
+    document.getElementById('form-ubah-password').reset();
+  });
+
   // Ambil Data Supabase
   async function loadData() {
     try {
@@ -413,10 +475,13 @@ li.admin-only-menu { display: none; }
     }
   }
 
-  // Format Kontak Member
+  // Format Tampilan Kontak (Member disembunyikan, Admin utuh)
   function formatKontakDisplay(kontak) {
     const isAdmin = document.body.classList.contains('is-admin');
+    // Jika user adalah admin ATAU checkbox sembunyikan dimatikan, tampilkan kontak asli
     if (isAdmin || !hideContactForMember) return kontak || '-';
+    
+    // Jika member/publik, sembunyikan kontak (masking)
     if (!kontak) return '-';
     const str = String(kontak).trim();
     if (str.length > 6) {
@@ -457,7 +522,7 @@ li.admin-only-menu { display: none; }
         <td>${item.kontingen || '-'}</td>
         <td>${formatKontakDisplay(item.kontak)}</td>
         <td>${item.domisili || '-'}</td>
-        <td class="admin-only" style="text-align: center; whitespace: nowrap;">
+        <td class="admin-only" style="text-align: center; white-space: nowrap;">
           <button class="small edit" type="button" onclick="openEditModal('${item.id}')">Edit</button>
           <button class="small del" type="button" onclick="hapusAlumni('${item.id}')">Hapus</button>
         </td>
