@@ -45,7 +45,7 @@ aside {
 }
 .sidebar-menu a:hover, .sidebar-menu a.active { background: var(--accent); color: var(--accent-ink); }
 
-/* Submenu / Tools Dropdown Styling */
+/* Submenu Dropdown Styling */
 .submenu-container { margin-bottom: 4px; }
 .submenu-toggle {
   display: flex; justify-content: space-between; align-items: center; padding: 11px 15px; color: #b0c4ba; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: 0.2s; background: transparent; width: 100%; border: none; text-align: left;
@@ -141,10 +141,23 @@ tr:last-child td { border-bottom: none; }
     </div>
     <ul class="sidebar-menu">
       <li><a href="#" class="nav-link active" data-target="page-beranda">Beranda & Profil</a></li>
-      <li><a href="#" class="nav-link" data-target="page-data-alumni">Direktori Alumni</a></li>
-      <li><a href="#" class="nav-link" data-target="page-tambah-alumni">Tambah Alumni (Manual)</a></li>
       
-      <!-- MENU TOOLS (Submenu Dropdown) -->
+      <!-- SUBMENU 1: DIREKTORI ALUMNI -->
+      <li class="submenu-container open" id="menu-alumni-container">
+        <button class="submenu-toggle" id="btn-alumni-toggle" type="button">
+          <span>Direktori Alumni</span>
+          <span class="arrow">▼</span>
+        </button>
+        <ul class="submenu-items">
+          <li><a href="#" class="nav-link" data-target="page-data-alumni">Data Informasi Alumni</a></li>
+          <li><a href="#" class="nav-link" data-target="page-tambah-alumni">Tambah Alumni (Manual)</a></li>
+        </ul>
+      </li>
+
+      <li><a href="#" class="nav-link" data-target="page-market">Alumni Market & Service</a></li>
+      <li><a href="#" class="nav-link" data-target="page-absensi">Absensi Event Reuni</a></li>
+
+      <!-- SUBMENU 2: TOOLS (Taruh Paling Bawah) -->
       <li class="submenu-container" id="menu-tools-container">
         <button class="submenu-toggle" id="btn-tools-toggle" type="button">
           <span>Tools</span>
@@ -155,9 +168,6 @@ tr:last-child td { border-bottom: none; }
           <li><a href="#" class="nav-link" data-target="page-berbagi">PJ96 Berbagi (Sosial)</a></li>
         </ul>
       </li>
-
-      <li><a href="#" class="nav-link" data-target="page-market">Alumni Market & Service</a></li>
-      <li><a href="#" class="nav-link" data-target="page-absensi">Absensi Event Reuni</a></li>
     </ul>
   </aside>
 
@@ -242,7 +252,39 @@ tr:last-child td { border-bottom: none; }
         </div>
       </section>
 
-      <!-- PAGE 2: TOOLS - IMPOR DATA EXCEL / CSV -->
+      <!-- PAGE 2: TAMBAH DATA ALUMNI MANUAL (SUB MENU DIREKTORI ALUMNI) -->
+      <section id="page-tambah-alumni" class="page">
+        <h1>Tambah Data Alumni Manual</h1>
+        <p class="sub">Masukkan informasi lengkap profil alumni satu per satu.</p>
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+          <form id="form-alumni">
+            <label for="alumni-nama">Nama Lengkap</label>
+            <input id="alumni-nama" placeholder="Contoh: A.A.Istri Inten D. Sawitri" required>
+
+            <label for="alumni-kontingen">Asal Kontingen</label>
+            <input id="alumni-kontingen" placeholder="Contoh: Bali / Jember / Jakarta" required>
+
+            <label for="alumni-kontak">Kontak / No. HP</label>
+            <input id="alumni-kontak" placeholder="Contoh: 08123456789" required>
+
+            <label for="alumni-domisili">Domisili Saat Ini</label>
+            <input id="alumni-domisili" placeholder="Contoh: Gianyar, Bali 80522" required>
+
+            <label for="alumni-foto">Foto Profil Alumni (Opsional)</label>
+            <div class="photo">
+              <div class="preview" id="preview-alumni">Belum ada foto</div>
+              <div>
+                <input type="file" id="alumni-foto" accept="image/*" style="padding:6px">
+              </div>
+            </div>
+
+            <button class="primary full" type="submit">Simpan Data Alumni</button>
+            <p class="msg" id="msg-alumni" role="status"></p>
+          </form>
+        </div>
+      </section>
+
+      <!-- PAGE 3: TOOLS - IMPOR DATA EXCEL / CSV -->
       <section id="page-impor-data" class="page">
         <h1>Impor Data Alumni (Tools)</h1>
         <p class="sub">Unggah file Excel (.xlsx, .xls) atau CSV untuk memasukkan data alumni secara masal.</p>
@@ -277,38 +319,6 @@ tr:last-child td { border-bottom: none; }
             </table>
           </div>
           <button class="primary full" id="btn-simpan-impor">Konfirmasi & Simpan ke Sistem</button>
-        </div>
-      </section>
-
-      <!-- PAGE 3: TAMBAH DATA ALUMNI MANUAL -->
-      <section id="page-tambah-alumni" class="page">
-        <h1>Tambah Data Alumni Manual</h1>
-        <p class="sub">Masukkan informasi lengkap profil alumni satu per satu.</p>
-        <div class="card" style="max-width: 600px; margin: 0 auto;">
-          <form id="form-alumni">
-            <label for="alumni-nama">Nama Lengkap</label>
-            <input id="alumni-nama" placeholder="Contoh: A.A.Istri Inten D. Sawitri" required>
-
-            <label for="alumni-kontingen">Asal Kontingen</label>
-            <input id="alumni-kontingen" placeholder="Contoh: Bali / Jember / Jakarta" required>
-
-            <label for="alumni-kontak">Kontak / No. HP</label>
-            <input id="alumni-kontak" placeholder="Contoh: 08123456789" required>
-
-            <label for="alumni-domisili">Domisili Saat Ini</label>
-            <input id="alumni-domisili" placeholder="Contoh: Gianyar, Bali 80522" required>
-
-            <label for="alumni-foto">Foto Profil Alumni (Opsional)</label>
-            <div class="photo">
-              <div class="preview" id="preview-alumni">Belum ada foto</div>
-              <div>
-                <input type="file" id="alumni-foto" accept="image/*" style="padding:6px">
-              </div>
-            </div>
-
-            <button class="primary full" type="submit">Simpan Data Alumni</button>
-            <p class="msg" id="msg-alumni" role="status"></p>
-          </form>
         </div>
       </section>
 
@@ -413,10 +423,15 @@ tr:last-child td { border-bottom: none; }
   let absensiData = JSON.parse(localStorage.getItem('absensi_data')) || [];
   let importedPreviewData = [];
 
-  /* --- Submenu Tools Toggle Logic --- */
+  /* --- Submenu Toggle Logic --- */
+  const alumniToggle = document.getElementById('btn-alumni-toggle');
+  const alumniContainer = document.getElementById('menu-alumni-container');
+  alumniToggle.addEventListener('click', () => {
+    alumniContainer.classList.toggle('open');
+  });
+
   const toolsToggle = document.getElementById('btn-tools-toggle');
   const toolsContainer = document.getElementById('menu-tools-container');
-
   toolsToggle.addEventListener('click', () => {
     toolsContainer.classList.toggle('open');
   });
@@ -437,7 +452,10 @@ tr:last-child td { border-bottom: none; }
       document.getElementById(targetId).classList.add('active');
       headerTitle.textContent = "Menu: " + link.textContent;
 
-      // Jika menu yang diklik ada di dalam Tools, pastikan dropdown Tools terbuka
+      // Otomatis buka kontainer submenu terkait saat anak menu diklik
+      if (link.closest('#menu-alumni-container')) {
+        alumniContainer.classList.add('open');
+      }
       if (link.closest('#menu-tools-container')) {
         toolsContainer.classList.add('open');
       }
