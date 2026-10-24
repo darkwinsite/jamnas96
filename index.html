@@ -3,26 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Dashboard & Absensi Alumni</title>
+<title>Dashboard & Sistem Alumni PJN96</title>
+
+<!-- CDN SheetJS (XLSX) untuk Impor Excel/CSV -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<!-- CDN jsPDF & jsPDF AutoTable untuk Ekspor PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
 <style>
 :root {
   --bg: #f3f6f4; --card: #fff; --ink: #17261f; --mute: #5d6e65; --line: #d5ded9; 
-  --accent: #0f6b4f; --accent-ink: #fff; --danger: #b3261e; --sidebar-bg: #11221b;
+  --accent: #0f6b4f; --accent-ink: #fff; --danger: #b3261e; --warning: #d97706; --sidebar-bg: #11221b;
   box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #101a15; --card: #18251e; --ink: #e8f1ec; --mute: #93a69b; --line: #2b3c33; 
-    --accent: #4cc79b; --accent-ink: #06261a; --danger: #ff8a80; --sidebar-bg: #0b1410;
+    --accent: #4cc79b; --accent-ink: #06261a; --danger: #ff8a80; --warning: #fbbf24; --sidebar-bg: #0b1410;
   }
 }
 :root[data-theme="dark"] {
   --bg: #101a15; --card: #18251e; --ink: #e8f1ec; --mute: #93a69b; --line: #2b3c33; 
-  --accent: #4cc79b; --accent-ink: #06261a; --danger: #ff8a80; --sidebar-bg: #0b1410;
+  --accent: #4cc79b; --accent-ink: #06261a; --danger: #ff8a80; --warning: #fbbf24; --sidebar-bg: #0b1410;
 }
 html { scroll-padding-top: env(safe-area-inset-top, 0px); }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; display: flex; min-height: 100vh; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; display: flex; min-height: 100vh; }
 
 /* Sidebar Layout */
 aside {
@@ -40,7 +47,7 @@ aside {
 /* Main Content Layout */
 .main-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 header { background: var(--card); border-bottom: 1px solid var(--line); padding: 16px 24px; font-weight: 600; font-size: 1.1rem; }
-main { max-width: 1100px; width: 100%; margin: 0 auto; padding: 24px; flex: 1; }
+main { max-width: 1200px; width: 100%; margin: 0 auto; padding: 24px; flex: 1; }
 
 .page { display: none; }
 .page.active { display: block; }
@@ -50,31 +57,46 @@ h1 { font-size: 1.7rem; margin: 0 0 4px; }
 .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
 @media(min-width: 800px) { .grid { grid-template-columns: 380px 1fr; align-items: start; } }
 
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
-label { display: block; font-weight: 600; font-size: .9rem; margin: 12px 0 4px; }
-input, textarea, select { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
+label { display: block; font-weight: 600; font-size: .88rem; margin: 10px 0 4px; }
+input, textarea, select { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; }
 input:focus, textarea:focus, select:focus, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 textarea { resize: vertical; min-height: 70px; }
 
 .photo { display: flex; gap: 12px; align-items: center; margin-top: 4px; }
-.preview { width: 84px; height: 84px; border-radius: 12px; border: 1px dashed var(--line); background: var(--bg) center/cover no-repeat; display: grid; place-items: center; color: var(--mute); font-size: .75rem; text-align: center; flex: none; }
-button { font: inherit; font-weight: 600; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 10px 14px; cursor: pointer; }
-button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); width: 100%; margin-top: 18px; padding: 12px; }
-button.small { padding: 6px 10px; font-size: .85rem; }
+.preview { width: 72px; height: 72px; border-radius: 12px; border: 1px dashed var(--line); background: var(--bg) center/cover no-repeat; display: grid; place-items: center; color: var(--mute); font-size: .75rem; text-align: center; flex: none; }
+button { font: inherit; font-weight: 600; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 8px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+button.full { width: 100%; justify-content: center; margin-top: 14px; padding: 11px; }
+button.small { padding: 5px 10px; font-size: .82rem; }
 button.del { color: var(--danger); border-color: var(--danger); }
+button.edit { color: var(--warning); border-color: var(--warning); }
 .msg { min-height: 1.4em; margin: 10px 0 0; font-size: .9rem; color: var(--danger); }
 .msg.ok { color: var(--accent); }
 
-.bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
-.bar input { flex: 1; min-width: 140px; }
+.bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+.bar input, .bar select { flex: 1; min-width: 150px; }
 .count { font-weight: 700; font-size: 1.05rem; margin: 0 0 12px; }
-.list { display: grid; gap: 10px; }
-.item { display: flex; gap: 12px; align-items: center; border: 1px solid var(--line); border-radius: 12px; padding: 10px; background: var(--card); }
-.item img, .item .ph { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex: none; background: var(--bg); display: grid; place-items: center; color: var(--mute); font-weight: 700; }
-.info { flex: 1; min-width: 0; }
-.info b { display: block; overflow-wrap: anywhere; }
-.info span { display: block; color: var(--mute); font-size: .85rem; overflow-wrap: anywhere; }
-.empty { color: var(--mute); text-align: center; padding: 28px 8px; }
+
+/* Table Styling */
+.table-responsive { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+th, td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { background: var(--bg); font-weight: 600; color: var(--mute); }
+tr:last-child td { border-bottom: none; }
+.avatar-cell { display: flex; align-items: center; gap: 10px; }
+.avatar-cell img, .avatar-cell .ph { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--bg); display: grid; place-items: center; font-weight: 700; color: var(--mute); flex: none; }
+
+/* Modal Styling */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; place-items: center; z-index: 1000; padding: 16px; }
+.modal-overlay.active { display: grid; }
+.modal { background: var(--card); border: 1px solid var(--line); border-radius: 14px; width: 100%; max-width: 550px; padding: 20px; max-height: 90vh; overflow-y: auto; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-bottom: 14px; }
+.modal-header h2 { margin: 0; font-size: 1.2rem; }
+
+/* Drag Drop Zone */
+.drop-zone { border: 2px dashed var(--line); border-radius: 12px; padding: 30px; text-align: center; background: var(--bg); cursor: pointer; transition: 0.2s; }
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: rgba(15, 107, 79, 0.05); }
 
 /* Responsive Sidebar Mobile */
 @media(max-width: 768px) {
@@ -89,25 +111,137 @@ button.del { color: var(--danger); border-color: var(--danger); }
 
   <!-- Sidebar Menu -->
   <aside>
-    <div class="sidebar-brand">Alumni Jamnas 1996</div>
+    <div class="sidebar-brand">Portal Alumni PJN96</div>
     <ul class="sidebar-menu">
-      <li><a href="#" class="nav-link active" data-target="page-absensi">Absensi Event</a></li>
-      <li><a href="#" class="nav-link" data-target="page-tambah-alumni">Data Alumni</a></li>
-      <li><a href="#" class="nav-link" data-target="page-data-alumni">Data Informasi Alumni</a></li>
+      <li><a href="#" class="nav-link active" data-target="page-data-alumni">Data Informasi Alumni</a></li>
+      <li><a href="#" class="nav-link" data-target="page-impor-data">Impor Data (Excel/CSV)</a></li>
+      <li><a href="#" class="nav-link" data-target="page-tambah-alumni">Tambah Alumni (Manual)</a></li>
+      <li><a href="#" class="nav-link" data-target="page-absensi">Absensi Event</a></li>
     </ul>
   </aside>
 
   <!-- Main Container -->
   <div class="main-wrapper">
-    <header id="header-title">Menu: Absensi Event</header>
+    <header id="header-title">Menu: Data Informasi Alumni</header>
     
     <main>
-      <!-- PAGE 1: ABSENSI EVENT -->
-      <section id="page-absensi" class="page active">
+      <!-- PAGE 1: DIREKTORI INFORMASI ALUMNI -->
+      <section id="page-data-alumni" class="page active">
+        <h1>Direktori Data Alumni</h1>
+        <p class="sub">Kelola, filter pencarian, edit data, dan cetak laporan PDF alumni.</p>
+        
+        <div class="card">
+          <div class="bar">
+            <input id="cari-alumni" type="search" placeholder="Cari nama, kontak, atau domisili...">
+            <select id="filter-kontingen">
+              <option value="">-- Semua Kontingen --</option>
+            </select>
+            <button class="primary" id="btn-export-pdf">
+              📄 Download PDF
+            </button>
+          </div>
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <p class="count" id="count-alumni" style="margin:0;">Total Alumni: 0</p>
+            <button class="small del" id="btn-reset-alumni">Reset / Hapus Semua Data</button>
+          </div>
+
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nama Alumni</th>
+                  <th>Asal Kontingen</th>
+                  <th>Kontak</th>
+                  <th>Domisili Saat Ini</th>
+                  <th style="text-align: center;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-alumni">
+                <!-- Data Alumni akan dimasukkan via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE 2: IMPOR DATA EXCEL / CSV -->
+      <section id="page-impor-data" class="page">
+        <h1>Impor Data Alumni</h1>
+        <p class="sub">Unggah file Excel (.xlsx, .xls) atau CSV untuk memasukkan data alumni secara masal.</p>
+        
+        <div class="card">
+          <div class="drop-zone" id="drop-zone">
+            <p style="margin:0 0 8px; font-weight:600;">Pilih atau Tarik File Excel / CSV ke Sini</p>
+            <span style="font-size:0.85rem; color:var(--mute);">Format kolom yang didukung: NO, NAMA, ASAL KONTINGEN, CONTACT, DOMISILI SAAT INI</span>
+            <input type="file" id="file-excel" accept=".xlsx, .xls, .csv" style="display: none;">
+            <br>
+            <button class="primary" style="margin-top:14px;" onclick="document.getElementById('file-excel').click()">Pilih File</button>
+          </div>
+          <p class="msg" id="msg-impor"></p>
+        </div>
+
+        <!-- Preview Impor -->
+        <div id="preview-impor-card" class="card" style="display: none;">
+          <h3>Preview Data Impor</h3>
+          <p id="count-preview" class="sub"></p>
+          <div class="table-responsive" style="max-height: 350px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nama</th>
+                  <th>Asal Kontingen</th>
+                  <th>Contact</th>
+                  <th>Domisili Saat Ini</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-preview"></tbody>
+            </table>
+          </div>
+          <button class="primary full" id="btn-simpan-impor">Konfirmasi & Simpan ke Sistem</button>
+        </div>
+      </section>
+
+      <!-- PAGE 3: TAMBAH DATA ALUMNI MANUAL -->
+      <section id="page-tambah-alumni" class="page">
+        <h1>Tambah Data Alumni Manual</h1>
+        <p class="sub">Masukkan informasi lengkap profil alumni satu per satu.</p>
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+          <form id="form-alumni">
+            <label for="alumni-nama">Nama Lengkap</label>
+            <input id="alumni-nama" placeholder="Contoh: A.A.Istri Inten D. Sawitri" required>
+
+            <label for="alumni-kontingen">Asal Kontingen</label>
+            <input id="alumni-kontingen" placeholder="Contoh: Bali / Jember / Jakarta" required>
+
+            <label for="alumni-kontak">Kontak / No. HP</label>
+            <input id="alumni-kontak" placeholder="Contoh: 08123456789" required>
+
+            <label for="alumni-domisili">Domisili Saat Ini</label>
+            <input id="alumni-domisili" placeholder="Contoh: Gianyar, Bali 80522" required>
+
+            <label for="alumni-foto">Foto Profil Alumni (Opsional)</label>
+            <div class="photo">
+              <div class="preview" id="preview-alumni">Belum ada foto</div>
+              <div>
+                <input type="file" id="alumni-foto" accept="image/*" style="padding:6px">
+              </div>
+            </div>
+
+            <button class="primary full" type="submit">Simpan Data Alumni</button>
+            <p class="msg" id="msg-alumni" role="status"></p>
+          </form>
+        </div>
+      </section>
+
+      <!-- PAGE 4: ABSENSI EVENT -->
+      <section id="page-absensi" class="page">
         <h1>Absensi Event</h1>
         <p class="sub">Isi data peserta, ambil foto, lalu simpan kehadiran.</p>
         <div class="grid">
-          <section class="card" aria-label="Form absensi">
+          <section class="card">
             <div>
               <label for="nama">Nama lengkap</label>
               <input id="nama" autocomplete="name" placeholder="Contoh: Budi Santoso">
@@ -124,16 +258,15 @@ button.del { color: var(--danger); border-color: var(--danger); }
                   <input type="file" id="foto" accept="image/*" capture="user" style="padding:6px">
                 </div>
               </div>
-              <button class="primary" id="simpan" type="button">Simpan kehadiran</button>
+              <button class="primary full" id="simpan" type="button">Simpan Kehadiran</button>
               <p class="msg" id="msg" role="status"></p>
             </div>
           </section>
 
-          <section class="card" aria-label="Daftar hadir">
+          <section class="card">
             <p class="count" id="count">Peserta hadir: 0</p>
             <div class="bar">
               <input id="cari" type="search" placeholder="Cari nama, kota, atau kontak">
-              <button class="small" id="salin" type="button">Salin data (CSV)</button>
             </div>
             <div class="list" id="list">
               <div class="empty">Belum ada data kehadiran.</div>
@@ -141,61 +274,50 @@ button.del { color: var(--danger); border-color: var(--danger); }
           </section>
         </div>
       </section>
-
-      <!-- PAGE 2: TAMBAH DATA ALUMNI MANUAL -->
-      <section id="page-tambah-alumni" class="page">
-        <h1>Tambah Data Alumni Manual</h1>
-        <p class="sub">Masukkan informasi lengkap profil alumni secara manual ke dalam sistem.</p>
-        <div class="card" style="max-width: 600px; margin: 0 auto;">
-          <form id="form-alumni">
-            <label for="alumni-nama">Nama Lengkap & Gelar</label>
-            <input id="alumni-nama" placeholder="Contoh: Siti Rahma, S.T." required>
-
-            <label for="alumni-tahun">Tahun Kelulusan</label>
-            <input id="alumni-tahun" type="number" placeholder="Contoh: 2020" required>
-
-            <label for="alumni-jurusan">Jurusan / Program Studi</label>
-            <input id="alumni-jurusan" placeholder="Contoh: Teknik Informatika" required>
-
-            <label for="alumni-pekerjaan">Pekerjaan / Instansi Saat Ini</label>
-            <input id="alumni-pekerjaan" placeholder="Contoh: Software Engineer di Tokopedia" required>
-
-            <label for="alumni-kontak">Kontak / Email / LinkedIn</label>
-            <input id="alumni-kontak" placeholder="Contoh: siti.rahma@email.com">
-
-            <label for="alumni-foto">Foto Profil Alumni</label>
-            <div class="photo">
-              <div class="preview" id="preview-alumni">Belum ada foto</div>
-              <div>
-                <input type="file" id="alumni-foto" accept="image/*" style="padding:6px">
-              </div>
-            </div>
-
-            <button class="primary" type="submit">Simpan Data Alumni</button>
-            <p class="msg" id="msg-alumni" role="status"></p>
-          </form>
-        </div>
-      </section>
-
-      <!-- PAGE 3: DIREKTORI INFORMASI ALUMNI -->
-      <section id="page-data-alumni" class="page">
-        <h1>Direktori Informasi Alumni</h1>
-        <p class="sub">Daftar seluruh alumni yang telah diinput secara manual ke dalam sistem.</p>
-        
-        <div class="bar">
-          <input id="cari-alumni" type="search" placeholder="Cari nama, tahun, atau pekerjaan...">
-        </div>
-        <p class="count" id="count-alumni">Total Alumni: 0</p>
-        
-        <div class="list" id="list-alumni">
-          <div class="empty">Belum ada data alumni tersimpan.</div>
-        </div>
-      </section>
     </main>
   </div>
 
+  <!-- MODAL EDIT ALUMNI -->
+  <div class="modal-overlay" id="modal-edit">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Edit Data Alumni</h2>
+        <button class="small" onclick="closeEditModal()">✕</button>
+      </div>
+      <form id="form-edit-alumni">
+        <input type="hidden" id="edit-id">
+        <label for="edit-nama">Nama Lengkap</label>
+        <input id="edit-nama" required>
+
+        <label for="edit-kontingen">Asal Kontingen</label>
+        <input id="edit-kontingen" required>
+
+        <label for="edit-kontak">Kontak / No. HP</label>
+        <input id="edit-kontak" required>
+
+        <label for="edit-domisili">Domisili Saat Ini</label>
+        <input id="edit-domisili" required>
+
+        <label for="edit-foto">Ubah Foto Profil</label>
+        <div class="photo">
+          <div class="preview" id="preview-edit-alumni">Foto</div>
+          <div>
+            <input type="file" id="edit-foto" accept="image/*" style="padding:6px">
+          </div>
+        </div>
+
+        <button class="primary full" type="submit">Simpan Perubahan</button>
+      </form>
+    </div>
+  </div>
+
 <script>
-  /* --- Navigasi Sidebar --- */
+  /* --- Initial State & Storage Keys --- */
+  let alumniData = JSON.parse(localStorage.getItem('alumni_pjn96_data')) || [];
+  let absensiData = JSON.parse(localStorage.getItem('absensi_data')) || [];
+  let importedPreviewData = [];
+
+  /* --- Navigation Handler --- */
   const navLinks = document.querySelectorAll('.nav-link');
   const pages = document.querySelectorAll('.page');
   const headerTitle = document.getElementById('header-title');
@@ -213,25 +335,334 @@ button.del { color: var(--danger); border-color: var(--danger); }
     });
   });
 
-  /* --- Logika Absensi Event --- */
-  let fotoBase64 = "";
-  const fotoInput = document.getElementById('foto');
-  const previewDiv = document.getElementById('preview');
+  /* --- DATA ALUMNI DIRECTORY LOGIC --- */
+  function populateKontingenFilter() {
+    const filterSelect = document.getElementById('filter-kontingen');
+    const selectedVal = filterSelect.value;
+    const kontingens = [...new Set(alumniData.map(a => a.kontingen).filter(Boolean))].sort();
 
-  fotoInput.addEventListener('change', function() {
+    filterSelect.innerHTML = `<option value="">-- Semua Kontingen (${kontingens.length}) --</option>` +
+      kontingens.map(k => `<option value="${k}" ${k === selectedVal ? 'selected' : ''}>${k}</option>`).join('');
+  }
+
+  function renderAlumniTable() {
+    const tbody = document.getElementById('tbody-alumni');
+    const countEl = document.getElementById('count-alumni');
+    const keyword = document.getElementById('cari-alumni').value.toLowerCase();
+    const filterKontingen = document.getElementById('filter-kontingen').value;
+
+    const filtered = alumniData.filter(item => {
+      const matchKeyword = (item.nama || '').toLowerCase().includes(keyword) ||
+                           (item.kontak || '').toLowerCase().includes(keyword) ||
+                           (item.domisili || '').toLowerCase().includes(keyword);
+      const matchKontingen = !filterKontingen || item.kontingen === filterKontingen;
+      return matchKeyword && matchKontingen;
+    });
+
+    countEl.textContent = `Menampilkan ${filtered.length} dari ${alumniData.length} Alumni`;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color: var(--mute);">Tidak ada data alumni ditemukan. Silakan tambahkan manual atau impor file Excel.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map((item, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td>
+          <div class="avatar-cell">
+            ${item.foto ? `<img src="${item.foto}" alt="Foto">` : `<div class="ph">${(item.nama || 'A').charAt(0)}</div>`}
+            <b>${item.nama}</b>
+          </div>
+        </td>
+        <td>${item.kontingen || '-'}</td>
+        <td>${item.kontak || '-'}</td>
+        <td>${item.domisili || '-'}</td>
+        <td style="text-align: center; whitespace: nowrap;">
+          <button class="small edit" onclick="openEditModal('${item.id}')">Edit</button>
+          <button class="small del" onclick="hapusAlumni('${item.id}')">Hapus</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('cari-alumni').addEventListener('input', renderAlumniTable);
+  document.getElementById('filter-kontingen').addEventListener('change', renderAlumniTable);
+
+  document.getElementById('btn-reset-alumni').addEventListener('click', () => {
+    if (confirm("Apakah Anda yakin ingin menghapus SELURUH data alumni di sistem?")) {
+      alumniData = [];
+      localStorage.removeItem('alumni_pjn96_data');
+      populateKontingenFilter();
+      renderAlumniTable();
+    }
+  });
+
+  window.hapusAlumni = function(id) {
+    if (confirm("Hapus data alumni ini?")) {
+      alumniData = alumniData.filter(a => a.id !== id);
+      localStorage.setItem('alumni_pjn96_data', JSON.stringify(alumniData));
+      populateKontingenFilter();
+      renderAlumniTable();
+    }
+  };
+
+  /* --- MODAL EDIT ALUMNI LOGIC --- */
+  let editFotoBase64 = "";
+
+  window.openEditModal = function(id) {
+    const item = alumniData.find(a => a.id === id);
+    if (!item) return;
+
+    document.getElementById('edit-id').value = item.id;
+    document.getElementById('edit-nama').value = item.nama || '';
+    document.getElementById('edit-kontingen').value = item.kontingen || '';
+    document.getElementById('edit-kontak').value = item.kontak || '';
+    document.getElementById('edit-domisili').value = item.domisili || '';
+    
+    editFotoBase64 = item.foto || '';
+    const previewEdit = document.getElementById('preview-edit-alumni');
+    if (editFotoBase64) {
+      previewEdit.style.backgroundImage = `url(${editFotoBase64})`;
+      previewEdit.textContent = "";
+    } else {
+      previewEdit.style.backgroundImage = "";
+      previewEdit.textContent = "Foto";
+    }
+
+    document.getElementById('modal-edit').classList.add('active');
+  };
+
+  function closeEditModal() {
+    document.getElementById('modal-edit').classList.remove('active');
+  }
+
+  document.getElementById('edit-foto').addEventListener('change', function() {
     const file = this.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = function(e) {
-        fotoBase64 = e.target.result;
-        previewDiv.style.backgroundImage = `url(${fotoBase64})`;
-        previewDiv.textContent = "";
+        editFotoBase64 = e.target.result;
+        const previewEdit = document.getElementById('preview-edit-alumni');
+        previewEdit.style.backgroundImage = `url(${editFotoBase64})`;
+        previewEdit.textContent = "";
       }
       reader.readAsDataURL(file);
     }
   });
 
-  let absensiData = JSON.parse(localStorage.getItem('absensi_data')) || [];
+  document.getElementById('form-edit-alumni').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const id = document.getElementById('edit-id').value;
+    const index = alumniData.findIndex(a => a.id === id);
+
+    if (index !== -1) {
+      alumniData[index].nama = document.getElementById('edit-nama').value.trim();
+      alumniData[index].kontingen = document.getElementById('edit-kontingen').value.trim();
+      alumniData[index].kontak = document.getElementById('edit-kontak').value.trim();
+      alumniData[index].domisili = document.getElementById('edit-domisili').value.trim();
+      alumniData[index].foto = editFotoBase64;
+
+      localStorage.setItem('alumni_pjn96_data', JSON.stringify(alumniData));
+      populateKontingenFilter();
+      renderAlumniTable();
+      closeEditModal();
+    }
+  });
+
+  /* --- EXPORT TO PDF LOGIC --- */
+  document.getElementById('btn-export-pdf').addEventListener('click', () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('landscape');
+
+    const keyword = document.getElementById('cari-alumni').value.toLowerCase();
+    const filterKontingen = document.getElementById('filter-kontingen').value;
+
+    const filtered = alumniData.filter(item => {
+      const matchKeyword = (item.nama || '').toLowerCase().includes(keyword) ||
+                           (item.kontak || '').toLowerCase().includes(keyword) ||
+                           (item.domisili || '').toLowerCase().includes(keyword);
+      const matchKontingen = !filterKontingen || item.kontingen === filterKontingen;
+      return matchKeyword && matchKontingen;
+    });
+
+    doc.setFontSize(16);
+    doc.text("Laporan Data Alumni PJN96", 14, 15);
+    doc.setFontSize(10);
+    doc.text(`Total Alumni: ${filtered.length} | Filter Kontingen: ${filterKontingen || 'Semua'}`, 14, 22);
+
+    const tableRows = filtered.map((a, index) => [
+      index + 1,
+      a.nama || '',
+      a.kontingen || '',
+      a.kontak || '',
+      a.domisili || ''
+    ]);
+
+    doc.autoTable({
+      head: [['No', 'Nama Alumni', 'Asal Kontingen', 'Contact', 'Domisili Saat Ini']],
+      body: tableRows,
+      startY: 28,
+      theme: 'grid',
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [15, 107, 79] }
+    });
+
+    doc.save(`Data_Alumni_PJN96_${Date.now()}.pdf`);
+  });
+
+  /* --- IMPOR DATA LOGIC (SHEETJS) --- */
+  const fileInput = document.getElementById('file-excel');
+  const dropZone = document.getElementById('drop-zone');
+
+  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length) handleFileImport(e.dataTransfer.files[0]);
+  });
+
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length) handleFileImport(e.target.files[0]);
+  });
+
+  function handleFileImport(file) {
+    const reader = new FileReader();
+    const msg = document.getElementById('msg-impor');
+    msg.textContent = "Membaca file...";
+
+    reader.onload = function(e) {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+        if (!jsonData.length) {
+          msg.textContent = "File kosong atau tidak dapat dibaca!";
+          return;
+        }
+
+        importedPreviewData = jsonData.map((row, idx) => ({
+          id: Date.now().toString() + '_' + idx,
+          nama: row['NAMA'] || row['Nama'] || row['nama'] || '',
+          kontingen: row['ASAL KONTINGEN'] || row['Kontingen'] || row['KONTINGEN'] || '',
+          kontak: String(row['CONTACT'] || row['Contact'] || row['kontak'] || row['NO HP'] || ''),
+          domisili: row['DOMISILI SAAT INI'] || row['Domisili'] || row['DOMISILI'] || '',
+          foto: ''
+        })).filter(a => a.nama !== '');
+
+        msg.textContent = "File berhasil dibaca!";
+        msg.className = "msg ok";
+
+        renderPreviewTable();
+      } catch (err) {
+        msg.textContent = "Gagal memproses file. Pastikan format file sesuai.";
+        msg.className = "msg";
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function renderPreviewTable() {
+    const card = document.getElementById('preview-impor-card');
+    const tbody = document.getElementById('tbody-preview');
+    const count = document.getElementById('count-preview');
+
+    card.style.display = 'block';
+    count.textContent = `Ditemukan ${importedPreviewData.length} baris data alumni.`;
+
+    tbody.innerHTML = importedPreviewData.slice(0, 50).map((row, idx) => `
+      <tr>
+        <td>${idx + 1}</td>
+        <td><b>${row.nama}</b></td>
+        <td>${row.kontingen}</td>
+        <td>${row.kontak}</td>
+        <td>${row.domisili}</td>
+      </tr>
+    `).join('') + (importedPreviewData.length > 50 ? `<tr><td colspan="5" style="text-align:center;">... Dan ${importedPreviewData.length - 50} data lainnya</td></tr>` : '');
+  }
+
+  document.getElementById('btn-simpan-impor').addEventListener('click', () => {
+    if (!importedPreviewData.length) return;
+
+    alumniData = [...importedPreviewData, ...alumniData];
+    localStorage.setItem('alumni_pjn96_data', JSON.stringify(alumniData));
+
+    alert(`Berhasil mengimpor ${importedPreviewData.length} data alumni!`);
+    importedPreviewData = [];
+    document.getElementById('preview-impor-card').style.display = 'none';
+    document.getElementById('msg-impor').textContent = "";
+    
+    populateKontingenFilter();
+    renderAlumniTable();
+
+    // Pindah ke Halaman Data Alumni
+    document.querySelector('[data-target="page-data-alumni"]').click();
+  });
+
+  /* --- MANUALLY ADD ALUMNI LOGIC --- */
+  let alumniFotoBase64 = "";
+  document.getElementById('alumni-foto').addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        alumniFotoBase64 = e.target.result;
+        const prev = document.getElementById('preview-alumni');
+        prev.style.backgroundImage = `url(${alumniFotoBase64})`;
+        prev.textContent = "";
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  document.getElementById('form-alumni').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nama = document.getElementById('alumni-nama').value.trim();
+    const kontingen = document.getElementById('alumni-kontingen').value.trim();
+    const kontak = document.getElementById('alumni-kontak').value.trim();
+    const domisili = document.getElementById('alumni-domisili').value.trim();
+    const msg = document.getElementById('msg-alumni');
+
+    const newAlumni = {
+      id: Date.now().toString(),
+      nama, kontingen, kontak, domisili,
+      foto: alumniFotoBase64
+    };
+
+    alumniData.unshift(newAlumni);
+    localStorage.setItem('alumni_pjn96_data', JSON.stringify(alumniData));
+
+    e.target.reset();
+    alumniFotoBase64 = "";
+    document.getElementById('preview-alumni').style.backgroundImage = "";
+    document.getElementById('preview-alumni').textContent = "Belum ada foto";
+
+    msg.textContent = "Data alumni berhasil disimpan!";
+    msg.className = "msg ok";
+
+    populateKontingenFilter();
+    renderAlumniTable();
+  });
+
+  /* --- ABSENSI EVENT LOGIC --- */
+  let fotoBase64Absensi = "";
+  document.getElementById('foto').addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        fotoBase64Absensi = e.target.result;
+        const prev = document.getElementById('preview');
+        prev.style.backgroundImage = `url(${fotoBase64Absensi})`;
+        prev.textContent = "";
+      };
+      reader.readAsDataURL(file);
+    }
+  });
 
   function renderAbsensi() {
     const listEl = document.getElementById('list');
@@ -239,25 +670,24 @@ button.del { color: var(--danger); border-color: var(--danger); }
     const keyword = document.getElementById('cari').value.toLowerCase();
     
     const filtered = absensiData.filter(item => 
-      item.nama.toLowerCase().includes(keyword) || 
-      item.kota.toLowerCase().includes(keyword) || 
-      item.kontak.toLowerCase().includes(keyword)
+      (item.nama || '').toLowerCase().includes(keyword) || 
+      (item.kota || '').toLowerCase().includes(keyword) || 
+      (item.kontak || '').toLowerCase().includes(keyword)
     );
 
     countEl.textContent = `Peserta hadir: ${absensiData.length}`;
-    if(filtered.length === 0) {
+    if (filtered.length === 0) {
       listEl.innerHTML = `<div class="empty">Tidak ada data ditemukan.</div>`;
       return;
     }
 
     listEl.innerHTML = filtered.map(item => `
-      <div class="item">
-        ${item.foto ? `<img src="${item.foto}" alt="Foto">` : `<div class="ph">${item.nama.charAt(0)}</div>`}
-        <div class="info">
-          <b>${item.nama}</b>
-          <span>${item.kota} · ${item.kontak}</span>
-          <span>${item.alamat}</span>
-          <span>Hadir: ${item.waktu}</span>
+      <div class="card" style="display:flex; gap:12px; align-items:center; margin-bottom:10px;">
+        ${item.foto ? `<img src="${item.foto}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">` : `<div class="ph" style="width:50px; height:50px; border-radius:50%; background:var(--bg); display:grid; place-items:center;">${(item.nama||'A').charAt(0)}</div>`}
+        <div style="flex:1;">
+          <b>${item.nama}</b><br>
+          <small style="color:var(--mute);">${item.kota} · ${item.kontak}</small><br>
+          <small style="color:var(--mute);">${item.alamat}</small>
         </div>
         <button class="small del" onclick="hapusAbsensi('${item.id}')">Hapus</button>
       </div>
@@ -280,22 +710,20 @@ button.del { color: var(--danger); border-color: var(--danger); }
     const newEntry = {
       id: Date.now().toString(),
       nama, kota, alamat, kontak,
-      foto: fotoBase64,
+      foto: fotoBase64Absensi,
       waktu: new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'short', hour: '2-digit', minute:'2-digit'})
     };
 
     absensiData.unshift(newEntry);
     localStorage.setItem('absensi_data', JSON.stringify(absensiData));
     
-    // Reset form
     document.getElementById('nama').value = "";
     document.getElementById('kota').value = "";
     document.getElementById('alamat').value = "";
     document.getElementById('kontak').value = "";
-    fotoBase64 = "";
-    fotoInput.value = "";
-    previewDiv.style.backgroundImage = "";
-    previewDiv.textContent = "Belum ada foto";
+    fotoBase64Absensi = "";
+    document.getElementById('preview').style.backgroundImage = "";
+    document.getElementById('preview').textContent = "Belum ada foto";
 
     msg.textContent = `${nama} tercatat hadir.`;
     msg.className = "msg ok";
@@ -306,110 +734,14 @@ button.del { color: var(--danger); border-color: var(--danger); }
     absensiData = absensiData.filter(i => i.id !== id);
     localStorage.setItem('absensi_data', JSON.stringify(absensiData));
     renderAbsensi();
-  }
+  };
 
   document.getElementById('cari').addEventListener('input', renderAbsensi);
-  
-  document.getElementById('salin').addEventListener('click', () => {
-    const csvContent = "Nama,Kota,Alamat,Kontak,Waktu\n" + absensiData.map(i => `"${i.nama}","${i.kota}","${i.alamat}","${i.kontak}","${i.waktu}"`).join("\n");
-    navigator.clipboard.writeText(csvContent).then(() => {
-      alert("Data berhasil disalin ke clipboard dalam format CSV!");
-    });
-  });
 
-
-  /* --- Logika Tambah & Direktori Data Alumni --- */
-  let alumniFotoBase64 = "";
-  const alumniFotoInput = document.getElementById('alumni-foto');
-  const previewAlumniDiv = document.getElementById('preview-alumni');
-
-  alumniFotoInput.addEventListener('change', function() {
-    const file = this.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        alumniFotoBase64 = e.target.result;
-        previewAlumniDiv.style.backgroundImage = `url(${alumniFotoBase64})`;
-        previewAlumniDiv.textContent = "";
-      }
-      reader.readAsDataURL(file);
-    }
-  });
-
-  let alumniData = JSON.parse(localStorage.getItem('alumni_data')) || [];
-
-  function renderAlumni() {
-    const listEl = document.getElementById('list-alumni');
-    const countEl = document.getElementById('count-alumni');
-    const keyword = document.getElementById('cari-alumni').value.toLowerCase();
-
-    const filtered = alumniData.filter(item => 
-      item.nama.toLowerCase().includes(keyword) || 
-      item.jurusan.toLowerCase().includes(keyword) || 
-      item.pekerjaan.toLowerCase().includes(keyword) ||
-      item.tahun.includes(keyword)
-    );
-
-    countEl.textContent = `Total Alumni: ${alumniData.length}`;
-    if(filtered.length === 0) {
-      listEl.innerHTML = `<div class="empty">Belum ada data alumni tersimpan.</div>`;
-      return;
-    }
-
-    listEl.innerHTML = filtered.map(item => `
-      <div class="item">
-        ${item.foto ? `<img src="${item.foto}" alt="Foto">` : `<div class="ph">${item.nama.charAt(0)}</div>`}
-        <div class="info">
-          <b>${item.nama} (Angkatan ${item.tahun})</b>
-          <span><b>Jurusan:</b> ${item.jurusan}</span>
-          <span><b>Pekerjaan:</b> ${item.pekerjaan}</span>
-          <span><b>Kontak:</b> ${item.kontak || '-'}</span>
-        </div>
-        <button class="small del" onclick="hapusAlumni('${item.id}')">Hapus</button>
-      </div>
-    `).join('');
-  }
-
-  document.getElementById('form-alumni').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const nama = document.getElementById('alumni-nama').value.trim();
-    const tahun = document.getElementById('alumni-tahun').value.trim();
-    const jurusan = document.getElementById('alumni-jurusan').value.trim();
-    const pekerjaan = document.getElementById('alumni-pekerjaan').value.trim();
-    const kontak = document.getElementById('alumni-kontak').value.trim();
-    const msg = document.getElementById('msg-alumni');
-
-    const newAlumni = {
-      id: Date.now().toString(),
-      nama, tahun, jurusan, pekerjaan, kontak,
-      foto: alumniFotoBase64
-    };
-
-    alumniData.unshift(newAlumni);
-    localStorage.setItem('alumni_data', JSON.stringify(alumniData));
-
-    // Reset Form
-    e.target.reset();
-    alumniFotoBase64 = "";
-    previewAlumniDiv.style.backgroundImage = "";
-    previewAlumniDiv.textContent = "Belum ada foto";
-
-    msg.textContent = "Data alumni berhasil disimpan!";
-    msg.className = "msg ok";
-    renderAlumni();
-  });
-
-  window.hapusAlumni = function(id) {
-    alumniData = alumniData.filter(i => i.id !== id);
-    localStorage.setItem('alumni_data', JSON.stringify(alumniData));
-    renderAlumni();
-  }
-
-  document.getElementById('cari-alumni').addEventListener('input', renderAlumni);
-
-  // Inisialisasi data awal saat pertama kali dibuka
+  /* --- Inisialisasi Saat Halaman Dimuat --- */
+  populateKontingenFilter();
+  renderAlumniTable();
   renderAbsensi();
-  renderAlumni();
 </script>
 </body>
 </html>
