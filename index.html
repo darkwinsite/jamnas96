@@ -156,7 +156,6 @@ tr:last-child td { border-bottom: none; }
 
       <li><a href="#" class="nav-link" data-target="page-market">Alumni Market & Service</a></li>
       <li><a href="#" class="nav-link" data-target="page-berbagi">PJ96 Berbagi (Sosial)</a></li>
-      <li><a href="#" class="nav-link" data-target="page-absensi">Absensi Event Reuni</a></li>
 
       <!-- SUBMENU 2: TOOLS (Paling Bawah) -->
       <li class="submenu-container" id="menu-tools-container">
@@ -166,6 +165,7 @@ tr:last-child td { border-bottom: none; }
         </button>
         <ul class="submenu-items">
           <li><a href="#" class="nav-link" data-target="page-impor-data">Impor Data (Excel/CSV)</a></li>
+          <li><a href="#" class="nav-link" data-target="page-absensi">Absensi Event Reuni</a></li>
         </ul>
       </li>
     </ul>
@@ -304,46 +304,7 @@ tr:last-child td { border-bottom: none; }
         </div>
       </section>
 
-      <!-- PAGE 5: ABSENSI EVENT -->
-      <section id="page-absensi" class="page">
-        <h1>Absensi Event Reuni</h1>
-        <p class="sub">Isi data peserta, ambil foto, lalu simpan kehadiran pada acara reuni/kegiatan alumni.</p>
-        <div class="grid">
-          <section class="card">
-            <div>
-              <label for="nama">Nama lengkap</label>
-              <input id="nama" autocomplete="name" placeholder="Contoh: Budi Santoso">
-              <label for="kota">Asal kota</label>
-              <input id="kota" placeholder="Contoh: Bandung">
-              <label for="alamat">Alamat</label>
-              <textarea id="alamat" placeholder="Jalan, nomor, kelurahan"></textarea>
-              <label for="kontak">Kontak (no. HP / email)</label>
-              <input id="kontak" inputmode="tel" placeholder="Contoh: 0812xxxxxxx">
-              <label for="foto">Foto peserta</label>
-              <div class="photo">
-                <div class="preview" id="preview">Belum ada foto</div>
-                <div>
-                  <input type="file" id="foto" accept="image/*" capture="user" style="padding:6px">
-                </div>
-              </div>
-              <button class="primary full" id="simpan" type="button">Simpan Kehadiran</button>
-              <p class="msg" id="msg" role="status"></p>
-            </div>
-          </section>
-
-          <section class="card">
-            <p class="count" id="count">Peserta hadir: 0</p>
-            <div class="bar">
-              <input id="cari" type="search" placeholder="Cari nama, kota, atau kontak">
-            </div>
-            <div class="list" id="list">
-              <div class="empty">Belum ada data kehadiran.</div>
-            </div>
-          </section>
-        </div>
-      </section>
-
-      <!-- PAGE 6: TOOLS - IMPOR DATA EXCEL / CSV -->
+      <!-- PAGE 5: TOOLS - IMPOR DATA EXCEL / CSV -->
       <section id="page-impor-data" class="page">
         <h1>Impor Data Alumni (Tools)</h1>
         <p class="sub">Unggah file Excel (.xlsx, .xls) atau CSV untuk memasukkan data alumni secara masal.</p>
@@ -378,6 +339,45 @@ tr:last-child td { border-bottom: none; }
             </table>
           </div>
           <button class="primary full" id="btn-simpan-impor">Konfirmasi & Simpan ke Sistem</button>
+        </div>
+      </section>
+
+      <!-- PAGE 6: TOOLS - ABSENSI EVENT -->
+      <section id="page-absensi" class="page">
+        <h1>Absensi Event Reuni (Tools)</h1>
+        <p class="sub">Isi data peserta, ambil foto, lalu simpan kehadiran pada acara reuni/kegiatan alumni.</p>
+        <div class="grid">
+          <section class="card">
+            <div>
+              <label for="nama">Nama lengkap</label>
+              <input id="nama" autocomplete="name" placeholder="Contoh: Budi Santoso">
+              <label for="kota">Asal kota</label>
+              <input id="kota" placeholder="Contoh: Bandung">
+              <label for="alamat">Alamat</label>
+              <textarea id="alamat" placeholder="Jalan, nomor, kelurahan"></textarea>
+              <label for="kontak">Kontak (no. HP / email)</label>
+              <input id="kontak" inputmode="tel" placeholder="Contoh: 0812xxxxxxx">
+              <label for="foto">Foto peserta</label>
+              <div class="photo">
+                <div class="preview" id="preview">Belum ada foto</div>
+                <div>
+                  <input type="file" id="foto" accept="image/*" capture="user" style="padding:6px">
+                </div>
+              </div>
+              <button class="primary full" id="simpan" type="button">Simpan Kehadiran</button>
+              <p class="msg" id="msg" role="status"></p>
+            </div>
+          </section>
+
+          <section class="card">
+            <p class="count" id="count">Peserta hadir: 0</p>
+            <div class="bar">
+              <input id="cari" type="search" placeholder="Cari nama, kota, atau kontak">
+            </div>
+            <div class="list" id="list">
+              <div class="empty">Belum ada data kehadiran.</div>
+            </div>
+          </section>
         </div>
       </section>
     </main>
