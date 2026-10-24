@@ -45,6 +45,21 @@ aside {
 }
 .sidebar-menu a:hover, .sidebar-menu a.active { background: var(--accent); color: var(--accent-ink); }
 
+/* Submenu / Tools Dropdown Styling */
+.submenu-container { margin-bottom: 4px; }
+.submenu-toggle {
+  display: flex; justify-content: space-between; align-items: center; padding: 11px 15px; color: #b0c4ba; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: 0.2s; background: transparent; width: 100%; border: none; text-align: left;
+}
+.submenu-toggle:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+.submenu-toggle .arrow { transition: transform 0.2s; font-size: 0.8rem; }
+.submenu-container.open .submenu-toggle .arrow { transform: rotate(180deg); }
+.submenu-items {
+  list-style: none; padding: 0 0 0 16px; margin: 4px 0 0 0; display: none;
+}
+.submenu-container.open .submenu-items { display: block; }
+.submenu-items a { padding: 8px 12px; font-size: 0.85rem; color: #93a69b; }
+.submenu-items a:hover, .submenu-items a.active { background: var(--accent); color: var(--accent-ink); }
+
 /* Main Content Layout */
 .main-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 header { background: var(--card); border-bottom: 1px solid var(--line); padding: 16px 24px; font-weight: 600; font-size: 1.1rem; }
@@ -109,8 +124,10 @@ tr:last-child td { border-bottom: none; }
 @media(max-width: 768px) {
   body { flex-direction: column; }
   aside { width: 100%; }
-  .sidebar-menu { display: flex; overflow-x: auto; padding: 10px; }
+  .sidebar-menu { display: flex; overflow-x: auto; padding: 10px; flex-wrap: wrap; }
   .sidebar-menu li { margin-bottom: 0; margin-right: 6px; }
+  .submenu-container { width: 100%; }
+  .submenu-items { padding-left: 0; }
 }
 </style>
 </head>
@@ -125,9 +142,20 @@ tr:last-child td { border-bottom: none; }
     <ul class="sidebar-menu">
       <li><a href="#" class="nav-link active" data-target="page-beranda">Beranda & Profil</a></li>
       <li><a href="#" class="nav-link" data-target="page-data-alumni">Direktori Alumni</a></li>
-      <li><a href="#" class="nav-link" data-target="page-impor-data">Impor Data (Excel/CSV)</a></li>
       <li><a href="#" class="nav-link" data-target="page-tambah-alumni">Tambah Alumni (Manual)</a></li>
-      <li><a href="#" class="nav-link" data-target="page-berbagi">PJ96 Berbagi (Sosial)</a></li>
+      
+      <!-- MENU TOOLS (Submenu Dropdown) -->
+      <li class="submenu-container" id="menu-tools-container">
+        <button class="submenu-toggle" id="btn-tools-toggle" type="button">
+          <span>Tools</span>
+          <span class="arrow">▼</span>
+        </button>
+        <ul class="submenu-items">
+          <li><a href="#" class="nav-link" data-target="page-impor-data">Impor Data (Excel/CSV)</a></li>
+          <li><a href="#" class="nav-link" data-target="page-berbagi">PJ96 Berbagi (Sosial)</a></li>
+        </ul>
+      </li>
+
       <li><a href="#" class="nav-link" data-target="page-market">Alumni Market & Service</a></li>
       <li><a href="#" class="nav-link" data-target="page-absensi">Absensi Event Reuni</a></li>
     </ul>
@@ -214,9 +242,9 @@ tr:last-child td { border-bottom: none; }
         </div>
       </section>
 
-      <!-- PAGE 2: IMPOR DATA EXCEL / CSV -->
+      <!-- PAGE 2: TOOLS - IMPOR DATA EXCEL / CSV -->
       <section id="page-impor-data" class="page">
-        <h1>Impor Data Alumni</h1>
+        <h1>Impor Data Alumni (Tools)</h1>
         <p class="sub">Unggah file Excel (.xlsx, .xls) atau CSV untuk memasukkan data alumni secara masal.</p>
         
         <div class="card">
@@ -284,9 +312,9 @@ tr:last-child td { border-bottom: none; }
         </div>
       </section>
 
-      <!-- PAGE 4: PJ96 BERBAGI -->
+      <!-- PAGE 4: TOOLS - PJ96 BERBAGI -->
       <section id="page-berbagi" class="page">
-        <h1>PJ96 Berbagi (Alumni Social Movement)</h1>
+        <h1>PJ96 Berbagi (Tools Sosial)</h1>
         <p class="sub">Gerakan kepedulian sosial dan bantuan kemanusiaan dari Alumni Jamnas 1996.</p>
         <div class="card">
           <h2>Bantuan Bencana & Aksi Kemanusiaan</h2>
@@ -385,6 +413,14 @@ tr:last-child td { border-bottom: none; }
   let absensiData = JSON.parse(localStorage.getItem('absensi_data')) || [];
   let importedPreviewData = [];
 
+  /* --- Submenu Tools Toggle Logic --- */
+  const toolsToggle = document.getElementById('btn-tools-toggle');
+  const toolsContainer = document.getElementById('menu-tools-container');
+
+  toolsToggle.addEventListener('click', () => {
+    toolsContainer.classList.toggle('open');
+  });
+
   /* --- Navigation Handler --- */
   const navLinks = document.querySelectorAll('.nav-link');
   const pages = document.querySelectorAll('.page');
@@ -400,6 +436,11 @@ tr:last-child td { border-bottom: none; }
       const targetId = link.getAttribute('data-target');
       document.getElementById(targetId).classList.add('active');
       headerTitle.textContent = "Menu: " + link.textContent;
+
+      // Jika menu yang diklik ada di dalam Tools, pastikan dropdown Tools terbuka
+      if (link.closest('#menu-tools-container')) {
+        toolsContainer.classList.add('open');
+      }
     });
   });
 
