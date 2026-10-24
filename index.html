@@ -33,14 +33,15 @@ body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Sego
 
 /* Sidebar Layout */
 aside {
-  width: 260px; background: var(--sidebar-bg); color: #fff; display: flex; flex-direction: column; flex: none;
+  width: 270px; background: var(--sidebar-bg); color: #fff; display: flex; flex-direction: column; flex: none;
   border-right: 1px solid var(--line);
 }
-.sidebar-brand { padding: 20px; font-size: 1.2rem; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--accent); }
+.sidebar-brand { padding: 20px; font-size: 1.15rem; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--accent); }
+.sidebar-brand span { display: block; font-size: 0.75rem; color: #93a69b; font-weight: normal; margin-top: 2px; }
 .sidebar-menu { list-style: none; padding: 10px; margin: 0; }
 .sidebar-menu li { margin-bottom: 4px; }
 .sidebar-menu a {
-  display: block; padding: 12px 16px; color: #b0c4ba; text-decoration: none; border-radius: 8px; font-weight: 600; transition: 0.2s;
+  display: block; padding: 11px 15px; color: #b0c4ba; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem; transition: 0.2s;
 }
 .sidebar-menu a:hover, .sidebar-menu a.active { background: var(--accent); color: var(--accent-ink); }
 
@@ -53,9 +54,15 @@ main { max-width: 1200px; width: 100%; margin: 0 auto; padding: 24px; flex: 1; }
 .page.active { display: block; }
 
 h1 { font-size: 1.7rem; margin: 0 0 4px; }
+h2 { font-size: 1.3rem; margin: 0 0 12px; color: var(--accent); }
 .sub { color: var(--mute); margin: 0 0 20px; }
 .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
 @media(min-width: 800px) { .grid { grid-template-columns: 380px 1fr; align-items: start; } }
+
+.grid-stats { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 20px; }
+.stat-card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; text-align: center; }
+.stat-card h3 { margin: 0; font-size: 1.6rem; color: var(--accent); }
+.stat-card p { margin: 4px 0 0; font-size: 0.85rem; color: var(--mute); }
 
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
 label { display: block; font-weight: 600; font-size: .88rem; margin: 10px 0 4px; }
@@ -111,22 +118,63 @@ tr:last-child td { border-bottom: none; }
 
   <!-- Sidebar Menu -->
   <aside>
-    <div class="sidebar-brand">Portal Alumni PJN96</div>
+    <div class="sidebar-brand">
+      JAMNAS 1996 (PJN96)
+      <span>Taqwa, Terampil, Terpercaya</span>
+    </div>
     <ul class="sidebar-menu">
-      <li><a href="#" class="nav-link active" data-target="page-data-alumni">Data Informasi Alumni</a></li>
+      <li><a href="#" class="nav-link active" data-target="page-beranda">Beranda & Profil</a></li>
+      <li><a href="#" class="nav-link" data-target="page-data-alumni">Direktori Alumni</a></li>
       <li><a href="#" class="nav-link" data-target="page-impor-data">Impor Data (Excel/CSV)</a></li>
       <li><a href="#" class="nav-link" data-target="page-tambah-alumni">Tambah Alumni (Manual)</a></li>
-      <li><a href="#" class="nav-link" data-target="page-absensi">Absensi Event</a></li>
+      <li><a href="#" class="nav-link" data-target="page-berbagi">PJ96 Berbagi (Sosial)</a></li>
+      <li><a href="#" class="nav-link" data-target="page-market">Alumni Market & Service</a></li>
+      <li><a href="#" class="nav-link" data-target="page-absensi">Absensi Event Reuni</a></li>
     </ul>
   </aside>
 
   <!-- Main Container -->
   <div class="main-wrapper">
-    <header id="header-title">Menu: Data Informasi Alumni</header>
+    <header id="header-title">Menu: Beranda & Profil Jamnas 1996</header>
     
     <main>
+      <!-- PAGE 0: BERANDA & PROFIL JAMNAS 1996 -->
+      <section id="page-beranda" class="page active">
+        <h1>Alumni Jambore Nasional VI 1996</h1>
+        <p class="sub">Wadah komunikasi, silaturahmi, dan kolaborasi Purna Jamnas VI 1996 Cibubur, Jakarta.</p>
+        
+        <div class="grid-stats">
+          <div class="stat-card">
+            <h3>28.847</h3>
+            <p>Total Peserta Jamnas '96</p>
+          </div>
+          <div class="stat-card">
+            <h3>12.102</h3>
+            <p>Penggalang Putra</p>
+          </div>
+          <div class="stat-card">
+            <h3>12.078</h3>
+            <p>Penggalang Putri</p>
+          </div>
+          <div class="stat-card">
+            <h3>3.947</h3>
+            <p>Pembina & Pendamping</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Tentang PJN96</h2>
+          <p>Situs ini didedikasikan sebagai ruang silaturahmi terbuka, positif, dan produktif bagi seluruh alumni Jambore Nasional VI Gerakan Pramuka Tahun 1996. Melalui nilai <b>"Taqwa, Terampil, dan Terpercaya"</b>, wadah ini bertujuan untuk merekatkan kembali tali persaudaraan sesama anggota Pramuka Penggalang dari seluruh Indonesia yang pernah berjuang bersama di Bumi Perkemahan Cibubur.</p>
+        </div>
+
+        <div class="card">
+          <h2>Kumpul Lagi, Jalin Silaturahmi</h2>
+          <p>Setelah puluhan tahun berlalu, kita kembali bersama melalui berbagai kegiatan reuni, aksi kepedulian sosial, serta dukungan jejaring ekonomi antar-alumni di seluruh nusantara.</p>
+        </div>
+      </section>
+
       <!-- PAGE 1: DIREKTORI INFORMASI ALUMNI -->
-      <section id="page-data-alumni" class="page active">
+      <section id="page-data-alumni" class="page">
         <h1>Direktori Data Alumni</h1>
         <p class="sub">Kelola, filter pencarian, edit data, dan cetak laporan PDF alumni.</p>
         
@@ -159,7 +207,7 @@ tr:last-child td { border-bottom: none; }
                 </tr>
               </thead>
               <tbody id="tbody-alumni">
-                <!-- Data Alumni akan dimasukkan via JavaScript -->
+                <!-- Data Alumni dimasukkan via JS -->
               </tbody>
             </table>
           </div>
@@ -236,10 +284,30 @@ tr:last-child td { border-bottom: none; }
         </div>
       </section>
 
-      <!-- PAGE 4: ABSENSI EVENT -->
+      <!-- PAGE 4: PJ96 BERBAGI -->
+      <section id="page-berbagi" class="page">
+        <h1>PJ96 Berbagi (Alumni Social Movement)</h1>
+        <p class="sub">Gerakan kepedulian sosial dan bantuan kemanusiaan dari Alumni Jamnas 1996.</p>
+        <div class="card">
+          <h2>Bantuan Bencana & Aksi Kemanusiaan</h2>
+          <p>Gerakan PJ96 Berbagi merupakan wujud nyata penerapan nilai Darna dan Dasa Darma Pramuka. Alumni PJN96 secara aktif menggalang bantuan sosial untuk tanggap bencana alam, bantuan sembako, serta aksi kepedulian di berbagai wilayah Indonesia.</p>
+        </div>
+      </section>
+
+      <!-- PAGE 5: ALUMNI MARKET & SERVICE -->
+      <section id="page-market" class="page">
+        <h1>Alumni Market & Service</h1>
+        <p class="sub">Pemberdayaan ekonomi dan jejaring bisnis antar-alumni Jamnas 1996.</p>
+        <div class="card">
+          <h2>Sektor Usaha & Kolaborasi Bisnis</h2>
+          <p>Wadah ini memfasilitasi promosi produk, layanan jasa, dan sinergi bisnis antar sesama alumni dari berbagai bidang dan wilayah.</p>
+        </div>
+      </section>
+
+      <!-- PAGE 6: ABSENSI EVENT -->
       <section id="page-absensi" class="page">
-        <h1>Absensi Event</h1>
-        <p class="sub">Isi data peserta, ambil foto, lalu simpan kehadiran.</p>
+        <h1>Absensi Event Reuni</h1>
+        <p class="sub">Isi data peserta, ambil foto, lalu simpan kehadiran pada acara reuni/kegiatan alumni.</p>
         <div class="grid">
           <section class="card">
             <div>
@@ -527,7 +595,7 @@ tr:last-child td { border-bottom: none; }
     if (e.target.files.length) handleFileImport(e.target.files[0]);
   });
 
-  // Fungsi penyesuaian nomor kontak
+  // Fungsi penyesuaian nomor kontak (Menambahkan angka 0 jika terpotong)
   function formatNomorHP(kontak) {
     if (!kontak) return "";
     let strKontak = String(kontak).trim();
