@@ -527,32 +527,26 @@ tr:last-child td { border-bottom: none; }
     if (e.target.files.length) handleFileImport(e.target.files[0]);
   });
 
-  function handleFileImport(file) {
-    const reader = new FileReader();
-    const msg = document.getElementById('msg-impor');
-    msg.textContent = "Membaca file...";
+  // Fungsi untuk merapikan nomor kontak agar selalu ada angka 0 di depan
+function formatNomorHP(kontak) {
+  if (!kontak) return "";
+  let strKontak = String(kontak).trim();
+  // Jika diawali dengan angka 8 (misal: 8123456789), tambahkan '0' di depannya menjadi '08123456789'
+  if (strKontak.startsWith('8')) {
+    strKontak = '0' + strKontak;
+  }
+  return strKontak;
+}
 
-    reader.onload = function(e) {
-      try {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-
-        if (!jsonData.length) {
-          msg.textContent = "File kosong atau tidak dapat dibaca!";
-          return;
-        }
-
-        importedPreviewData = jsonData.map((row, idx) => ({
-          id: Date.now().toString() + '_' + idx,
-          nama: row['NAMA'] || row['Nama'] || row['nama'] || '',
-          kontingen: row['ASAL KONTINGEN'] || row['Kontingen'] || row['KONTINGEN'] || '',
-          kontak: String(row['CONTACT'] || row['Contact'] || row['kontak'] || row['NO HP'] || ''),
-          domisili: row['DOMISILI SAAT INI'] || row['Domisili'] || row['DOMISILI'] || '',
-          foto: ''
-        })).filter(a => a.nama !== '');
+// Terapkan saat memetakan data impor:
+importedPreviewData = jsonData.map((row, idx) => ({
+  id: Date.now().toString() + '_' + idx,
+  nama: row['NAMA'] || row['Nama'] || row['nama'] || '',
+  kontingen: row['ASAL KONTINGEN'] || row['Kontingen'] || row['KONTINGEN'] || '',
+  kontak: formatNomorHP(row['CONTACT'] || row['Contact'] || row['kontak'] || row['NO HP'] || ''),
+  domisili: row['DOMISILI SAAT INI'] || row['Domisili'] || row['DOMISILI'] || '',
+  foto: ''
+})).filter(a => a.nama !== '');
 
         msg.textContent = "File berhasil dibaca!";
         msg.className = "msg ok";
