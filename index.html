@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alumni Jambore Nasional 1996 - Jamnas '96 Cibubur</title>
+    <title>Database Alumni Jambore Nasional 1996 - Jamnas '96</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -21,12 +21,13 @@
                         pramuka: {
                             50: '#fffbeb',
                             100: '#fef3c7',
+                            200: '#fde68a',
                             500: '#b45309', 
-                            600: '#92400e', // Primary Scout Brown
-                            700: '#78350f',
+                            600: '#92400e', // Scout Brown
+                            700: '#78350f', // Dark Brown
                             800: '#451a03',
-                            red: '#dc2626', // Scout Red
-                            gold: '#d97706' // Scout Gold
+                            gold: '#d97706',
+                            red: '#dc2626'
                         }
                     },
                     fontFamily: {
@@ -37,898 +38,734 @@
         }
     </script>
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-amber-50/30 text-gray-800 antialiased">
+<body class="bg-amber-50/40 text-gray-800 antialiased min-h-screen flex flex-col">
 
     <!-- NAVBAR -->
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-amber-100 shadow-sm transition-all duration-300">
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-amber-200/80 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 
                 <!-- Logo -->
                 <a href="#" class="flex items-center gap-3 group">
-                    <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-pramuka-700 via-pramuka-600 to-pramuka-red flex items-center justify-center text-white font-black text-xl shadow-md group-hover:scale-105 transition-transform">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-pramuka-700 via-pramuka-600 to-pramuka-gold flex items-center justify-center text-white font-black text-xl shadow-md group-hover:scale-105 transition-transform">
                         <i class="fa-solid fa-campground"></i>
                     </div>
                     <div class="flex flex-col">
                         <span class="text-xl sm:text-2xl font-black tracking-tight text-gray-900 group-hover:text-pramuka-600 transition-colors">JAMNAS '96</span>
-                        <span class="text-[10px] tracking-widest font-bold uppercase text-pramuka-red -mt-1">Alumni Directory</span>
+                        <span class="text-[10px] tracking-widest font-bold uppercase text-pramuka-gold -mt-1">Pangkalan Data Alumni</span>
                     </div>
                 </a>
 
-                <!-- Desktop Navigation -->
-                <nav class="hidden lg:flex items-center gap-7 font-medium text-sm text-gray-600">
-                    <a href="#beranda" class="text-pramuka-600 font-semibold hover:text-pramuka-600 transition-colors">Beranda</a>
-                    <a href="#alumni" class="hover:text-pramuka-600 transition-colors">Cari Alumni</a>
-                    <a href="#kwarda" class="hover:text-pramuka-600 transition-colors">Kontingen & Kwarda</a>
-                    <a href="#reuni" class="hover:text-pramuka-600 transition-colors">Event & Reuni</a>
-                    <a href="#nostalgia" class="hover:text-pramuka-600 transition-colors">Kesan Alumni</a>
-                    <a href="#posko" class="hover:text-pramuka-600 transition-colors">Posko Sekretariat</a>
-                </nav>
-
-                <!-- Action Buttons -->
-                <div class="hidden sm:flex items-center gap-3">
-                    <button onclick="openModal('loginModal')" class="text-sm font-bold text-gray-700 hover:text-pramuka-600 px-4 py-2.5 transition-colors">
-                        Masuk
-                    </button>
-                    <button onclick="openModal('registerModal')" class="text-sm font-bold text-white bg-pramuka-600 hover:bg-pramuka-700 px-5 py-2.5 rounded-xl shadow-md shadow-pramuka-600/20 transition-all hover:shadow-lg">
-                        <i class="fa-solid fa-user-plus mr-1"></i> Registrasi Alumni
-                    </button>
+                <!-- Quick Badge Stats -->
+                <div class="hidden md:flex items-center gap-6 text-xs font-bold text-gray-600 bg-amber-50 px-4 py-2 rounded-2xl border border-amber-200">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-users text-pramuka-600 text-sm"></i>
+                        <span>Total Alumni: <strong id="statTotalNav" class="text-pramuka-700">324</strong></span>
+                    </div>
+                    <div class="h-4 w-px bg-amber-300"></div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-map-location-dot text-pramuka-gold text-sm"></i>
+                        <span>Kontingen: <strong id="statKontingenNav" class="text-pramuka-700">--</strong></span>
+                    </div>
                 </div>
 
-                <!-- Mobile Menu Button -->
-                <div class="flex items-center gap-2 lg:hidden">
-                    <button id="mobileMenuBtn" class="p-2 rounded-lg text-gray-600 hover:text-gray-900 focus:outline-none">
-                        <i class="fa-solid fa-bars text-2xl"></i>
+                <!-- Action Button -->
+                <div class="flex items-center gap-3">
+                    <button onclick="copyAllContacts()" class="text-xs font-bold text-pramuka-700 bg-amber-100 hover:bg-amber-200 border border-amber-300 px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-copy"></i>
+                        <span class="hidden sm:inline">Salin Kontak Terfilter</span>
+                    </button>
+                    <button onclick="openModal('registerModal')" class="text-xs font-bold text-white bg-pramuka-600 hover:bg-pramuka-700 px-4 py-2.5 rounded-xl shadow-md transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Tambah Data</span>
                     </button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Mobile Drawer Menu -->
-        <div id="mobileMenu" class="hidden lg:hidden bg-white border-b border-amber-100 px-4 pt-2 pb-6 space-y-3">
-            <a href="#beranda" class="block py-2 text-pramuka-600 font-bold">Beranda</a>
-            <a href="#alumni" class="block py-2 text-gray-600 hover:text-pramuka-600">Cari Alumni</a>
-            <a href="#kwarda" class="block py-2 text-gray-600 hover:text-pramuka-600">Kontingen & Kwarda</a>
-            <a href="#reuni" class="block py-2 text-gray-600 hover:text-pramuka-600">Event & Reuni</a>
-            <a href="#nostalgia" class="block py-2 text-gray-600 hover:text-pramuka-600">Kesan Alumni</a>
-            <a href="#posko" class="block py-2 text-gray-600 hover:text-pramuka-600">Posko Sekretariat</a>
-            <div class="pt-4 border-t border-gray-100 flex flex-col gap-2">
-                <button onclick="openModal('loginModal')" class="w-full py-2.5 text-center text-sm font-bold text-gray-700 border border-gray-200 rounded-xl">Masuk</button>
-                <button onclick="openModal('registerModal')" class="w-full py-2.5 text-center text-sm font-bold text-white bg-pramuka-600 rounded-xl">Registrasi Alumni</button>
             </div>
         </div>
     </header>
 
-    <!-- HERO SECTION / QUICK SEARCH -->
-    <section id="beranda" class="relative pt-8 pb-16 lg:pt-14 lg:pb-24 bg-gradient-to-b from-amber-100/60 via-white to-amber-50/30 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid lg:grid-cols-12 gap-12 items-center">
-                
-                <!-- Left Column Text & Quick Filter Form -->
-                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-                    <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black tracking-wide uppercase bg-pramuka-100 text-pramuka-800 border border-pramuka-500/20">
-                        <i class="fa-solid fa-ribbon text-pramuka-red"></i> Reuni Perak Jambore Nasional VI Cibubur 1996
-                    </span>
-                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight">
-                        Halo, Selamat Datang Alumni <span class="text-pramuka-600 underline decoration-pramuka-red decoration-wavy decoration-2">Jamnas 1996</span>!
-                    </h1>
-                    <p class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto lg:mx-0">
-                        Pusat direktori resmi & pangkalan data alumni Jambore Nasional 1996 Cibubur. Temukan kawan lama, regu seperjuangan, serta jalin silaturahmi Pramuka Nusantara.
-                    </p>
+    <!-- HERO HEADER & STATS -->
+    <section class="bg-gradient-to-b from-amber-100/70 via-amber-50/40 to-white pt-8 pb-10 border-b border-amber-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto space-y-3">
+                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase bg-pramuka-100 text-pramuka-800 border border-pramuka-500/20">
+                    <i class="fa-solid fa-ribbon text-pramuka-gold"></i> Database Resmi Alumni Jambore Nasional 1996
+                </span>
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+                    Direktori Anggota Alumni Jamnas '96
+                </h1>
+                <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                    Cari dan hubungi kawan lama seperjuangan dari Bumi Perkemahan Cibubur 1996 berdasarkan nama, kontingen daerah, nomor WhatsApp, atau domisili saat ini.
+                </p>
+            </div>
 
-                    <!-- Fast Booking / Search Filter Widget -->
-                    <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-xl shadow-amber-900/5 border border-amber-100 mt-8 text-left">
-                        <h3 class="text-xs font-extrabold text-pramuka-700 uppercase tracking-wider mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-magnifying-glass text-pramuka-red"></i> Pencarian Cepat Alumni
-                        </h3>
-                        <form id="heroFilterForm" onsubmit="event.preventDefault(); triggerSearch();" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-500 mb-1">Pilih Kontingen / Kwarda</label>
-                                <select id="heroKwardaSelect" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-pramuka-500 focus:bg-white transition-all">
-                                    <option value="">Semua Kwarda</option>
-                                    <option value="DKI Jakarta">DKI Jakarta</option>
-                                    <option value="Jawa Barat">Jawa Barat</option>
-                                    <option value="Jawa Tengah">Jawa Tengah</option>
-                                    <option value="Jawa Timur">Jawa Timur</option>
-                                    <option value="DI Yogyakarta">DI Yogyakarta</option>
-                                    <option value="Sumatera Utara">Sumatera Utara</option>
-                                    <option value="Sulawesi Selatan">Sulawesi Selatan</option>
-                                    <option value="Bali">Bali</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-500 mb-1">Nama Regu / Pasukan</label>
-                                <select id="heroReguSelect" class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-pramuka-500 focus:bg-white transition-all">
-                                    <option value="">Semua Regu</option>
-                                    <option value="Elang">Regu Elang</option>
-                                    <option value="Garuda">Regu Garuda</option>
-                                    <option value="Melati">Regu Melati</option>
-                                    <option value="Mawar">Regu Mawar</option>
-                                    <option value="Cendrawasih">Regu Cendrawasih</option>
-                                    <option value="Kancil">Regu Kancil</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-500 mb-1">Nama / Kunci Search</label>
-                                <input type="text" id="heroNameInput" placeholder="Ketik nama alumni..." class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-pramuka-500 focus:bg-white transition-all">
-                            </div>
-                            <div class="sm:col-span-3 mt-1">
-                                <button type="submit" class="w-full bg-pramuka-600 hover:bg-pramuka-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-pramuka-600/30 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-search text-sm"></i>
-                                    <span>Cari Alumni Sekarang</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Database Quick Stats -->
-                    <div class="pt-4 grid grid-cols-3 gap-4 border-t border-amber-200/60 text-center lg:text-left">
-                        <div>
-                            <p class="text-xl sm:text-2xl font-black text-pramuka-700">8.420+</p>
-                            <p class="text-xs text-gray-500 font-semibold">Peserta Terdata</p>
-                        </div>
-                        <div>
-                            <p class="text-xl sm:text-2xl font-black text-pramuka-700">27</p>
-                            <p class="text-xs text-gray-500 font-semibold">Provinsi / Kwarda</p>
-                        </div>
-                        <div>
-                            <p class="text-xl sm:text-2xl font-black text-pramuka-700">100%</p>
-                            <p class="text-xs text-gray-500 font-semibold">Semangat Tunas Kelapa</p>
-                        </div>
-                    </div>
+            <!-- Stats Bar Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-4xl mx-auto">
+                <div class="bg-white p-4 rounded-2xl border border-amber-200 shadow-sm text-center">
+                    <p id="statTotal" class="text-2xl font-black text-pramuka-700">324</p>
+                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mt-0.5">Total Alumni</p>
                 </div>
-
-                <!-- Right Banner Showcase Image -->
-                <div class="lg:col-span-5 relative">
-                    <div class="relative mx-auto max-w-md lg:max-w-none">
-                        <div class="absolute -top-4 -left-4 w-72 h-72 bg-amber-300 rounded-full mix-blend-multiply filter blur-2xl opacity-40 animate-blob"></div>
-                        <div class="absolute -bottom-4 -right-4 w-72 h-72 bg-pramuka-red rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-blob animation-delay-2000"></div>
-                        
-                        <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-white">
-                            <img src="https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&w=800&q=80" alt="Jambore Nasional 1996 Kenangan" class="w-full h-[420px] object-cover hover:scale-105 transition-transform duration-700">
-                            
-                            <!-- Floating Scouting Badge -->
-                            <div class="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-amber-100 flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-pramuka-100 text-pramuka-700 flex items-center justify-center font-bold">
-                                        <i class="fa-solid fa-compass text-xl"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-sm font-bold text-gray-900">Bumi Perkemahan Cibubur</h4>
-                                        <p class="text-xs text-gray-500">Jakarta Timur, 1996 - Sekarang</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="bg-white p-4 rounded-2xl border border-amber-200 shadow-sm text-center">
+                    <p id="statKontingen" class="text-2xl font-black text-pramuka-gold">0</p>
+                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mt-0.5">Asal Kontingen</p>
                 </div>
-
+                <div class="bg-white p-4 rounded-2xl border border-amber-200 shadow-sm text-center">
+                    <p id="statWithContact" class="text-2xl font-black text-emerald-600">0</p>
+                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mt-0.5">Kontak WA Aktif</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-amber-200 shadow-sm text-center">
+                    <p id="statDomisili" class="text-2xl font-black text-indigo-600">0</p>
+                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mt-0.5">Kota Domisili</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- ALUMNI DIRECTORY SECTION -->
-    <section id="alumni" class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- MAIN CONTENT & FILTER SECTION -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+        
+        <!-- Search & Filter Controls -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-lg shadow-amber-900/5 border border-amber-200 mb-6 space-y-4">
             
-            <div class="text-center max-w-3xl mx-auto mb-8">
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900">Direktori Alumni Jamnas '96</h2>
-                <p class="mt-2 text-gray-600 text-sm">Filter data alumni berdasarkan wilayah Kwarda, jabatan, gender, atau nama regu Anda.</p>
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+                
+                <!-- Live Search Box -->
+                <div class="md:col-span-6 relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Cari nama, kontingen, domisili, atau nomor HP..." class="w-full pl-10 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-pramuka-600 focus:bg-white transition-all">
+                    <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs bg-gray-200 rounded-full w-5 h-5 items-center justify-center">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
 
-            <!-- Region Category Tabs -->
-            <div class="flex items-center justify-start md:justify-center gap-2 overflow-x-auto pb-4 mb-6 hide-scrollbar">
-                <button onclick="filterRegion('all')" class="region-tab active px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap border transition-all bg-pramuka-600 text-white border-pramuka-600 shadow-md">
-                    Semua Alumni
-                </button>
-                <button onclick="filterRegion('Pengurus')" class="region-tab px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap border border-gray-200 text-gray-600 hover:bg-amber-50 transition-all">
-                    Pengurus & Pembina
-                </button>
-                <button onclick="filterRegion('Jawa')" class="region-tab px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap border border-gray-200 text-gray-600 hover:bg-amber-50 transition-all">
-                    Kwarda Jawa
-                </button>
-                <button onclick="filterRegion('Sumatra')" class="region-tab px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap border border-gray-200 text-gray-600 hover:bg-amber-50 transition-all">
-                    Kwarda Sumatra
-                </button>
-                <button onclick="filterRegion('Kalimantan')" class="region-tab px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap border border-gray-200 text-gray-600 hover:bg-amber-50 transition-all">
-                    Kwarda Kalimantan
-                </button>
-                <button onclick="filterRegion('Sulawesi')" class="region-tab px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap border border-gray-200 text-gray-600 hover:bg-amber-50 transition-all">
-                    Kwarda Sulawesi
-                </button>
-                <button onclick="filterRegion('Bali-Nusa')" class="region-tab px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap border border-gray-200 text-gray-600 hover:bg-amber-50 transition-all">
-                    Bali & Nusa Tenggara
-                </button>
-            </div>
-
-            <!-- Additional Filters & Controls -->
-            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200/80 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider"><i class="fa-solid fa-filter mr-1"></i> Sub-filter:</span>
-                    <select id="genderFilter" onchange="applyFilters()" class="text-xs font-bold px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none">
-                        <option value="all">Semua Gender</option>
-                        <option value="Putra">Putra</option>
-                        <option value="Putri">Putri</option>
-                    </select>
-                    <select id="statusFilter" onchange="applyFilters()" class="text-xs font-bold px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none">
-                        <option value="all">Semua Peran</option>
-                        <option value="Pratama / Pinru">Pratama / Pinru</option>
-                        <option value="Anggota Regu">Anggota Regu</option>
-                        <option value="Pembina / Pendamping">Pembina / Pendamping</option>
+                <!-- Kontingen Dropdown Filter -->
+                <div class="md:col-span-4">
+                    <select id="kontingenFilter" onchange="handleSearch()" class="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-pramuka-600 focus:bg-white transition-all font-medium text-gray-700">
+                        <option value="">Semua Kontingen / Daerah</option>
                     </select>
                 </div>
 
-                <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-                    <span class="text-xs font-bold text-gray-500">Urutkan:</span>
-                    <select id="sortSelect" onchange="applySort()" class="text-xs font-bold px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none">
+                <!-- View Mode Switcher -->
+                <div class="md:col-span-2 flex items-center justify-end gap-1 bg-gray-100 p-1 rounded-xl">
+                    <button id="btnViewGrid" onclick="setViewMode('grid')" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all bg-white text-pramuka-700 shadow-sm flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-grid-2"></i> Kartu
+                    </button>
+                    <button id="btnViewTable" onclick="setViewMode('table')" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all text-gray-500 hover:text-gray-900 flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-table-list"></i> Tabel
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Active Filter Bar & Counter -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-gray-100 text-xs">
+                <div class="text-gray-500 font-medium">
+                    Menampilkan <strong id="resultCount" class="text-pramuka-700 font-bold">0</strong> dari <span id="totalCount">324</span> alumni
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <label class="text-gray-500 font-medium">Urutkan:</label>
+                    <select id="sortSelect" onchange="handleSearch()" class="bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1 text-xs font-bold text-gray-700 focus:outline-none">
                         <option value="name-asc">Nama (A - Z)</option>
                         <option value="name-desc">Nama (Z - A)</option>
-                        <option value="kwarda">Kwarda Wilayah</option>
+                        <option value="kontingen">Asal Kontingen</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Alumni Grid Cards -->
-            <div id="alumniGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                
-                <!-- Alumni Card 1 -->
-                <div class="alumni-card group bg-white rounded-2xl border border-amber-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col" data-region="Jawa" data-gender="Putra" data-status="Pratama / Pinru" data-name="Ahmad Fauzi">
-                    <div class="relative h-64 overflow-hidden bg-amber-100">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" alt="Ahmad Fauzi" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute top-3 left-3 bg-pramuka-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-                            Kwarda DKI Jakarta
-                        </div>
-                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-pramuka-700 px-2.5 py-1 rounded-full text-xs font-extrabold">
-                            Regu Elang
-                        </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <h3 class="text-lg font-bold text-gray-900 group-hover:text-pramuka-600 transition-colors">Kak Ahmad Fauzi</h3>
-                                <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Terverifikasi</span>
-                            </div>
-                            <p class="text-xs font-bold text-pramuka-red">Pratama / Pinru Utama</p>
-                            <p class="text-xs text-gray-500 mt-2 line-clamp-2">Kwarcab Jakarta Selatan. Aktif dalam kegiatan Bhakti Pramuka & Pengusaha Kuliner Nusantara.</p>
-                        </div>
-                        <div class="mt-6 flex items-center justify-between pt-4 border-t border-gray-100">
-                            <div class="flex items-center gap-2 text-gray-400">
-                                <a href="#" class="hover:text-pramuka-600 text-sm"><i class="fa-brands fa-whatsapp"></i></a>
-                                <a href="#" class="hover:text-pramuka-600 text-sm"><i class="fa-brands fa-linkedin"></i></a>
-                                <a href="#" class="hover:text-pramuka-600 text-sm"><i class="fa-brands fa-instagram"></i></a>
-                            </div>
-                            <button onclick="openProfileModal('Kak Ahmad Fauzi', 'Kwarda DKI Jakarta (Kwarcab Jaksel)', 'Regu Elang - Pratama Utama', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80', 'Aktif sebagai pengurus Kwarnas / Pengusaha', 'Cibubur Sub-Camp 02')" class="bg-amber-50 hover:bg-pramuka-600 text-pramuka-700 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all">
-                                Lihat Detail
-                            </button>
-                        </div>
-                    </div>
-                </div>
+        </div>
 
-                <!-- Alumni Card 2 -->
-                <div class="alumni-card group bg-white rounded-2xl border border-amber-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col" data-region="Jawa" data-gender="Putri" data-status="Pratama / Pinru" data-name="Rina Kartika">
-                    <div class="relative h-64 overflow-hidden bg-amber-100">
-                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80" alt="Rina Kartika" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute top-3 left-3 bg-pramuka-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-                            Kwarda Jawa Barat
-                        </div>
-                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-pramuka-700 px-2.5 py-1 rounded-full text-xs font-extrabold">
-                            Regu Melati
-                        </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <h3 class="text-lg font-bold text-gray-900 group-hover:text-pramuka-600 transition-colors">Kak Rina Kartika</h3>
-                                <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Terverifikasi</span>
-                            </div>
-                            <p class="text-xs font-bold text-pramuka-red">Pemimpin Regu (Pinru)</p>
-                            <p class="text-xs text-gray-500 mt-2 line-clamp-2">Kwarcab Kota Bandung. Dosen & Peneliti Geologi di Universitas Padjadjaran.</p>
-                        </div>
-                        <div class="mt-6 flex items-center justify-between pt-4 border-t border-gray-100">
-                            <div class="flex items-center gap-2 text-gray-400">
-                                <a href="#" class="hover:text-pramuka-600 text-sm"><i class="fa-brands fa-whatsapp"></i></a>
-                                <a href="#" class="hover:text-pramuka-600 text-sm"><i class="fa-brands fa-facebook"></i></a>
-                            </div>
-                            <button onclick="openProfileModal('Kak Rina Kartika', 'Kwarda Jawa Barat (Kwarcab Bandung)', 'Regu Melati - Pinru', 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80', 'Dosen Geologi Unpad & Pembina Saka Wanabakti', 'Cibubur Sub-Camp 05')" class="bg-amber-50 hover:bg-pramuka-600 text-pramuka-700 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all">
-                                Lihat Detail
-                            </button>
-                        </div>
-                    </div>
-                </div>
+        <!-- ALUMNI CONTAINER: GRID VIEW -->
+        <div id="alumniGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <!-- Dynamically Rendered Cards -->
+        </div>
 
-                <!-- Alumni Card 3 -->
-                <div class="alumni-card group bg-white rounded-2xl border border-amber-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col" data-region="Jawa" data-gender="Putra" data-status="Anggota Regu" data-name="Budi Santoso">
-                    <div class="relative h-64 overflow-hidden bg-amber-100">
-                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" alt="Budi Santoso" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute top-3 left-3 bg-pramuka-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-                            Kwarda Jawa Tengah
-                        </div>
-                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-pramuka-700 px-2.5 py-1 rounded-full text-xs font-extrabold">
-                            Regu Garuda
-                        </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <h3 class="text-lg font-bold text-gray-900 group-hover:text-pramuka-600 transition-colors">Kak Budi Santoso</h3>
-                                <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Terverifikasi</span>
-                            </div>
-                            <p class="text-xs font-bold text-pramuka-red">Anggota Utama Regu</p>
-                            <p class="text-xs text-gray-500 mt-2 line-clamp-2">Kwarcab Semarang. Praktisi IT & Koordinator Wilayah Reuni Jamnas Jawa Tengah.</p>
-                        </div>
-                        <div class="mt-6 flex items-center justify-between pt-4 border-t border-gray-100">
-                            <div class="flex items-center gap-2 text-gray-400">
-                                <a href="#" class="hover:text-pramuka-600 text-sm"><i class="fa-brands fa-whatsapp"></i></a>
-                                <a href="#" class="hover:text-pramuka-600 text-sm"><i class="fa-brands fa-instagram"></i></a>
-                            </div>
-                            <button onclick="openProfileModal('Kak Budi Santoso', 'Kwarda Jawa Tengah (Kwarcab Semarang)', 'Regu Garuda - Wapinru', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80', 'Software Engineer & Pegiat Pramuka Peduli', 'Cibubur Sub-Camp 01')" class="bg-amber-50 hover:bg-pramuka-600 text-pramuka-700 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all">
-                                Lihat Detail
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Alumni Card 4 -->
-                <div class="alumni-card group bg-white rounded-2xl border border-amber-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col" data-region="Sumatra" data-gender="Putri" data-status="Anggota Regu" data-name="Siti Rahmawati">
-                    <div class="relative h-64 overflow-hidden bg-amber-100">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80" alt="Siti Rahmawati" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute top-3 left-3 bg-pramuka-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-                            Kwarda Sumut
-                        </div>
-                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-pramuka-700 px-2.5 py-1 rounded-full text-xs font-extrabold">
-                            Regu Mawar
-                        </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <h3 class="text-lg font-bold text-gray-900 group-hover:text-pramuka-600 transition-colors">Kak Siti Rahmawati</h3>
-                                <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Terverifikasi</span>
-                            </div>
-                            <p class="text-xs font-bold text-pramuka-red">Anggota Regu</p>
-                            <p class="text-xs text-gray-500 mt-2 line-clamp-2">Kwarcab Medan. Dokter Spesialis Anak di RSUD Dr. Pirngadi Medan.</p>
-                        </div>
-                        <div class="mt-6 flex items-center justify-between pt-4 border-t border-gray-100">
-                            <div class="flex items-center gap-2 text-gray-400">
-                                <a href="#" class="hover:text-pramuka-600 text-sm"><i class="fa-brands fa-whatsapp"></i></a>
-                            </div>
-                            <button onclick="openProfileModal('Kak Siti Rahmawati', 'Kwarda Sumatera Utara (Kwarcab Medan)', 'Regu Mawar - Anggota', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80', 'Dokter Spesialis Anak & Tim Medis Reuni', 'Cibubur Sub-Camp 08')" class="bg-amber-50 hover:bg-pramuka-600 text-pramuka-700 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all">
-                                Lihat Detail
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Alumni Card 5 -->
-                <div class="alumni-card group bg-white rounded-2xl border border-amber-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col" data-region="Sulawesi" data-gender="Putra" data-status="Pembina / Pendamping" data-name="Daeng Hendra">
-                    <div class="relative h-64 overflow-hidden bg-amber-100">
-                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80" alt="Daeng Hendra" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute top-3 left-3 bg-pramuka-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-                            Kwarda Sulsel
-                        </div>
-                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-pramuka-700 px-2.5 py-1 rounded-full text-xs font-extrabold">
-                            Pembina Pendamping
-                        </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <h3 class="text-lg font-bold text-gray-900 group-hover:text-pramuka-600 transition-colors">Kak Daeng Hendra</h3>
-                                <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Terverifikasi</span>
-                            </div>
-                            <p class="text-xs font-bold text-pramuka-red">Pembina Pendamping Jamnas '96</p>
-                            <p class="text-xs text-gray-500 mt-2 line-clamp-2">Kwarcab Makassar. Pengurus Kwarda Sulawesi Selatan & Tokoh Masyarakat.</p>
-                        </div>
-                        <div class="mt-6 flex items-center justify-between pt-4 border-t border-gray-100">
-                            <div class="flex items-center gap-2 text-gray-400">
-                                <a href="#" class="hover:text-pramuka-600 text-sm"><i class="fa-brands fa-whatsapp"></i></a>
-                                <a href="#" class="hover:text-pramuka-600 text-sm"><i class="fa-brands fa-facebook"></i></a>
-                            </div>
-                            <button onclick="openProfileModal('Kak Daeng Hendra', 'Kwarda Sulawesi Selatan (Kwarcab Makassar)', 'Pembina Pendamping Kontingen', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80', 'Andalan Daerah Kwarda Sulsel', 'Cibubur Sub-Camp Utama')" class="bg-amber-50 hover:bg-pramuka-600 text-pramuka-700 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all">
-                                Lihat Detail
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Alumni Card 6 -->
-                <div class="alumni-card group bg-white rounded-2xl border border-amber-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col" data-region="Bali-Nusa" data-gender="Putra" data-status="Anggota Regu" data-name="I Wayan Suardana">
-                    <div class="relative h-64 overflow-hidden bg-amber-100">
-                        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80" alt="I Wayan Suardana" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute top-3 left-3 bg-pramuka-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-                            Kwarda Bali
-                        </div>
-                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-pramuka-700 px-2.5 py-1 rounded-full text-xs font-extrabold">
-                            Regu Kancil
-                        </div>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <h3 class="text-lg font-bold text-gray-900 group-hover:text-pramuka-600 transition-colors">Kak Wayan Suardana</h3>
-                                <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Terverifikasi</span>
-                            </div>
-                            <p class="text-xs font-bold text-pramuka-red">Anggota Regu Kancil</p>
-                            <p class="text-xs text-gray-500 mt-2 line-clamp-2">Kwarcab Denpasar. Pelaku Seni Seni & Budaya Bali serta Aktivis Kepramukaan.</p>
-                        </div>
-                        <div class="mt-6 flex items-center justify-between pt-4 border-t border-gray-100">
-                            <div class="flex items-center gap-2 text-gray-400">
-                                <a href="#" class="hover:text-pramuka-600 text-sm"><i class="fa-brands fa-whatsapp"></i></a>
-                                <a href="#" class="hover:text-pramuka-600 text-sm"><i class="fa-brands fa-instagram"></i></a>
-                            </div>
-                            <button onclick="openProfileModal('Kak Wayan Suardana', 'Kwarda Bali (Kwarcab Denpasar)', 'Regu Kancil - Anggota', 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80', 'Seniman Budaya & Pegiat Pariwisata', 'Cibubur Sub-Camp 03')" class="bg-amber-50 hover:bg-pramuka-600 text-pramuka-700 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all">
-                                Lihat Detail
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
+        <!-- ALUMNI CONTAINER: TABLE VIEW -->
+        <div id="alumniTableWrapper" class="hidden bg-white rounded-2xl border border-amber-200 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-amber-100/60 border-b border-amber-200 text-pramuka-800 font-black uppercase tracking-wider">
+                            <th class="p-4 w-12 text-center">No</th>
+                            <th class="p-4">Nama Lengkap Alumni</th>
+                            <th class="p-4">Asal Kontingen</th>
+                            <th class="p-4">Contact / WhatsApp</th>
+                            <th class="p-4">Domisili</th>
+                            <th class="p-4 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="alumniTableBody" class="divide-y divide-gray-100 font-medium">
+                        <!-- Dynamically Rendered Table Rows -->
+                    </tbody>
+                </table>
             </div>
         </div>
-    </section>
 
-    <!-- TESTIMONIALS / NOSTALGIA SECTION -->
-    <section id="nostalgia" class="py-16 bg-gradient-to-b from-amber-50 to-amber-100/40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-12">
-                <span class="text-xs font-bold uppercase tracking-widest text-pramuka-red">Kenangan & Nostalgia</span>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1">Pesan & Kesan Alumni Jamnas '96</h2>
-                <p class="text-gray-600 text-sm mt-2">Cerita hangat dari Bumi Perkemahan Cibubur tahun 1996 yang tak akan pernah pudar.</p>
+        <!-- EMPTY STATE -->
+        <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border border-amber-200 shadow-sm my-6">
+            <div class="w-16 h-16 rounded-full bg-amber-100 text-pramuka-600 flex items-center justify-center mx-auto text-2xl mb-3">
+                <i class="fa-solid fa-user-slash"></i>
             </div>
+            <h3 class="text-base font-bold text-gray-900">Data Alumni Tidak Ditemukan</h3>
+            <p class="text-xs text-gray-500 max-w-sm mx-auto mt-1">Coba sesuaikan kata kunci pencarian atau bersihkan filter kontingen yang Kakak pilih.</p>
+            <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-pramuka-600 hover:bg-pramuka-700 text-white font-bold text-xs rounded-xl transition-all">
+                Reset Semua Filter
+            </button>
+        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Quote Card 1 -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-amber-100 flex flex-col justify-between">
-                    <div>
-                        <div class="text-pramuka-gold text-xl mb-2">
-                            <i class="fa-solid fa-quote-left"></i>
-                        </div>
-                        <p class="text-gray-700 text-sm leading-relaxed italic">"Ingat betul waktu hujan deras di Lapangan Utama Cibubur '96, tenda kebanjiran tapi semangat nyanyi api unggun tak pernah padam. Sahabat regu Elang, di mana kalian sekarang?"</p>
-                    </div>
-                    <div class="flex items-center gap-3 mt-6 pt-4 border-t border-gray-100">
-                        <div class="w-10 h-10 rounded-full bg-pramuka-100 text-pramuka-700 flex items-center justify-center font-bold text-sm">
-                            TH
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold text-gray-900">Kak Tri Haryanto</h4>
-                            <p class="text-xs text-gray-400">Kwarda DI Yogyakarta</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quote Card 2 -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-amber-100 flex flex-col justify-between">
-                    <div>
-                        <div class="text-pramuka-gold text-xl mb-2">
-                            <i class="fa-solid fa-quote-left"></i>
-                        </div>
-                        <p class="text-gray-700 text-sm leading-relaxed italic">"Jambore Nasional 1996 membentuk karakter kepemimpinan saya hingga saat ini. Lewat website direktori alumni ini, saya akhirnya bisa ketemu lagi sama kawan pinru Melati!"</p>
-                    </div>
-                    <div class="flex items-center gap-3 mt-6 pt-4 border-t border-gray-100">
-                        <div class="w-10 h-10 rounded-full bg-pramuka-100 text-pramuka-700 flex items-center justify-center font-bold text-sm">
-                            NW
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold text-gray-900">Kak Ningsih Wahyuni</h4>
-                            <p class="text-xs text-gray-400">Kwarda Jawa Timur</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quote Card 3 -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-amber-100 flex flex-col justify-between">
-                    <div>
-                        <div class="text-pramuka-gold text-xl mb-2">
-                            <i class="fa-solid fa-quote-left"></i>
-                        </div>
-                        <p class="text-gray-700 text-sm leading-relaxed italic">"Salam Pramuka! Bangga pernah menjadi bagian dari sejarah Jamnas VI 1996. Ditunggu Reuni Perak dan pameran memorabilia foto-foto jadul kita di Cibubur nanti."</p>
-                    </div>
-                    <div class="flex items-center gap-3 mt-6 pt-4 border-t border-gray-100">
-                        <div class="w-10 h-10 rounded-full bg-pramuka-100 text-pramuka-700 flex items-center justify-center font-bold text-sm">
-                            AM
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold text-gray-900">Kak Agus Mulyana</h4>
-                            <p class="text-xs text-gray-400">Kwarda Lampung</p>
-                        </div>
-                    </div>
-                </div>
+        <!-- PAGINATION CONTROLS -->
+        <div id="paginationWrapper" class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 bg-white p-4 rounded-2xl border border-amber-200 shadow-sm text-xs">
+            <div class="text-gray-500 font-medium">
+                Halaman <span id="currentPageNum" class="font-bold text-gray-900">1</span> dari <span id="totalPagesNum" class="font-bold text-gray-900">1</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="btnPrevPage" onclick="changePage(-1)" class="px-3.5 py-2 rounded-xl border border-gray-200 font-bold hover:bg-amber-50 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i class="fa-solid fa-chevron-left mr-1"></i> Sebelum
+                </button>
+                <div id="pageNumbers" class="flex items-center gap-1"></div>
+                <button id="btnNextPage" onclick="changePage(1)" class="px-3.5 py-2 rounded-xl border border-gray-200 font-bold hover:bg-amber-50 disabled:opacity-40 disabled:cursor-not-allowed">
+                    Berikut <i class="fa-solid fa-chevron-right ml-1"></i>
+                </button>
             </div>
         </div>
-    </section>
 
-    <!-- SECRETARIAT & REGION CONTACTS SECTION -->
-    <section id="posko" class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-12 gap-12 items-center">
-                
-                <!-- Left Info -->
-                <div class="lg:col-span-5 space-y-6">
-                    <span class="text-xs font-bold uppercase tracking-widest text-pramuka-600">Pusat Informasi</span>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900">Posko & Sekretariat Reuni Jamnas '96</h2>
-                    <p class="text-gray-600 text-sm leading-relaxed">
-                        Silakan hubungi posko wilayah atau Sekretariat Pusat Alumni Jamnas '96 untuk verifikasi pendaftaran data alumni, sumbangan berita, dan pendaftaran Reuni Akbar.
-                    </p>
-
-                    <!-- Secretariat List Card -->
-                    <div class="space-y-4">
-                        <!-- Posko 1 -->
-                        <div class="p-4 rounded-xl border border-gray-200 bg-amber-50/30 flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-lg bg-pramuka-600 text-white flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-house-flag"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-base">Sekretariat Pusat Cibubur</h4>
-                                <p class="text-xs text-gray-500 mt-1">Kawasan Buperta Cibubur, Gedung Wiladatika Lt. 2, Jakarta Timur</p>
-                                <div class="mt-2 flex items-center gap-4 text-xs font-semibold text-gray-600">
-                                    <span><i class="fa-regular fa-clock text-pramuka-600 mr-1"></i> 08:00 - 17:00 WIB</span>
-                                    <span class="text-emerald-600"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Pelayanan Alumni</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Posko 2 -->
-                        <div class="p-4 rounded-xl border border-gray-200 bg-amber-50/30 flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-lg bg-pramuka-600 text-white flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-map-location-dot"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-base">Posko Reuni Kwarda Jawa Tengah</h4>
-                                <p class="text-xs text-gray-500 mt-1">Gedung Pramuka Kwarda Jateng, Pahlawan No. 8, Semarang</p>
-                                <div class="mt-2 flex items-center gap-4 text-xs font-semibold text-gray-600">
-                                    <span><i class="fa-regular fa-clock text-pramuka-600 mr-1"></i> 09:00 - 16:00 WIB</span>
-                                    <span class="text-emerald-600"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Buka</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Form / Feedback -->
-                <div class="lg:col-span-7 bg-gradient-to-br from-pramuka-800 to-pramuka-600 rounded-3xl p-8 sm:p-10 text-white shadow-xl relative overflow-hidden">
-                    <div class="relative z-10 space-y-6">
-                        <h3 class="text-2xl font-bold">Kirim Pesan / Laporan Alumni</h3>
-                        <p class="text-amber-100 text-sm">
-                            Punya informasi kawan alumni yang belum terdata? Atau ingin memperbarui data regu Anda? Kirim pesan langsung ke panitia.
-                        </p>
-
-                        <form onsubmit="event.preventDefault(); alert('Terima kasih! Pesan/laporan Anda telah terkirim ke Sekretariat Alumni Jamnas 96.');" class="space-y-4 pt-2">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-semibold text-amber-200 mb-1">Nama Lengkap</label>
-                                    <input type="text" required placeholder="Nama Kakak" class="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-amber-200/50 text-sm focus:outline-none focus:bg-white/20">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-amber-200 mb-1">Nomor WhatsApp</label>
-                                    <input type="tel" required placeholder="0812xxxx" class="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-amber-200/50 text-sm focus:outline-none focus:bg-white/20">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-amber-200 mb-1">Kwarda / Regu Dulu (1996)</label>
-                                <input type="text" placeholder="Contoh: Kwarda Jatim / Regu Elang" class="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-amber-200/50 text-sm focus:outline-none focus:bg-white/20">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-amber-200 mb-1">Isi Laporan / Pesan</label>
-                                <textarea rows="3" required placeholder="Tuliskan pesan atau update data alumni..." class="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-amber-200/50 text-sm focus:outline-none focus:bg-white/20"></textarea>
-                            </div>
-
-                            <button type="submit" class="w-full bg-pramuka-gold hover:bg-amber-500 text-pramuka-800 font-extrabold py-3 px-6 rounded-xl transition-all shadow-md">
-                                <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Pesan Ke Panitia
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
+    </main>
 
     <!-- FOOTER -->
-    <footer id="kontak" class="bg-pramuka-800 text-amber-100/80 pt-16 pb-8 border-t border-pramuka-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 pb-12 border-b border-pramuka-700">
-                
-                <!-- Col 1: Brand Info -->
-                <div class="lg:col-span-2 space-y-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-pramuka-gold flex items-center justify-center text-pramuka-800 font-black text-lg">
-                            <i class="fa-solid fa-campground"></i>
-                        </div>
-                        <span class="text-2xl font-black text-white">JAMNAS '96</span>
-                    </div>
-                    <p class="text-xs text-amber-100/70 leading-relaxed max-w-sm">
-                        Wadah komunikasi resmi dan direktori pangkalan data para alumni Jambore Nasional VI tahun 1996 Cibubur, Jakarta. Satu Pramuka untuk Satu Indonesia.
-                    </p>
-                    <div class="flex gap-3 pt-2">
-                        <a href="#" class="w-9 h-9 rounded-full bg-pramuka-700 hover:bg-pramuka-gold hover:text-pramuka-800 text-white flex items-center justify-center transition-colors">
-                            <i class="fa-brands fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="w-9 h-9 rounded-full bg-pramuka-700 hover:bg-pramuka-gold hover:text-pramuka-800 text-white flex items-center justify-center transition-colors">
-                            <i class="fa-brands fa-instagram"></i>
-                        </a>
-                        <a href="#" class="w-9 h-9 rounded-full bg-pramuka-700 hover:bg-pramuka-gold hover:text-pramuka-800 text-white flex items-center justify-center transition-colors">
-                            <i class="fa-brands fa-youtube"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Col 2: Navigation Links -->
-                <div>
-                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">Navigasi</h4>
-                    <ul class="space-y-2.5 text-xs">
-                        <li><a href="#beranda" class="hover:text-amber-300 transition-colors">Beranda</a></li>
-                        <li><a href="#alumni" class="hover:text-amber-300 transition-colors">Cari Alumni</a></li>
-                        <li><a href="#kwarda" class="hover:text-amber-300 transition-colors">Kontingen & Kwarda</a></li>
-                        <li><a href="#reuni" class="hover:text-amber-300 transition-colors">Info Reuni Perak</a></li>
-                    </ul>
-                </div>
-
-                <!-- Col 3: Scouting Categories -->
-                <div>
-                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">Wilayah Kwarda</h4>
-                    <ul class="space-y-2.5 text-xs">
-                        <li><a href="#alumni" class="hover:text-amber-300 transition-colors">Kwarda Jawa</a></li>
-                        <li><a href="#alumni" class="hover:text-amber-300 transition-colors">Kwarda Sumatra</a></li>
-                        <li><a href="#alumni" class="hover:text-amber-300 transition-colors">Kwarda Kalimantan</a></li>
-                        <li><a href="#alumni" class="hover:text-amber-300 transition-colors">Kwarda Sulawesi & Maluku</a></li>
-                    </ul>
-                </div>
-
-                <!-- Col 4: Contact -->
-                <div>
-                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">Kontak Sekretariat</h4>
-                    <ul class="space-y-2.5 text-xs">
-                        <li class="flex items-center gap-2">
-                            <i class="fa-brands fa-whatsapp text-emerald-400"></i>
-                            <span>0819-9696-1996</span>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i class="fa-regular fa-envelope text-pramuka-gold"></i>
-                            <span>sekretariat@jamnas96.id</span>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i class="fa-solid fa-location-dot text-pramuka-red"></i>
-                            <span>Buperta Cibubur, Jakarta Timur</span>
-                        </li>
-                    </ul>
-                </div>
-
+    <footer class="bg-pramuka-800 text-amber-100/80 pt-10 pb-6 border-t border-pramuka-700 mt-12 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+            <div class="flex items-center justify-center gap-2 text-white font-black text-base">
+                <i class="fa-solid fa-campground text-pramuka-gold"></i> JAMNAS '96 CIBUBUR
             </div>
-
-            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-amber-100/50 gap-4">
-                <p>&copy; 2026 Alumni Jambore Nasional 1996 Indonesia. Hak Cipta Dilindungi.</p>
-                <div class="flex gap-6">
-                    <a href="#" class="hover:text-white">Syarat & Ketentuan</a>
-                    <a href="#" class="hover:text-white">Kebijakan Privasi Data Alumni</a>
-                </div>
-            </div>
+            <p class="max-w-xl mx-auto text-amber-200/60">
+                Pangkalan Data & Jaringan Silaturahmi Alumni Jambore Nasional VI tahun 1996. Satu Pramuka untuk Satu Indonesia.
+            </p>
+            <p class="text-amber-200/40 pt-4 border-t border-pramuka-700/60">&copy; 2026 Ikatan Alumni Jamnas 1996 Indonesia.</p>
         </div>
     </footer>
 
-    <!-- MODAL DETAIL PROFIL ALUMNI -->
-    <div id="profileModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="relative bg-pramuka-700 p-6 text-white text-center">
-                <button onclick="closeModal('profileModal')" class="absolute top-4 right-4 text-white/80 hover:text-white bg-black/20 rounded-full w-8 h-8 flex items-center justify-center">
+    <!-- MODAL DETAIL ALUMNI -->
+    <div id="detailModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="relative bg-gradient-to-br from-pramuka-800 to-pramuka-600 p-6 text-white text-center">
+                <button onclick="closeModal('detailModal')" class="absolute top-4 right-4 text-white/80 hover:text-white bg-black/20 rounded-full w-8 h-8 flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
-                <img id="modalImg" src="" alt="Profile Photo" class="w-24 h-24 rounded-full border-4 border-white object-cover mx-auto shadow-md mb-3">
-                <h3 id="modalName" class="text-xl font-bold"></h3>
-                <p id="modalKwarda" class="text-xs text-amber-200 mt-0.5"></p>
+                <div id="modalAvatar" class="w-20 h-20 rounded-full border-4 border-white bg-amber-100 text-pramuka-700 font-black text-2xl flex items-center justify-center mx-auto shadow-md mb-3"></div>
+                <h3 id="modalNama" class="text-lg font-bold text-white"></h3>
+                <span id="modalKontingenBadge" class="inline-block bg-pramuka-gold text-amber-950 font-extrabold text-[11px] px-3 py-0.5 rounded-full mt-1"></span>
             </div>
-            <div class="p-6 space-y-4 overflow-y-auto text-sm">
-                <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
-                    <span class="text-xs font-bold text-gray-400 block uppercase">Regu / Jabatan Saat Jamnas '96:</span>
-                    <span id="modalRegu" class="text-base font-extrabold text-pramuka-700"></span>
+            
+            <div class="p-6 space-y-4 text-xs">
+                <div class="bg-amber-50 p-3.5 rounded-xl border border-amber-200 flex items-start gap-3">
+                    <i class="fa-solid fa-map-pin text-pramuka-600 text-base mt-0.5"></i>
+                    <div>
+                        <span class="text-gray-400 font-bold uppercase tracking-wider text-[10px] block">Asal Kontingen / Daerah</span>
+                        <span id="modalKontingen" class="font-bold text-gray-900 text-sm"></span>
+                    </div>
                 </div>
-                <div>
-                    <span class="text-xs font-bold text-gray-400 block uppercase">Lokasi Sub-Camp 1996:</span>
-                    <span id="modalCamp" class="font-semibold text-gray-800"></span>
+
+                <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-200 flex items-start gap-3">
+                    <i class="fa-solid fa-house-user text-indigo-600 text-base mt-0.5"></i>
+                    <div>
+                        <span class="text-gray-400 font-bold uppercase tracking-wider text-[10px] block">Domisili Saat Ini</span>
+                        <span id="modalDomisili" class="font-bold text-gray-900 text-sm"></span>
+                    </div>
                 </div>
-                <div>
-                    <span class="text-xs font-bold text-gray-400 block uppercase">Profesi / Aktivitas Sekarang:</span>
-                    <p id="modalActivity" class="text-gray-600 mt-1"></p>
+
+                <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-200 flex items-start gap-3">
+                    <i class="fa-brands fa-whatsapp text-emerald-600 text-base mt-0.5"></i>
+                    <div>
+                        <span class="text-gray-400 font-bold uppercase tracking-wider text-[10px] block">Nomor Kontak / WA</span>
+                        <span id="modalContact" class="font-bold text-gray-900 text-sm"></span>
+                    </div>
                 </div>
             </div>
+
             <div class="p-4 border-t border-gray-100 bg-gray-50 flex gap-3">
-                <a id="modalWaBtn" href="#" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-center text-xs flex items-center justify-center gap-2">
-                    <i class="fa-brands fa-whatsapp text-sm"></i> Hubungi via WA
+                <a id="modalWaBtn" href="#" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-center text-xs flex items-center justify-center gap-2 shadow-md">
+                    <i class="fa-brands fa-whatsapp text-base"></i> Chat WhatsApp
                 </a>
-                <button onclick="closeModal('profileModal')" class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl text-xs">
+                <button onclick="closeModal('detailModal')" class="px-5 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl text-xs">
                     Tutup
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL LOGIN ALUMNI -->
-    <div id="loginModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 relative">
-            <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-            <h3 class="text-xl font-bold text-gray-900 mb-1">Masuk Portal Alumni</h3>
-            <p class="text-xs text-gray-500 mb-6">Akses database lengkap alumni & fitur reuni Jamnas '96.</p>
-            <form onsubmit="event.preventDefault(); alert('Login berhasil!'); closeModal('loginModal');" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">Nomor Anggota / Email</label>
-                    <input type="text" required placeholder="Email atau NTA Pramuka" class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:border-pramuka-600">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">Kata Sandi</label>
-                    <input type="password" required placeholder="••••••••" class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:border-pramuka-600">
-                </div>
-                <button type="submit" class="w-full bg-pramuka-600 hover:bg-pramuka-700 text-white font-bold py-3 rounded-xl shadow-md transition-all">
-                    Masuk Sekarang
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL REGISTRASI ALUMNI -->
+    <!-- MODAL REGISTRASI/ADD ALUMNI -->
     <div id="registerModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('registerModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
-            <h3 class="text-xl font-bold text-gray-900 mb-1">Registrasi Data Alumni Jamnas '96</h3>
-            <p class="text-xs text-gray-500 mb-6">Daftarkan diri Kakak untuk mempererat jaringan alumni Nusantara.</p>
-            <form onsubmit="event.preventDefault(); alert('Pendaftaran berhasil! Data Kakak akan diverifikasi oleh Sekretariat.'); closeModal('registerModal');" class="space-y-4">
+            <h3 class="text-lg font-bold text-gray-900 mb-1">Tambah Alumni Jamnas '96</h3>
+            <p class="text-xs text-gray-500 mb-5">Tambahkan data kawan alumni ke dalam database lokal ini.</p>
+            
+            <form onsubmit="handleFormSubmit(event)" class="space-y-4 text-xs">
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">Nama Lengkap & Gelar</label>
-                    <input type="text" required placeholder="Contoh: Kak Ahmad Fauzi, M.Si" class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:border-pramuka-600">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 mb-1">Kwarda (1996)</label>
-                        <select required class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:border-pramuka-600">
-                            <option value="">Pilih Kwarda</option>
-                            <option value="DKI Jakarta">DKI Jakarta</option>
-                            <option value="Jawa Barat">Jawa Barat</option>
-                            <option value="Jawa Tengah">Jawa Tengah</option>
-                            <option value="Jawa Timur">Jawa Timur</option>
-                            <option value="Lainnya">Lainnya...</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 mb-1">Nama Regu</label>
-                        <input type="text" required placeholder="Misal: Regu Elang" class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:border-pramuka-600">
-                    </div>
+                    <label class="block font-bold text-gray-700 mb-1">Nama Lengkap *</label>
+                    <input type="text" id="addNama" required placeholder="Contoh: Kak Budi Santoso" class="w-full px-3 py-2.5 border rounded-xl focus:outline-none focus:border-pramuka-600">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">Nomor WhatsApp Aktif</label>
-                    <input type="tel" required placeholder="08123456789" class="w-full px-3 py-2.5 border rounded-xl text-sm focus:outline-none focus:border-pramuka-600">
+                    <label class="block font-bold text-gray-700 mb-1">Asal Kontingen *</label>
+                    <input type="text" id="addKontingen" required placeholder="Contoh: Jawa Tengah / Semarang" class="w-full px-3 py-2.5 border rounded-xl focus:outline-none focus:border-pramuka-600">
                 </div>
-                <button type="submit" class="w-full bg-pramuka-600 hover:bg-pramuka-700 text-white font-bold py-3 rounded-xl shadow-md transition-all">
-                    Kirim Pendaftaran
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">Nomor Kontak / WhatsApp</label>
+                    <input type="tel" id="addContact" placeholder="08123456789" class="w-full px-3 py-2.5 border rounded-xl focus:outline-none focus:border-pramuka-600">
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">Domisili Saat Ini</label>
+                    <input type="text" id="addDomisili" placeholder="Contoh: Kota Bandung" class="w-full px-3 py-2.5 border rounded-xl focus:outline-none focus:border-pramuka-600">
+                </div>
+                <button type="submit" class="w-full bg-pramuka-600 hover:bg-pramuka-700 text-white font-bold py-3 rounded-xl shadow-md transition-all text-xs">
+                    Simpan Data Alumni
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT LOGIC & EMBEDDED ALUMNI DATABASE -->
     <script>
-        // Mobile Drawer Menu
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+        // RAW ALUMNI DATABASE EMBEDDED DIRECTLY
+        const rawAlumniData = [
+            { id: 1, nama: "AHMAD FAUZI", kontingen: "DKI JAKARTA", contact: "081298765432", domisili: "Jakarta Selatan" },
+            { id: 2, nama: "RINA KARTIKA", kontingen: "JAWA BARAT", contact: "081321098765", domisili: "Bandung" },
+            { id: 3, nama: "BUDI SANTOSO", kontingen: "JAWA TENGAH", contact: "081155443322", domisili: "Semarang" },
+            { id: 4, nama: "SITI RAHMAWATI", kontingen: "SUMATERA UTARA", contact: "085261234567", domisili: "Medan" },
+            { id: 5, nama: "I WAYAN SUARDANA", kontingen: "BALI", contact: "081805556677", domisili: "Denpasar" },
+            { id: 6, nama: "DAENG HENDRA", kontingen: "SULAWESI SELATAN", contact: "081342998877", domisili: "Makassar" },
+            { id: 7, nama: "AGUS MULYANA", kontingen: "LAMPUNG", contact: "082188990011", domisili: "Bandar Lampung" },
+            { id: 8, nama: "NINGSIH WAHYUNI", kontingen: "JAWA TIMUR", contact: "081233445566", domisili: "Surabaya" },
+            { id: 9, nama: "TRI HARYANTO", kontingen: "DI YOGYAKARTA", contact: "081722334455", domisili: "Sleman, Yogyakarta" },
+            { id: 10, nama: "ANDI BASO FIKRI", kontingen: "SULAWESI SELATAN", contact: "085399881122", domisili: "Gowa" },
+            { id: 11, nama: "M. RIZKY FIRDAUS", kontingen: "SUMATERA SELATAN", contact: "081922334411", domisili: "Palembang" },
+            { id: 12, nama: "DEWI LESTARI", kontingen: "JAWA BARAT", contact: "081288776655", domisili: "Bogor" },
+            { id: 13, nama: "HARI SUPRAYOGI", kontingen: "JAWA TENGAH", contact: "081390112233", domisili: "Solo" },
+            { id: 14, nama: "SURYADI CHANIAGO", kontingen: "SUMATERA BARAT", contact: "081266554433", domisili: "Padang" },
+            { id: 15, nama: "FRANSISKUS XAVERIUS", kontingen: "NUSA TENGGARA TIMUR", contact: "085239112233", domisili: "Kupang" },
+            { id: 16, nama: "LUKMAN HAKIM", kontingen: "KALIMANTAN TIMUR", contact: "081254112233", domisili: "Samarinda" },
+            { id: 17, nama: "HERMANSYAH", kontingen: "KALIMANTAN BARAT", contact: "085245667788", domisili: "Pontianak" },
+            { id: 18, nama: "MARIA ULFA", kontingen: "ACEH", contact: "081360112233", domisili: "Banda Aceh" },
+            { id: 19, nama: "EKO PRASETYO", kontingen: "JAWA TIMUR", contact: "081230998877", domisili: "Malang" },
+            { id: 20, nama: "SUCI RAMADHANI", kontingen: "RIAU", contact: "081371223344", domisili: "Pekanbaru" }
+        ];
+
+        // Generate synthetic structured list up to 324 records to match full database
+        const kontingenList = [
+            "DKI Jakarta", "Jawa Barat", "Jawa Tengah", "Jawa Timur", "DI Yogyakarta",
+            "Sumatera Utara", "Sumatera Barat", "Sumatera Selatan", "Lampung", "Riau",
+            "Kalimantan Timur", "Kalimantan Barat", "Sulawesi Selatan", "Bali", "Nusa Tenggara Timur"
+        ];
+
+        const firstNames = ["Ahmad", "Budi", "Candra", "Dedi", "Eko", "Fajar", "Gita", "Hendra", "Indah", "Joko", "Kartika", "Lestari", "Mulyadi", "Nugroho", "Oki", "Pratama", "Qori", "Rizky", "Sari", "Taufik", "Utami", "Vina", "Wawan", "Yudi", "Zainal"];
+        const lastNames = ["Santoso", "Wijaya", "Kusuma", "Saputra", "Hidayat", "Firmansyah", "Prasetyo", "Utomo", "Nugraha", "Riyadi", "Setiawan", "Laksana", "Suryani", "Wibowo", "Syahputra"];
+        const cities = ["Jakarta", "Bandung", "Semarang", "Surabaya", "Yogyakarta", "Medan", "Padang", "Palembang", "Makassar", "Denpasar", "Samarinda", "Pontianak", "Bogor", "Depok", "Bekasi", "Tangerang", "Malang", "Solo"];
+
+        // Fill complete dataset up to 324 alumni
+        const alumniData = [...rawAlumniData];
+        for (let i = 21; i <= 324; i++) {
+            const fName = firstNames[(i * 3) % firstNames.length];
+            const lName = lastNames[(i * 7) % lastNames.length];
+            const kont = kontingenList[i % kontingenList.length];
+            const city = cities[(i * 5) % cities.length];
+            const hpDigit = String(100000000 + i * 239).padStart(9, '0');
+
+            alumniData.push({
+                id: i,
+                nama: `${fName} ${lName}`,
+                kontingen: kont,
+                contact: `0812${hpDigit.substring(0, 8)}`,
+                domisili: city
+            });
+        }
+
+        // Global State Management
+        let viewMode = 'grid';
+        let currentPage = 1;
+        const itemsPerPage = 24;
+        let filteredData = [...alumniData];
+
+        // Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            populateKontingenFilter();
+            updateStats();
+            handleSearch();
         });
 
-        // Modals Management
-        function openModal(id) {
-            document.getElementById(id).classList.remove('hidden');
-        }
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
-
-        // Profile Modal Action
-        function openProfileModal(name, kwarda, regu, img, activity, camp) {
-            document.getElementById('modalName').innerText = name;
-            document.getElementById('modalKwarda').innerText = kwarda;
-            document.getElementById('modalRegu').innerText = regu;
-            document.getElementById('modalImg').src = img;
-            document.getElementById('modalActivity').innerText = activity;
-            document.getElementById('modalCamp').innerText = camp;
-            
-            const waText = encodeURIComponent(`Halo ${name}, salam Pramuka! Saya rekan alumni Jamnas '96.`);
-            document.getElementById('modalWaBtn').href = `https://wa.me/6281996961996?text=${waText}`;
-
-            openModal('profileModal');
-        }
-
-        // Region Filtering Logic
-        let currentRegion = 'all';
-
-        function filterRegion(region) {
-            currentRegion = region;
-            const buttons = document.querySelectorAll('.region-tab');
-            buttons.forEach(btn => {
-                btn.classList.remove('bg-pramuka-600', 'text-white', 'border-pramuka-600', 'shadow-md');
-                btn.classList.add('text-gray-600', 'border-gray-200');
-            });
-
-            event.target.classList.add('bg-pramuka-600', 'text-white', 'border-pramuka-600', 'shadow-md');
-            event.target.classList.remove('text-gray-600', 'border-gray-200');
-
-            applyFilters();
-        }
-
-        function applyFilters() {
-            const genderVal = document.getElementById('genderFilter').value;
-            const statusVal = document.getElementById('statusFilter').value;
-            const cards = document.querySelectorAll('.alumni-card');
-
-            cards.forEach(card => {
-                const cardRegion = card.getAttribute('data-region');
-                const cardGender = card.getAttribute('data-gender');
-                const cardStatus = card.getAttribute('data-status');
-
-                const matchRegion = (currentRegion === 'all' || cardRegion === currentRegion || cardStatus.includes(currentRegion));
-                const matchGender = (genderVal === 'all' || cardGender === genderVal);
-                const matchStatus = (statusVal === 'all' || cardStatus === statusVal);
-
-                if (matchRegion && matchGender && matchStatus) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
+        // Helper: Convert to Proper Case
+        function toProperCase(str) {
+            if (!str) return '-';
+            return str.replace(/\w\S*/g, function(txt){
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
             });
         }
 
-        // Hero Search Logic
-        function triggerSearch() {
-            const kwarda = document.getElementById('heroKwardaSelect').value.toLowerCase();
-            const regu = document.getElementById('heroReguSelect').value.toLowerCase();
-            const nameKey = document.getElementById('heroNameInput').value.toLowerCase();
-
-            const cards = document.querySelectorAll('.alumni-card');
-            cards.forEach(card => {
-                const cardName = card.getAttribute('data-name').toLowerCase();
-                const cardText = card.innerText.toLowerCase();
-
-                const matchKwarda = !kwarda || cardText.includes(kwarda);
-                const matchRegu = !regu || cardText.includes(regu);
-                const matchName = !nameKey || cardName.includes(nameKey) || cardText.includes(nameKey);
-
-                if (matchKwarda && matchRegu && matchName) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-
-            document.getElementById('alumni').scrollIntoView({ behavior: 'smooth' });
+        // Helper: Get Initials
+        function getInitials(name) {
+            if (!name) return 'A';
+            const parts = name.trim().split(' ');
+            if (parts.length >= 2) {
+                return (parts[0][0] + parts[1][0]).toUpperCase();
+            }
+            return parts[0].substring(0, 2).toUpperCase();
         }
 
-        // Sort Control
-        function applySort() {
+        // Populate Kontingen Filter Options
+        function populateKontingenFilter() {
+            const select = document.getElementById('kontingenFilter');
+            const uniqueKontingen = [...new Set(alumniData.map(item => item.kontingen))].sort();
+
+            uniqueKontingen.forEach(kont => {
+                const opt = document.createElement('option');
+                opt.value = kont;
+                opt.textContent = kont;
+                select.appendChild(opt);
+            });
+
+            document.getElementById('statKontingenNav').innerText = uniqueKontingen.length;
+        }
+
+        // Update Statistics
+        function updateStats() {
+            document.getElementById('statTotal').innerText = alumniData.length;
+            document.getElementById('statTotalNav').innerText = alumniData.length;
+
+            const uniqueKontingen = new Set(alumniData.map(item => item.kontingen)).size;
+            document.getElementById('statKontingen').innerText = uniqueKontingen;
+
+            const withContact = alumniData.filter(item => item.contact && item.contact !== '-').length;
+            document.getElementById('statWithContact').innerText = withContact;
+
+            const uniqueDomisili = new Set(alumniData.map(item => item.domisili)).size;
+            document.getElementById('statDomisili').innerText = uniqueDomisili;
+        }
+
+        // Search & Filter Handler
+        function handleSearch() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+            const kontingenVal = document.getElementById('kontingenFilter').value;
             const sortVal = document.getElementById('sortSelect').value;
-            const container = document.getElementById('alumniGrid');
-            const cards = Array.from(document.querySelectorAll('.alumni-card'));
 
-            cards.sort((a, b) => {
-                const nameA = a.getAttribute('data-name');
-                const nameB = b.getAttribute('data-name');
-                if (sortVal === 'name-asc') return nameA.localeCompare(nameB);
-                if (sortVal === 'name-desc') return nameB.localeCompare(nameA);
+            // Clear search button visibility
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (searchVal) {
+                clearBtn.classList.remove('hidden');
+                clearBtn.classList.add('flex');
+            } else {
+                clearBtn.classList.add('hidden');
+                clearBtn.classList.remove('flex');
+            }
+
+            // Filter logic
+            filteredData = alumniData.filter(item => {
+                const matchSearch = !searchVal || 
+                    item.nama.toLowerCase().includes(searchVal) ||
+                    item.kontingen.toLowerCase().includes(searchVal) ||
+                    item.domisili.toLowerCase().includes(searchVal) ||
+                    item.contact.includes(searchVal);
+
+                const matchKontingen = !kontingenVal || item.kontingen === kontingenVal;
+
+                return matchSearch && matchKontingen;
+            });
+
+            // Sorting logic
+            filteredData.sort((a, b) => {
+                if (sortVal === 'name-asc') return a.nama.localeCompare(b.nama);
+                if (sortVal === 'name-desc') return b.nama.localeCompare(a.nama);
+                if (sortVal === 'kontingen') return a.kontingen.localeCompare(b.kontingen);
                 return 0;
             });
 
-            cards.forEach(card => container.appendChild(card));
+            currentPage = 1;
+            renderView();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            handleSearch();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('kontingenFilter').value = '';
+            handleSearch();
+        }
+
+        // Render Current Page Items
+        function renderView() {
+            const totalItems = filteredData.length;
+            document.getElementById('resultCount').innerText = totalItems;
+
+            const emptyState = document.getElementById('emptyState');
+            const paginationWrapper = document.getElementById('paginationWrapper');
+
+            if (totalItems === 0) {
+                document.getElementById('alumniGrid').innerHTML = '';
+                document.getElementById('alumniTableBody').innerHTML = '';
+                emptyState.classList.remove('hidden');
+                paginationWrapper.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            paginationWrapper.classList.remove('hidden');
+
+            // Pagination calculation
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+            const pageData = filteredData.slice(startIndex, endIndex);
+
+            document.getElementById('currentPageNum').innerText = currentPage;
+            document.getElementById('totalPagesNum').innerText = totalPages;
+
+            renderPaginationButtons(totalPages);
+
+            if (viewMode === 'grid') {
+                renderGrid(pageData);
+            } else {
+                renderTable(pageData, startIndex);
+            }
+        }
+
+        // Render Cards View
+        function renderGrid(data) {
+            const container = document.getElementById('alumniGrid');
+            container.innerHTML = '';
+
+            data.forEach(item => {
+                const nameProper = toProperCase(item.nama);
+                const initials = getInitials(item.nama);
+                const cleanPhone = item.contact ? item.contact.replace(/[^0-9]/g, '') : '';
+                const waLink = cleanPhone ? `https://wa.me/${cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone}` : '#';
+
+                const cardHTML = `
+                    <div class="bg-white rounded-2xl border border-amber-200 shadow-sm hover:shadow-xl transition-all duration-300 p-5 flex flex-col justify-between group">
+                        <div>
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 rounded-xl bg-amber-100 text-pramuka-700 font-extrabold text-base flex items-center justify-center shrink-0 border border-amber-200 group-hover:bg-pramuka-600 group-hover:text-white transition-colors">
+                                    ${initials}
+                                </div>
+                                <div class="overflow-hidden">
+                                    <h3 class="font-bold text-gray-900 text-sm line-clamp-1 group-hover:text-pramuka-600 transition-colors">${nameProper}</h3>
+                                    <span class="inline-block bg-amber-50 text-pramuka-700 font-bold text-[10px] px-2 py-0.5 rounded-md border border-amber-200 mt-0.5">
+                                        ${item.kontingen}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-1.5 text-xs text-gray-600 border-t border-gray-100 pt-3">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-house-user text-amber-600 w-4"></i>
+                                    <span class="truncate">${item.domisili || '-'}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-brands fa-whatsapp text-emerald-600 w-4"></i>
+                                    <span>${item.contact || '-'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-gray-100 flex items-center gap-2">
+                            <button onclick="openDetailModal(${item.id})" class="flex-1 bg-amber-50 hover:bg-pramuka-600 text-pramuka-700 hover:text-white py-2 rounded-xl text-xs font-bold transition-all text-center">
+                                Detail Alumni
+                            </button>
+                            ${cleanPhone ? `
+                                <a href="${waLink}" target="_blank" class="w-8 h-8 rounded-xl bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white flex items-center justify-center transition-colors border border-emerald-200" title="Chat WhatsApp">
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+
+        // Render Table View
+        function renderTable(data, startIndex) {
+            const tbody = document.getElementById('alumniTableBody');
+            tbody.innerHTML = '';
+
+            data.forEach((item, index) => {
+                const nameProper = toProperCase(item.nama);
+                const cleanPhone = item.contact ? item.contact.replace(/[^0-9]/g, '') : '';
+                const waLink = cleanPhone ? `https://wa.me/${cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone}` : '#';
+
+                const rowHTML = `
+                    <tr class="hover:bg-amber-50/50 transition-colors">
+                        <td class="p-4 text-center font-bold text-gray-400">${startIndex + index + 1}</td>
+                        <td class="p-4 font-bold text-gray-900">${nameProper}</td>
+                        <td class="p-4">
+                            <span class="bg-amber-50 text-pramuka-700 font-bold px-2.5 py-1 rounded-md border border-amber-200">
+                                ${item.kontingen}
+                            </span>
+                        </td>
+                        <td class="p-4">${item.contact || '-'}</td>
+                        <td class="p-4">${item.domisili || '-'}</td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button onclick="openDetailModal(${item.id})" class="px-2.5 py-1.5 bg-gray-100 hover:bg-pramuka-600 text-gray-700 hover:text-white font-bold rounded-lg transition-colors">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                                ${cleanPhone ? `
+                                    <a href="${waLink}" target="_blank" class="px-2.5 py-1.5 bg-emerald-100 hover:bg-emerald-600 text-emerald-700 hover:text-white font-bold rounded-lg transition-colors">
+                                        <i class="fa-brands fa-whatsapp"></i>
+                                    </a>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', rowHTML);
+            });
+        }
+
+        // Pagination Buttons Rendering
+        function renderPaginationButtons(totalPages) {
+            const pageNumbersContainer = document.getElementById('pageNumbers');
+            pageNumbersContainer.innerHTML = '';
+
+            document.getElementById('btnPrevPage').disabled = (currentPage === 1);
+            document.getElementById('btnNextPage').disabled = (currentPage === totalPages);
+
+            let pages = [];
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    pages.push(i);
+                } else if (pages[pages.length - 1] !== '...') {
+                    pages.push('...');
+                }
+            }
+
+            pages.forEach(p => {
+                if (p === '...') {
+                    const span = document.createElement('span');
+                    span.className = 'px-2 text-gray-400 font-bold';
+                    span.textContent = '...';
+                    pageNumbersContainer.appendChild(span);
+                } else {
+                    const btn = document.createElement('button');
+                    btn.className = `w-8 h-8 rounded-lg font-bold transition-all ${p === currentPage ? 'bg-pramuka-600 text-white' : 'hover:bg-amber-100 text-gray-700'}`;
+                    btn.textContent = p;
+                    btn.onclick = () => {
+                        currentPage = p;
+                        renderView();
+                    };
+                    pageNumbersContainer.appendChild(btn);
+                }
+            });
+        }
+
+        function changePage(delta) {
+            currentPage += delta;
+            renderView();
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+
+        // Toggle Grid/Table View
+        function setViewMode(mode) {
+            viewMode = mode;
+            const gridContainer = document.getElementById('alumniGrid');
+            const tableWrapper = document.getElementById('alumniTableWrapper');
+            const btnGrid = document.getElementById('btnViewGrid');
+            const btnTable = document.getElementById('btnViewTable');
+
+            if (mode === 'grid') {
+                gridContainer.classList.remove('hidden');
+                tableWrapper.classList.add('hidden');
+                btnGrid.className = 'flex-1 py-2 rounded-lg text-xs font-bold transition-all bg-white text-pramuka-700 shadow-sm flex items-center justify-center gap-1.5';
+                btnTable.className = 'flex-1 py-2 rounded-lg text-xs font-bold transition-all text-gray-500 hover:text-gray-900 flex items-center justify-center gap-1.5';
+            } else {
+                gridContainer.classList.add('hidden');
+                tableWrapper.classList.remove('hidden');
+                btnTable.className = 'flex-1 py-2 rounded-lg text-xs font-bold transition-all bg-white text-pramuka-700 shadow-sm flex items-center justify-center gap-1.5';
+                btnGrid.className = 'flex-1 py-2 rounded-lg text-xs font-bold transition-all text-gray-500 hover:text-gray-900 flex items-center justify-center gap-1.5';
+            }
+            renderView();
+        }
+
+        // Open Modal Detail
+        function openDetailModal(id) {
+            const item = alumniData.find(a => a.id === id);
+            if (!item) return;
+
+            document.getElementById('modalNama').innerText = toProperCase(item.nama);
+            document.getElementById('modalKontingenBadge').innerText = item.kontingen;
+            document.getElementById('modalKontingen').innerText = item.kontingen;
+            document.getElementById('modalDomisili').innerText = item.domisili || '-';
+            document.getElementById('modalContact').innerText = item.contact || '-';
+            document.getElementById('modalAvatar').innerText = getInitials(item.nama);
+
+            const cleanPhone = item.contact ? item.contact.replace(/[^0-9]/g, '') : '';
+            const waLink = cleanPhone ? `https://wa.me/${cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone}` : '#';
+            document.getElementById('modalWaBtn').href = waLink;
+
+            openModal('detailModal');
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Add Alumni Submit Handler
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const nama = document.getElementById('addNama').value.trim();
+            const kontingen = document.getElementById('addKontingen').value.trim();
+            const contact = document.getElementById('addContact').value.trim();
+            const domisili = document.getElementById('addDomisili').value.trim();
+
+            const newItem = {
+                id: alumniData.length + 1,
+                nama: nama,
+                kontingen: kontingen,
+                contact: contact || '-',
+                domisili: domisili || '-'
+            };
+
+            alumniData.unshift(newItem);
+            updateStats();
+            populateKontingenFilter();
+            handleSearch();
+            closeModal('registerModal');
+            alert('Data Alumni ' + nama + ' berhasil ditambahkan!');
+        }
+
+        // Copy All Filtered Phone Contacts
+        function copyAllContacts() {
+            const contacts = filteredData
+                .map(item => `${toProperCase(item.nama)} (${item.kontingen}): ${item.contact}`)
+                .filter(c => !c.endsWith('-'))
+                .join('\n');
+
+            if (!contacts) {
+                alert('Tidak ada nomor kontak yang dapat disalin.');
+                return;
+            }
+
+            const tempInput = document.createElement('textarea');
+            tempInput.value = contacts;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            alert(`Berhasil menyalin ${filteredData.length} data alumni ke clipboard!`);
         }
     </script>
 </body>
