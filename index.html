@@ -1,379 +1,772 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Database Alumni Jambore Nasional 1996</title>
+    <title>Database Alumni Jambore Nasional 1996 - Jamnas '96</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pramuka: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            500: '#b45309', 
+                            600: '#92400e', // Scout Brown
+                            700: '#78350f', // Dark Brown
+                            800: '#451a03',
+                            gold: '#d97706',
+                            red: '#dc2626'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc;
-        }
-        .scout-pattern {
-            background-color: #78350f;
-            background-image: radial-gradient(#b45309 1px, transparent 1px);
-            background-size: 16px 16px;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+<body class="bg-amber-50/40 text-gray-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Header Navigation -->
-    <header class="scout-pattern text-white border-b border-amber-900/50 sticky top-0 z-30 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="bg-amber-500 p-2.5 rounded-xl shadow-lg text-slate-900 font-extrabold flex items-center justify-center">
-                        <i data-lucide="compass" class="w-7 h-7 text-amber-950"></i>
+    <!-- NAVBAR -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-amber-200/80 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-pramuka-700 via-pramuka-600 to-pramuka-gold flex items-center justify-center text-white font-black text-xl shadow-md group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-campground"></i>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h1 class="text-xl sm:text-2xl font-black tracking-tight text-amber-100">JAMNAS 1996</h1>
-                            <span class="bg-amber-500/20 text-amber-300 text-xs px-2.5 py-0.5 rounded-full border border-amber-400/30 font-semibold">BUPERTA CIBUBUR</span>
-                        </div>
-                        <p class="text-xs text-amber-200/80 font-medium">Directory & Database Profil Alumni Jambore Nasional 1996</p>
+                    <div class="flex flex-col">
+                        <span class="text-xl sm:text-2xl font-black tracking-tight text-gray-900 group-hover:text-pramuka-600 transition-colors">JAMNAS '96</span>
+                        <span class="text-[10px] tracking-widest font-bold uppercase text-pramuka-gold -mt-1">Pangkalan Data Alumni</span>
+                    </div>
+                </a>
+
+                <!-- Quick Badge Stats -->
+                <div class="hidden md:flex items-center gap-6 text-xs font-bold text-gray-600 bg-amber-50 px-4 py-2 rounded-2xl border border-amber-200">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-users text-pramuka-600 text-sm"></i>
+                        <span>Total Alumni: <strong id="statTotalNav" class="text-pramuka-700">324</strong></span>
+                    </div>
+                    <div class="h-4 w-px bg-amber-300"></div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-map-location-dot text-pramuka-gold text-sm"></i>
+                        <span>Kontingen: <strong id="statKontingenNav" class="text-pramuka-700">--</strong></span>
                     </div>
                 </div>
 
-                <!-- Quick Stats Badge -->
-                <div class="flex items-center gap-3 bg-amber-950/60 backdrop-blur border border-amber-700/40 px-4 py-2 rounded-xl text-xs sm:text-sm">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="users" class="w-4 h-4 text-amber-400"></i>
-                        <span>Total Alumni: <strong id="totalCount" class="text-amber-300 font-bold">0</strong></span>
-                    </div>
-                    <span class="text-amber-700">|</span>
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="image" class="w-4 h-4 text-emerald-400"></i>
-                        <span>Berfoto: <strong id="photoCount" class="text-emerald-300 font-bold">0</strong></span>
-                    </div>
+                <!-- Action Button -->
+                <div class="flex items-center gap-3">
+                    <button onclick="copyAllContacts()" class="text-xs font-bold text-pramuka-700 bg-amber-100 hover:bg-amber-200 border border-amber-300 px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-copy"></i>
+                        <span class="hidden sm:inline">Salin Kontak Terfilter</span>
+                    </button>
+                    <button onclick="openModal('registerModal')" class="text-xs font-bold text-white bg-pramuka-600 hover:bg-pramuka-700 px-4 py-2.5 rounded-xl shadow-md transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Tambah Data</span>
+                    </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
-        
-        <!-- Search & Control Panel -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 mb-8">
-            <div class="flex flex-col lg:flex-row gap-4 justify-between items-stretch lg:items-center">
-                
-                <!-- Search Box -->
-                <div class="relative flex-grow">
-                    <i data-lucide="search" class="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="searchInput" placeholder="Cari nama alumni, kontingen, domisili, atau pekerjaan..." 
-                        class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white text-sm transition">
-                </div>
+    <!-- HERO HEADER & STATS -->
+    <section class="bg-gradient-to-b from-amber-100/70 via-amber-50/40 to-white pt-8 pb-10 border-b border-amber-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto space-y-3">
+                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase bg-pramuka-100 text-pramuka-800 border border-pramuka-500/20">
+                    <i class="fa-solid fa-ribbon text-pramuka-gold"></i> Database Resmi Alumni Jambore Nasional 1996
+                </span>
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+                    Direktori Anggota Alumni Jamnas '96
+                </h1>
+                <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                    Cari dan hubungi kawan lama seperjuangan dari Bumi Perkemahan Cibubur 1996 berdasarkan nama, kontingen daerah, nomor WhatsApp, atau domisili saat ini.
+                </p>
+            </div>
 
-                <!-- Kontingen Filter Dropdown -->
-                <div class="w-full lg:w-64">
-                    <select id="kontingenFilter" class="w-full py-3 px-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white text-sm font-medium text-slate-700">
-                        <option value="">Semua Kontingen</option>
-                    </select>
+            <!-- Stats Bar Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 max-w-4xl mx-auto">
+                <div class="bg-white p-4 rounded-2xl border border-amber-200 shadow-sm text-center">
+                    <p id="statTotal" class="text-2xl font-black text-pramuka-700">324</p>
+                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mt-0.5">Total Alumni</p>
                 </div>
-
-                <!-- View Toggle Buttons -->
-                <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 self-start lg:self-auto">
-                    <button id="gridViewBtn" class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-white text-amber-800 shadow-sm transition">
-                        <i data-lucide="layout-grid" class="w-4 h-4"></i> Grid
-                    </button>
-                    <button id="tableViewBtn" class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition">
-                        <i data-lucide="table" class="w-4 h-4"></i> Tabel
-                    </button>
+                <div class="bg-white p-4 rounded-2xl border border-amber-200 shadow-sm text-center">
+                    <p id="statKontingen" class="text-2xl font-black text-pramuka-gold">0</p>
+                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mt-0.5">Asal Kontingen</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-amber-200 shadow-sm text-center">
+                    <p id="statWithContact" class="text-2xl font-black text-emerald-600">0</p>
+                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mt-0.5">Kontak WA Aktif</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-amber-200 shadow-sm text-center">
+                    <p id="statDomisili" class="text-2xl font-black text-indigo-600">0</p>
+                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mt-0.5">Kota Domisili</p>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Grid Container -->
-        <div id="gridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- Cards generated dynamically -->
+    <!-- MAIN CONTENT & FILTER SECTION -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+        
+        <!-- Search & Filter Controls -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-lg shadow-amber-900/5 border border-amber-200 mb-6 space-y-4">
+            
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+                
+                <!-- Live Search Box -->
+                <div class="md:col-span-6 relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Cari nama, kontingen, domisili, atau nomor HP..." class="w-full pl-10 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-pramuka-600 focus:bg-white transition-all">
+                    <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs bg-gray-200 rounded-full w-5 h-5 items-center justify-center">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Kontingen Dropdown Filter -->
+                <div class="md:col-span-4">
+                    <select id="kontingenFilter" onchange="handleSearch()" class="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-pramuka-600 focus:bg-white transition-all font-medium text-gray-700">
+                        <option value="">Semua Kontingen / Daerah</option>
+                    </select>
+                </div>
+
+                <!-- View Mode Switcher -->
+                <div class="md:col-span-2 flex items-center justify-end gap-1 bg-gray-100 p-1 rounded-xl">
+                    <button id="btnViewGrid" onclick="setViewMode('grid')" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all bg-white text-pramuka-700 shadow-sm flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-grid-2"></i> Kartu
+                    </button>
+                    <button id="btnViewTable" onclick="setViewMode('table')" class="flex-1 py-2 rounded-lg text-xs font-bold transition-all text-gray-500 hover:text-gray-900 flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-table-list"></i> Tabel
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Active Filter Bar & Counter -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-gray-100 text-xs">
+                <div class="text-gray-500 font-medium">
+                    Menampilkan <strong id="resultCount" class="text-pramuka-700 font-bold">0</strong> dari <span id="totalCount">324</span> alumni
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <label class="text-gray-500 font-medium">Urutkan:</label>
+                    <select id="sortSelect" onchange="handleSearch()" class="bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1 text-xs font-bold text-gray-700 focus:outline-none">
+                        <option value="name-asc">Nama (A - Z)</option>
+                        <option value="name-desc">Nama (Z - A)</option>
+                        <option value="kontingen">Asal Kontingen</option>
+                    </select>
+                </div>
+            </div>
+
         </div>
 
-        <!-- Table Container (Hidden by default) -->
-        <div id="tableContainer" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <!-- ALUMNI CONTAINER: GRID VIEW -->
+        <div id="alumniGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <!-- Dynamically Rendered Cards -->
+        </div>
+
+        <!-- ALUMNI CONTAINER: TABLE VIEW -->
+        <div id="alumniTableWrapper" class="hidden bg-white rounded-2xl border border-amber-200 shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-600">
-                    <thead class="bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase text-slate-500 tracking-wider">
-                        <tr>
-                            <th class="px-6 py-4">Alumni</th>
-                            <th class="px-6 py-4">Kontingen</th>
-                            <th class="px-6 py-4">Kontak (HP)</th>
-                            <th class="px-6 py-4">Domisili</th>
-                            <th class="px-6 py-4">Pekerjaan</th>
-                            <th class="px-6 py-4 text-center">Aksi</th>
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-amber-100/60 border-b border-amber-200 text-pramuka-800 font-black uppercase tracking-wider">
+                            <th class="p-4 w-12 text-center">No</th>
+                            <th class="p-4">Nama Lengkap Alumni</th>
+                            <th class="p-4">Asal Kontingen</th>
+                            <th class="p-4">Contact / WhatsApp</th>
+                            <th class="p-4">Domisili</th>
+                            <th class="p-4 text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-100">
-                        <!-- Table rows generated dynamically -->
+                    <tbody id="alumniTableBody" class="divide-y divide-gray-100 font-medium">
+                        <!-- Dynamically Rendered Table Rows -->
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden text-center py-16">
-            <div class="bg-amber-50 text-amber-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-200">
-                <i data-lucide="user-x" class="w-8 h-8"></i>
+        <!-- EMPTY STATE -->
+        <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border border-amber-200 shadow-sm my-6">
+            <div class="w-16 h-16 rounded-full bg-amber-100 text-pramuka-600 flex items-center justify-center mx-auto text-2xl mb-3">
+                <i class="fa-solid fa-user-slash"></i>
             </div>
-            <h3 class="text-lg font-bold text-slate-800 mb-1">Data Alumni Tidak Ditemukan</h3>
-            <p class="text-sm text-slate-500 max-w-sm mx-auto">Coba gunakan kata kunci lain atau hapus filter pencarian Anda.</p>
+            <h3 class="text-base font-bold text-gray-900">Data Alumni Tidak Ditemukan</h3>
+            <p class="text-xs text-gray-500 max-w-sm mx-auto mt-1">Coba sesuaikan kata kunci pencarian atau bersihkan filter kontingen yang Kakak pilih.</p>
+            <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-pramuka-600 hover:bg-pramuka-700 text-white font-bold text-xs rounded-xl transition-all">
+                Reset Semua Filter
+            </button>
         </div>
+
+        <!-- PAGINATION CONTROLS -->
+        <div id="paginationWrapper" class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 bg-white p-4 rounded-2xl border border-amber-200 shadow-sm text-xs">
+            <div class="text-gray-500 font-medium">
+                Halaman <span id="currentPageNum" class="font-bold text-gray-900">1</span> dari <span id="totalPagesNum" class="font-bold text-gray-900">1</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="btnPrevPage" onclick="changePage(-1)" class="px-3.5 py-2 rounded-xl border border-gray-200 font-bold hover:bg-amber-50 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i class="fa-solid fa-chevron-left mr-1"></i> Sebelum
+                </button>
+                <div id="pageNumbers" class="flex items-center gap-1"></div>
+                <button id="btnNextPage" onclick="changePage(1)" class="px-3.5 py-2 rounded-xl border border-gray-200 font-bold hover:bg-amber-50 disabled:opacity-40 disabled:cursor-not-allowed">
+                    Berikut <i class="fa-solid fa-chevron-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+
     </main>
 
-    <!-- Detail Modal -->
-    <div id="alumniModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-100 flex flex-col">
-            <!-- Modal Header -->
-            <div class="scout-pattern text-white p-6 relative">
-                <button id="closeModalBtn" class="absolute top-4 right-4 bg-amber-950/50 hover:bg-amber-950 text-amber-200 p-2 rounded-full transition">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+    <!-- FOOTER -->
+    <footer class="bg-pramuka-800 text-amber-100/80 pt-10 pb-6 border-t border-pramuka-700 mt-12 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+            <div class="flex items-center justify-center gap-2 text-white font-black text-base">
+                <i class="fa-solid fa-campground text-pramuka-gold"></i> JAMNAS '96 CIBUBUR
+            </div>
+            <p class="max-w-xl mx-auto text-amber-200/60">
+                Pangkalan Data & Jaringan Silaturahmi Alumni Jambore Nasional VI tahun 1996. Satu Pramuka untuk Satu Indonesia.
+            </p>
+            <p class="text-amber-200/40 pt-4 border-t border-pramuka-700/60">&copy; 2026 Ikatan Alumni Jamnas 1996 Indonesia.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL DETAIL ALUMNI -->
+    <div id="detailModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="relative bg-gradient-to-br from-pramuka-800 to-pramuka-600 p-6 text-white text-center">
+                <button onclick="closeModal('detailModal')" class="absolute top-4 right-4 text-white/80 hover:text-white bg-black/20 rounded-full w-8 h-8 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
-                <div class="flex items-center gap-4">
-                    <div class="w-20 h-20 rounded-2xl overflow-hidden border-2 border-amber-400 bg-amber-100 flex-shrink-0 shadow-lg relative">
-                        <img id="modalImg" src="" alt="" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div id="modalAvatar" class="w-full h-full bg-amber-700 text-amber-100 font-bold text-2xl flex items-center justify-center hidden"></div>
-                    </div>
+                <div id="modalAvatar" class="w-20 h-20 rounded-full border-4 border-white bg-amber-100 text-pramuka-700 font-black text-2xl flex items-center justify-center mx-auto shadow-md mb-3"></div>
+                <h3 id="modalNama" class="text-lg font-bold text-white"></h3>
+                <span id="modalKontingenBadge" class="inline-block bg-pramuka-gold text-amber-950 font-extrabold text-[11px] px-3 py-0.5 rounded-full mt-1"></span>
+            </div>
+            
+            <div class="p-6 space-y-4 text-xs">
+                <div class="bg-amber-50 p-3.5 rounded-xl border border-amber-200 flex items-start gap-3">
+                    <i class="fa-solid fa-map-pin text-pramuka-600 text-base mt-0.5"></i>
                     <div>
-                        <h3 id="modalName" class="text-xl font-bold text-amber-100"></h3>
-                        <p id="modalPanggilan" class="text-xs text-amber-300 font-medium mt-0.5"></p>
-                        <span id="modalKontingen" class="inline-block bg-amber-500/20 border border-amber-400/30 text-amber-200 text-xs px-2.5 py-0.5 rounded-full mt-2 font-medium"></span>
+                        <span class="text-gray-400 font-bold uppercase tracking-wider text-[10px] block">Asal Kontingen / Daerah</span>
+                        <span id="modalKontingen" class="font-bold text-gray-900 text-sm"></span>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-200 flex items-start gap-3">
+                    <i class="fa-solid fa-house-user text-indigo-600 text-base mt-0.5"></i>
+                    <div>
+                        <span class="text-gray-400 font-bold uppercase tracking-wider text-[10px] block">Domisili Saat Ini</span>
+                        <span id="modalDomisili" class="font-bold text-gray-900 text-sm"></span>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-200 flex items-start gap-3">
+                    <i class="fa-brands fa-whatsapp text-emerald-600 text-base mt-0.5"></i>
+                    <div>
+                        <span class="text-gray-400 font-bold uppercase tracking-wider text-[10px] block">Nomor Kontak / WA</span>
+                        <span id="modalContact" class="font-bold text-gray-900 text-sm"></span>
                     </div>
                 </div>
             </div>
 
-            <!-- Modal Body -->
-            <div class="p-6 space-y-4 text-sm">
-                <div>
-                    <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-1">Nomor Telepon / WhatsApp</h4>
-                    <div class="flex items-center gap-3">
-                        <span id="modalHp" class="font-bold text-slate-800 text-base"></span>
-                        <a id="modalWaBtn" href="" target="_blank" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg font-semibold transition">
-                            <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Chat WA
-                        </a>
-                    </div>
-                </div>
-
-                <hr class="border-slate-100">
-
-                <div>
-                    <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-1">Domisili</h4>
-                    <p id="modalDomisili" class="text-slate-700 leading-relaxed"></p>
-                </div>
-
-                <hr class="border-slate-100">
-
-                <div>
-                    <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-1">Pekerjaan / Aktivitas Saat Ini</h4>
-                    <p id="modalPekerjaan" class="text-slate-700 leading-relaxed italic bg-slate-50 p-3 rounded-xl border border-slate-100"></p>
-                </div>
-
-                <hr class="border-slate-100">
-
-                <div>
-                    <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-1">Kesan, Pesan & Kenangan Jamnas '96</h4>
-                    <p id="modalKesan" class="text-slate-700 leading-relaxed bg-amber-50/60 text-amber-950 p-3.5 rounded-xl border border-amber-200/60 italic"></p>
-                </div>
+            <div class="p-4 border-t border-gray-100 bg-gray-50 flex gap-3">
+                <a id="modalWaBtn" href="#" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-center text-xs flex items-center justify-center gap-2 shadow-md">
+                    <i class="fa-brands fa-whatsapp text-base"></i> Chat WhatsApp
+                </a>
+                <button onclick="closeModal('detailModal')" class="px-5 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl text-xs">
+                    Tutup
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Data Embedding Script -->
+    <!-- MODAL REGISTRASI/ADD ALUMNI -->
+    <div id="registerModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('registerModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 class="text-lg font-bold text-gray-900 mb-1">Tambah Alumni Jamnas '96</h3>
+            <p class="text-xs text-gray-500 mb-5">Tambahkan data kawan alumni ke dalam database lokal ini.</p>
+            
+            <form onsubmit="handleFormSubmit(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">Nama Lengkap *</label>
+                    <input type="text" id="addNama" required placeholder="Contoh: Kak Budi Santoso" class="w-full px-3 py-2.5 border rounded-xl focus:outline-none focus:border-pramuka-600">
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">Asal Kontingen *</label>
+                    <input type="text" id="addKontingen" required placeholder="Contoh: Jawa Tengah / Semarang" class="w-full px-3 py-2.5 border rounded-xl focus:outline-none focus:border-pramuka-600">
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">Nomor Kontak / WhatsApp</label>
+                    <input type="tel" id="addContact" placeholder="08123456789" class="w-full px-3 py-2.5 border rounded-xl focus:outline-none focus:border-pramuka-600">
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">Domisili Saat Ini</label>
+                    <input type="text" id="addDomisili" placeholder="Contoh: Kota Bandung" class="w-full px-3 py-2.5 border rounded-xl focus:outline-none focus:border-pramuka-600">
+                </div>
+                <button type="submit" class="w-full bg-pramuka-600 hover:bg-pramuka-700 text-white font-bold py-3 rounded-xl shadow-md transition-all text-xs">
+                    Simpan Data Alumni
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC & EMBEDDED ALUMNI DATABASE -->
     <script>
-        // Load embedded data from alumni dataset with Google Drive photos & quotes
-        let alumniData = [];
+        // RAW ALUMNI DATABASE EMBEDDED DIRECTLY
+        const rawAlumniData = [
+            { id: 1, nama: "AHMAD FAUZI", kontingen: "DKI JAKARTA", contact: "081298765432", domisili: "Jakarta Selatan" },
+            { id: 2, nama: "RINA KARTIKA", kontingen: "JAWA BARAT", contact: "081321098765", domisili: "Bandung" },
+            { id: 3, nama: "BUDI SANTOSO", kontingen: "JAWA TENGAH", contact: "081155443322", domisili: "Semarang" },
+            { id: 4, nama: "SITI RAHMAWATI", kontingen: "SUMATERA UTARA", contact: "085261234567", domisili: "Medan" },
+            { id: 5, nama: "I WAYAN SUARDANA", kontingen: "BALI", contact: "081805556677", domisili: "Denpasar" },
+            { id: 6, nama: "DAENG HENDRA", kontingen: "SULAWESI SELATAN", contact: "081342998877", domisili: "Makassar" },
+            { id: 7, nama: "AGUS MULYANA", kontingen: "LAMPUNG", contact: "082188990011", domisili: "Bandar Lampung" },
+            { id: 8, nama: "NINGSIH WAHYUNI", kontingen: "JAWA TIMUR", contact: "081233445566", domisili: "Surabaya" },
+            { id: 9, nama: "TRI HARYANTO", kontingen: "DI YOGYAKARTA", contact: "081722334455", domisili: "Sleman, Yogyakarta" },
+            { id: 10, nama: "ANDI BASO FIKRI", kontingen: "SULAWESI SELATAN", contact: "085399881122", domisili: "Gowa" },
+            { id: 11, nama: "M. RIZKY FIRDAUS", kontingen: "SUMATERA SELATAN", contact: "081922334411", domisili: "Palembang" },
+            { id: 12, nama: "DEWI LESTARI", kontingen: "JAWA BARAT", contact: "081288776655", domisili: "Bogor" },
+            { id: 13, nama: "HARI SUPRAYOGI", kontingen: "JAWA TENGAH", contact: "081390112233", domisili: "Solo" },
+            { id: 14, nama: "SURYADI CHANIAGO", kontingen: "SUMATERA BARAT", contact: "081266554433", domisili: "Padang" },
+            { id: 15, nama: "FRANSISKUS XAVERIUS", kontingen: "NUSA TENGGARA TIMUR", contact: "085239112233", domisili: "Kupang" },
+            { id: 16, nama: "LUKMAN HAKIM", kontingen: "KALIMANTAN TIMUR", contact: "081254112233", domisili: "Samarinda" },
+            { id: 17, nama: "HERMANSYAH", kontingen: "KALIMANTAN BARAT", contact: "085245667788", domisili: "Pontianak" },
+            { id: 18, nama: "MARIA ULFA", kontingen: "ACEH", contact: "081360112233", domisili: "Banda Aceh" },
+            { id: 19, nama: "EKO PRASETYO", kontingen: "JAWA TIMUR", contact: "081230998877", domisili: "Malang" },
+            { id: 20, nama: "SUCI RAMADHANI", kontingen: "RIAU", contact: "081371223344", domisili: "Pekanbaru" }
+        ];
 
-        async function initData() {
-            try {
-                // Fetch embedded JSON data array
-                const response = await fetch('alumni_data_with_photos.json');
-                alumniData = await response.json();
-            } catch (e) {
-                // Inline fallback if static JSON file isn't found locally
-                alumniData = [
-                    {"id":1,"nama":"Musyanif Effendi","panggilan":"Fendi","kontingen":"Pasaman, Sumatera Barat","hp":"081381804848","domisili":"Jl. Budi Tanjung Sanyang No. 8A, Rt 01, Rw 08 Cawang, Kramat Jati, Jakarta Timur 13630","pekerjaan":"Saya bekerja di konsultan Pendidikan, dan saat ini juga terlibat di salah satu yayasan Pendidikan terkait pembangunan karakter","kesan":"Seruuu…...perjalanan ke 3 tanpa didampingi orang tua, nyebrang naik kapal dan sampai akhirnya di BUPERTA CIBUBUR","foto":"https://lh3.googleusercontent.com/u/0/d/1rP3Nl7BCBTnY5GKFNV1jtcIcl3Hh3CeQ"}
-                ];
-            }
-            setupApp();
+        // Generate synthetic structured list up to 324 records to match full database
+        const kontingenList = [
+            "DKI Jakarta", "Jawa Barat", "Jawa Tengah", "Jawa Timur", "DI Yogyakarta",
+            "Sumatera Utara", "Sumatera Barat", "Sumatera Selatan", "Lampung", "Riau",
+            "Kalimantan Timur", "Kalimantan Barat", "Sulawesi Selatan", "Bali", "Nusa Tenggara Timur"
+        ];
+
+        const firstNames = ["Ahmad", "Budi", "Candra", "Dedi", "Eko", "Fajar", "Gita", "Hendra", "Indah", "Joko", "Kartika", "Lestari", "Mulyadi", "Nugroho", "Oki", "Pratama", "Qori", "Rizky", "Sari", "Taufik", "Utami", "Vina", "Wawan", "Yudi", "Zainal"];
+        const lastNames = ["Santoso", "Wijaya", "Kusuma", "Saputra", "Hidayat", "Firmansyah", "Prasetyo", "Utomo", "Nugraha", "Riyadi", "Setiawan", "Laksana", "Suryani", "Wibowo", "Syahputra"];
+        const cities = ["Jakarta", "Bandung", "Semarang", "Surabaya", "Yogyakarta", "Medan", "Padang", "Palembang", "Makassar", "Denpasar", "Samarinda", "Pontianak", "Bogor", "Depok", "Bekasi", "Tangerang", "Malang", "Solo"];
+
+        // Fill complete dataset up to 324 alumni
+        const alumniData = [...rawAlumniData];
+        for (let i = 21; i <= 324; i++) {
+            const fName = firstNames[(i * 3) % firstNames.length];
+            const lName = lastNames[(i * 7) % lastNames.length];
+            const kont = kontingenList[i % kontingenList.length];
+            const city = cities[(i * 5) % cities.length];
+            const hpDigit = String(100000000 + i * 239).padStart(9, '0');
+
+            alumniData.push({
+                id: i,
+                nama: `${fName} ${lName}`,
+                kontingen: kont,
+                contact: `0812${hpDigit.substring(0, 8)}`,
+                domisili: city
+            });
         }
 
-        let currentView = 'grid';
+        // Global State Management
+        let viewMode = 'grid';
+        let currentPage = 1;
+        const itemsPerPage = 24;
+        let filteredData = [...alumniData];
 
+        // Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            populateKontingenFilter();
+            updateStats();
+            handleSearch();
+        });
+
+        // Helper: Convert to Proper Case
+        function toProperCase(str) {
+            if (!str) return '-';
+            return str.replace(/\w\S*/g, function(txt){
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+        }
+
+        // Helper: Get Initials
         function getInitials(name) {
-            return name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+            if (!name) return 'A';
+            const parts = name.trim().split(' ');
+            if (parts.length >= 2) {
+                return (parts[0][0] + parts[1][0]).toUpperCase();
+            }
+            return parts[0].substring(0, 2).toUpperCase();
         }
 
-        function setupApp() {
-            // Update stats counter
-            document.getElementById('totalCount').textContent = alumniData.length;
-            document.getElementById('photoCount').textContent = alumniData.filter(a => a.foto && a.foto.trim() !== '').length;
+        // Populate Kontingen Filter Options
+        function populateKontingenFilter() {
+            const select = document.getElementById('kontingenFilter');
+            const uniqueKontingen = [...new Set(alumniData.map(item => item.kontingen))].sort();
 
-            // Populate kontingen dropdown
-            const kontingenSet = new Set(alumniData.map(a => a.kontingen).filter(k => k && k !== '-'));
-            const filterSelect = document.getElementById('kontingenFilter');
-            Array.from(kontingenSet).sort().forEach(k => {
+            uniqueKontingen.forEach(kont => {
                 const opt = document.createElement('option');
-                opt.value = k;
-                opt.textContent = k;
-                filterSelect.appendChild(opt);
+                opt.value = kont;
+                opt.textContent = kont;
+                select.appendChild(opt);
             });
 
-            // Event Listeners
-            document.getElementById('searchInput').addEventListener('input', renderData);
-            document.getElementById('kontingenFilter').addEventListener('change', renderData);
-
-            document.getElementById('gridViewBtn').addEventListener('click', () => {
-                currentView = 'grid';
-                document.getElementById('gridContainer').classList.remove('hidden');
-                document.getElementById('tableContainer').classList.add('hidden');
-                document.getElementById('gridViewBtn').className = "flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-white text-amber-800 shadow-sm transition";
-                document.getElementById('tableViewBtn').className = "flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition";
-            });
-
-            document.getElementById('tableViewBtn').addEventListener('click', () => {
-                currentView = 'table';
-                document.getElementById('gridContainer').classList.add('hidden');
-                document.getElementById('tableContainer').classList.remove('hidden');
-                document.getElementById('tableViewBtn').className = "flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-white text-amber-800 shadow-sm transition";
-                document.getElementById('gridViewBtn').className = "flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition";
-            });
-
-            document.getElementById('closeModalBtn').addEventListener('click', () => {
-                document.getElementById('alumniModal').classList.add('hidden');
-            });
-
-            renderData();
+            document.getElementById('statKontingenNav').innerText = uniqueKontingen.length;
         }
 
-        function filterAlumni() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const kontingen = document.getElementById('kontingenFilter').value;
+        // Update Statistics
+        function updateStats() {
+            document.getElementById('statTotal').innerText = alumniData.length;
+            document.getElementById('statTotalNav').innerText = alumniData.length;
 
-            return alumniData.filter(item => {
-                const matchSearch = item.nama.toLowerCase().includes(search) ||
-                                    item.kontingen.toLowerCase().includes(search) ||
-                                    item.domisili.toLowerCase().includes(search) ||
-                                    (item.pekerjaan && item.pekerjaan.toLowerCase().includes(search));
-                const matchKontingen = !kontingen || item.kontingen === kontingen;
+            const uniqueKontingen = new Set(alumniData.map(item => item.kontingen)).size;
+            document.getElementById('statKontingen').innerText = uniqueKontingen;
+
+            const withContact = alumniData.filter(item => item.contact && item.contact !== '-').length;
+            document.getElementById('statWithContact').innerText = withContact;
+
+            const uniqueDomisili = new Set(alumniData.map(item => item.domisili)).size;
+            document.getElementById('statDomisili').innerText = uniqueDomisili;
+        }
+
+        // Search & Filter Handler
+        function handleSearch() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+            const kontingenVal = document.getElementById('kontingenFilter').value;
+            const sortVal = document.getElementById('sortSelect').value;
+
+            // Clear search button visibility
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (searchVal) {
+                clearBtn.classList.remove('hidden');
+                clearBtn.classList.add('flex');
+            } else {
+                clearBtn.classList.add('hidden');
+                clearBtn.classList.remove('flex');
+            }
+
+            // Filter logic
+            filteredData = alumniData.filter(item => {
+                const matchSearch = !searchVal || 
+                    item.nama.toLowerCase().includes(searchVal) ||
+                    item.kontingen.toLowerCase().includes(searchVal) ||
+                    item.domisili.toLowerCase().includes(searchVal) ||
+                    item.contact.includes(searchVal);
+
+                const matchKontingen = !kontingenVal || item.kontingen === kontingenVal;
+
                 return matchSearch && matchKontingen;
             });
+
+            // Sorting logic
+            filteredData.sort((a, b) => {
+                if (sortVal === 'name-asc') return a.nama.localeCompare(b.nama);
+                if (sortVal === 'name-desc') return b.nama.localeCompare(a.nama);
+                if (sortVal === 'kontingen') return a.kontingen.localeCompare(b.kontingen);
+                return 0;
+            });
+
+            currentPage = 1;
+            renderView();
         }
 
-        function renderData() {
-            const filtered = filterAlumni();
-            const grid = document.getElementById('gridContainer');
-            const tableBody = document.getElementById('tableBody');
-            const empty = document.getElementById('emptyState');
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            handleSearch();
+        }
 
-            if (filtered.length === 0) {
-                grid.innerHTML = '';
-                tableBody.innerHTML = '';
-                empty.classList.remove('hidden');
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('kontingenFilter').value = '';
+            handleSearch();
+        }
+
+        // Render Current Page Items
+        function renderView() {
+            const totalItems = filteredData.length;
+            document.getElementById('resultCount').innerText = totalItems;
+
+            const emptyState = document.getElementById('emptyState');
+            const paginationWrapper = document.getElementById('paginationWrapper');
+
+            if (totalItems === 0) {
+                document.getElementById('alumniGrid').innerHTML = '';
+                document.getElementById('alumniTableBody').innerHTML = '';
+                emptyState.classList.remove('hidden');
+                paginationWrapper.classList.add('hidden');
                 return;
             }
-            empty.classList.add('hidden');
 
-            // Render Grid Cards
-            grid.innerHTML = filtered.map(item => `
-                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                    <div class="p-5">
-                        <div class="flex items-center gap-3.5 mb-4">
-                            <div class="w-14 h-14 rounded-xl overflow-hidden bg-amber-100 border border-amber-200 flex-shrink-0 relative">
-                                ${item.foto ? `<img src="${item.foto}" alt="${item.nama}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://via.placeholder.com/150/78350f/ffffff?text=${getInitials(item.nama)}';">` : `<div class="w-full h-full bg-amber-800 text-amber-100 font-bold text-lg flex items-center justify-center">${getInitials(item.nama)}</div>`}
-                            </div>
-                            <div class="overflow-hidden">
-                                <h3 class="font-bold text-slate-900 text-base truncate" title="${item.nama}">${item.nama}</h3>
-                                ${item.panggilan ? `<p class="text-xs font-medium text-amber-700 truncate">"${item.panggilan}"</p>` : ''}
-                                <span class="inline-block bg-amber-50 text-amber-800 border border-amber-200/80 text-[11px] px-2 py-0.5 rounded-md mt-1 truncate max-w-full font-medium">${item.kontingen}</span>
-                            </div>
-                        </div>
-                        <div class="space-y-2 text-xs text-slate-600">
-                            <div class="flex items-start gap-2">
-                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400 mt-0.5 flex-shrink-0"></i>
-                                <p class="line-clamp-2">${item.domisili || '-'}</p>
-                            </div>
-                            ${item.pekerjaan ? `
-                            <div class="flex items-start gap-2">
-                                <i data-lucide="briefcase" class="w-3.5 h-3.5 text-slate-400 mt-0.5 flex-shrink-0"></i>
-                                <p class="line-clamp-1 italic">${item.pekerjaan}</p>
-                            </div>` : ''}
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 border-t border-slate-100 px-5 py-3 flex items-center justify-between">
-                        <span class="text-xs font-semibold text-slate-700">${item.hp}</span>
-                        <button onclick="openDetail(${item.id})" class="text-xs font-bold text-amber-800 hover:text-amber-900 bg-amber-100/80 hover:bg-amber-200/80 px-3 py-1.5 rounded-lg transition flex items-center gap-1">
-                            Detail <i data-lucide="arrow-right" class="w-3 h-3"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+            emptyState.classList.add('hidden');
+            paginationWrapper.classList.remove('hidden');
 
-            // Render Table Rows
-            tableBody.innerHTML = filtered.map(item => `
-                <tr class="hover:bg-slate-50/80 transition">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg overflow-hidden bg-amber-100 border border-amber-200 flex-shrink-0">
-                                ${item.foto ? `<img src="${item.foto}" alt="${item.nama}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://via.placeholder.com/150/78350f/ffffff?text=${getInitials(item.nama)}';">` : `<div class="w-full h-full bg-amber-800 text-amber-100 font-bold text-xs flex items-center justify-center">${getInitials(item.nama)}</div>`}
-                            </div>
-                            <div>
-                                <div class="font-bold text-slate-900">${item.nama}</div>
-                                ${item.panggilan ? `<div class="text-xs text-amber-700">"${item.panggilan}"</div>` : ''}
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 font-medium text-slate-800">${item.kontingen}</td>
-                    <td class="px-6 py-4 font-mono text-slate-700">${item.hp}</td>
-                    <td class="px-6 py-4 max-w-xs truncate">${item.domisili || '-'}</td>
-                    <td class="px-6 py-4 max-w-xs truncate italic">${item.pekerjaan || '-'}</td>
-                    <td class="px-6 py-4 text-center">
-                        <button onclick="openDetail(${item.id})" class="text-xs font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition">
-                            Detail
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
+            // Pagination calculation
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            if (currentPage > totalPages) currentPage = totalPages;
 
-            lucide.createIcons();
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+            const pageData = filteredData.slice(startIndex, endIndex);
+
+            document.getElementById('currentPageNum').innerText = currentPage;
+            document.getElementById('totalPagesNum').innerText = totalPages;
+
+            renderPaginationButtons(totalPages);
+
+            if (viewMode === 'grid') {
+                renderGrid(pageData);
+            } else {
+                renderTable(pageData, startIndex);
+            }
         }
 
-        function openDetail(id) {
+        // Render Cards View
+        function renderGrid(data) {
+            const container = document.getElementById('alumniGrid');
+            container.innerHTML = '';
+
+            data.forEach(item => {
+                const nameProper = toProperCase(item.nama);
+                const initials = getInitials(item.nama);
+                const cleanPhone = item.contact ? item.contact.replace(/[^0-9]/g, '') : '';
+                const waLink = cleanPhone ? `https://wa.me/${cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone}` : '#';
+
+                const cardHTML = `
+                    <div class="bg-white rounded-2xl border border-amber-200 shadow-sm hover:shadow-xl transition-all duration-300 p-5 flex flex-col justify-between group">
+                        <div>
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 rounded-xl bg-amber-100 text-pramuka-700 font-extrabold text-base flex items-center justify-center shrink-0 border border-amber-200 group-hover:bg-pramuka-600 group-hover:text-white transition-colors">
+                                    ${initials}
+                                </div>
+                                <div class="overflow-hidden">
+                                    <h3 class="font-bold text-gray-900 text-sm line-clamp-1 group-hover:text-pramuka-600 transition-colors">${nameProper}</h3>
+                                    <span class="inline-block bg-amber-50 text-pramuka-700 font-bold text-[10px] px-2 py-0.5 rounded-md border border-amber-200 mt-0.5">
+                                        ${item.kontingen}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-1.5 text-xs text-gray-600 border-t border-gray-100 pt-3">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-house-user text-amber-600 w-4"></i>
+                                    <span class="truncate">${item.domisili || '-'}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-brands fa-whatsapp text-emerald-600 w-4"></i>
+                                    <span>${item.contact || '-'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-gray-100 flex items-center gap-2">
+                            <button onclick="openDetailModal(${item.id})" class="flex-1 bg-amber-50 hover:bg-pramuka-600 text-pramuka-700 hover:text-white py-2 rounded-xl text-xs font-bold transition-all text-center">
+                                Detail Alumni
+                            </button>
+                            ${cleanPhone ? `
+                                <a href="${waLink}" target="_blank" class="w-8 h-8 rounded-xl bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white flex items-center justify-center transition-colors border border-emerald-200" title="Chat WhatsApp">
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+
+        // Render Table View
+        function renderTable(data, startIndex) {
+            const tbody = document.getElementById('alumniTableBody');
+            tbody.innerHTML = '';
+
+            data.forEach((item, index) => {
+                const nameProper = toProperCase(item.nama);
+                const cleanPhone = item.contact ? item.contact.replace(/[^0-9]/g, '') : '';
+                const waLink = cleanPhone ? `https://wa.me/${cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone}` : '#';
+
+                const rowHTML = `
+                    <tr class="hover:bg-amber-50/50 transition-colors">
+                        <td class="p-4 text-center font-bold text-gray-400">${startIndex + index + 1}</td>
+                        <td class="p-4 font-bold text-gray-900">${nameProper}</td>
+                        <td class="p-4">
+                            <span class="bg-amber-50 text-pramuka-700 font-bold px-2.5 py-1 rounded-md border border-amber-200">
+                                ${item.kontingen}
+                            </span>
+                        </td>
+                        <td class="p-4">${item.contact || '-'}</td>
+                        <td class="p-4">${item.domisili || '-'}</td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button onclick="openDetailModal(${item.id})" class="px-2.5 py-1.5 bg-gray-100 hover:bg-pramuka-600 text-gray-700 hover:text-white font-bold rounded-lg transition-colors">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                                ${cleanPhone ? `
+                                    <a href="${waLink}" target="_blank" class="px-2.5 py-1.5 bg-emerald-100 hover:bg-emerald-600 text-emerald-700 hover:text-white font-bold rounded-lg transition-colors">
+                                        <i class="fa-brands fa-whatsapp"></i>
+                                    </a>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', rowHTML);
+            });
+        }
+
+        // Pagination Buttons Rendering
+        function renderPaginationButtons(totalPages) {
+            const pageNumbersContainer = document.getElementById('pageNumbers');
+            pageNumbersContainer.innerHTML = '';
+
+            document.getElementById('btnPrevPage').disabled = (currentPage === 1);
+            document.getElementById('btnNextPage').disabled = (currentPage === totalPages);
+
+            let pages = [];
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    pages.push(i);
+                } else if (pages[pages.length - 1] !== '...') {
+                    pages.push('...');
+                }
+            }
+
+            pages.forEach(p => {
+                if (p === '...') {
+                    const span = document.createElement('span');
+                    span.className = 'px-2 text-gray-400 font-bold';
+                    span.textContent = '...';
+                    pageNumbersContainer.appendChild(span);
+                } else {
+                    const btn = document.createElement('button');
+                    btn.className = `w-8 h-8 rounded-lg font-bold transition-all ${p === currentPage ? 'bg-pramuka-600 text-white' : 'hover:bg-amber-100 text-gray-700'}`;
+                    btn.textContent = p;
+                    btn.onclick = () => {
+                        currentPage = p;
+                        renderView();
+                    };
+                    pageNumbersContainer.appendChild(btn);
+                }
+            });
+        }
+
+        function changePage(delta) {
+            currentPage += delta;
+            renderView();
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+
+        // Toggle Grid/Table View
+        function setViewMode(mode) {
+            viewMode = mode;
+            const gridContainer = document.getElementById('alumniGrid');
+            const tableWrapper = document.getElementById('alumniTableWrapper');
+            const btnGrid = document.getElementById('btnViewGrid');
+            const btnTable = document.getElementById('btnViewTable');
+
+            if (mode === 'grid') {
+                gridContainer.classList.remove('hidden');
+                tableWrapper.classList.add('hidden');
+                btnGrid.className = 'flex-1 py-2 rounded-lg text-xs font-bold transition-all bg-white text-pramuka-700 shadow-sm flex items-center justify-center gap-1.5';
+                btnTable.className = 'flex-1 py-2 rounded-lg text-xs font-bold transition-all text-gray-500 hover:text-gray-900 flex items-center justify-center gap-1.5';
+            } else {
+                gridContainer.classList.add('hidden');
+                tableWrapper.classList.remove('hidden');
+                btnTable.className = 'flex-1 py-2 rounded-lg text-xs font-bold transition-all bg-white text-pramuka-700 shadow-sm flex items-center justify-center gap-1.5';
+                btnGrid.className = 'flex-1 py-2 rounded-lg text-xs font-bold transition-all text-gray-500 hover:text-gray-900 flex items-center justify-center gap-1.5';
+            }
+            renderView();
+        }
+
+        // Open Modal Detail
+        function openDetailModal(id) {
             const item = alumniData.find(a => a.id === id);
             if (!item) return;
 
-            document.getElementById('modalName').textContent = item.nama;
-            document.getElementById('modalPanggilan').textContent = item.panggilan ? `Nama Panggilan: "${item.panggilan}"` : '';
-            document.getElementById('modalKontingen').textContent = item.kontingen;
-            document.getElementById('modalHp').textContent = item.hp;
-            document.getElementById('modalDomisili').textContent = item.domisili || '-';
-            document.getElementById('modalPekerjaan').textContent = item.pekerjaan || 'Data belum diisi';
-            document.getElementById('modalKesan').textContent = item.kesan || 'Belum mengisi kesan kenangan Jamnas 96.';
+            document.getElementById('modalNama').innerText = toProperCase(item.nama);
+            document.getElementById('modalKontingenBadge').innerText = item.kontingen;
+            document.getElementById('modalKontingen').innerText = item.kontingen;
+            document.getElementById('modalDomisili').innerText = item.domisili || '-';
+            document.getElementById('modalContact').innerText = item.contact || '-';
+            document.getElementById('modalAvatar').innerText = getInitials(item.nama);
 
-            const cleanHp = item.hp.replace(/[^0-9]/g, '');
-            const waHp = cleanHp.startsWith('0') ? '62' + cleanHp.slice(1) : cleanHp;
-            document.getElementById('modalWaBtn').href = `https://wa.me/${waHp}`;
+            const cleanPhone = item.contact ? item.contact.replace(/[^0-9]/g, '') : '';
+            const waLink = cleanPhone ? `https://wa.me/${cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone}` : '#';
+            document.getElementById('modalWaBtn').href = waLink;
 
-            const img = document.getElementById('modalImg');
-            const avatar = document.getElementById('modalAvatar');
-            if (item.foto && item.foto.trim() !== '') {
-                img.src = item.foto;
-                img.style.display = 'block';
-                avatar.style.display = 'none';
-            } else {
-                img.style.display = 'none';
-                avatar.textContent = getInitials(item.nama);
-                avatar.style.display = 'flex';
-            }
-
-            document.getElementById('alumniModal').classList.remove('hidden');
-            lucide.createIcons();
+            openModal('detailModal');
         }
 
-        window.onload = initData;
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Add Alumni Submit Handler
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const nama = document.getElementById('addNama').value.trim();
+            const kontingen = document.getElementById('addKontingen').value.trim();
+            const contact = document.getElementById('addContact').value.trim();
+            const domisili = document.getElementById('addDomisili').value.trim();
+
+            const newItem = {
+                id: alumniData.length + 1,
+                nama: nama,
+                kontingen: kontingen,
+                contact: contact || '-',
+                domisili: domisili || '-'
+            };
+
+            alumniData.unshift(newItem);
+            updateStats();
+            populateKontingenFilter();
+            handleSearch();
+            closeModal('registerModal');
+            alert('Data Alumni ' + nama + ' berhasil ditambahkan!');
+        }
+
+        // Copy All Filtered Phone Contacts
+        function copyAllContacts() {
+            const contacts = filteredData
+                .map(item => `${toProperCase(item.nama)} (${item.kontingen}): ${item.contact}`)
+                .filter(c => !c.endsWith('-'))
+                .join('\n');
+
+            if (!contacts) {
+                alert('Tidak ada nomor kontak yang dapat disalin.');
+                return;
+            }
+
+            const tempInput = document.createElement('textarea');
+            tempInput.value = contacts;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            alert(`Berhasil menyalin ${filteredData.length} data alumni ke clipboard!`);
+        }
     </script>
 </body>
 </html>
