@@ -1,1 +1,140 @@
+<style>
+  .alumni-form-wrapper {
+    max-width: 600px;
+    margin: 20px auto;
+    background: #f9f9f9;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    font-family: Arial, sans-serif;
+  }
+  .alumni-form-wrapper h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 22px;
+  }
+  .alumni-form-group {
+    margin-bottom: 20px;
+  }
+  .alumni-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #444;
+  }
+  .alumni-form-group input, 
+  .alumni-form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+  }
+  .alumni-form-group small {
+    display: block;
+    margin-top: 5px;
+    color: #666;
+    font-size: 12px;
+  }
+  .alumni-btn-submit {
+    background-color: #0073aa;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .alumni-btn-submit:hover {
+    background-color: #005177;
+  }
+</style>
 
+<div class="alumni-form-wrapper">
+  <h2>Form Submit Data Alumni Jamnas 1996</h2>
+  <form action="#" method="POST" enctype="multipart/form-data">
+    
+    <!-- Nama Lengkap -->
+    <div class="alumni-form-group">
+      <label for="nama_lengkap">Nama Lengkap Alumni:</label>
+      <input type="text" id="nama_lengkap" name="nama_lengkap" placeholder="Masukkan nama lengkap" required>
+    </div>
+
+    <!-- Asal Kontingen -->
+    <div class="alumni-form-group">
+      <label for="asal_kontingen">Asal Kontingen (Kota/Kabupaten):</label>
+      <input type="text" id="asal_kontingen" name="asal_kontingen" placeholder="Contoh: Kab. Bogor" required>
+    </div>
+
+    <!-- Provinsi -->
+    <div class="alumni-form-group">
+      <label for="provinsi">Provinsi Kontingen:</label>
+      <select id="provinsi" name="provinsi" required>
+        <option value="">-- Pilih Provinsi --</option>
+        <option value="Aceh">Aceh</option>
+        <option value="Sumatera Utara">Sumatera Utara</option>
+        <option value="Sumatera Barat">Sumatera Barat</option>
+        <option value="Riau">Riau</option>
+        <option value="Kepulauan Riau">Kepulauan Riau</option>
+        <option value="Jambi">Jambi</option>
+        <option value="Bengkulu">Bengkulu</option>
+        <option value="Sumatera Selatan">Sumatera Selatan</option>
+        <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</option>
+        <option value="Lampung">Lampung</option>
+        <option value="DKI Jakarta">DKI Jakarta</option>
+        <option value="Jawa Barat">Jawa Barat</option>
+        <option value="Banten">Banten</option>
+        <option value="Jawa Tengah">Jawa Tengah</option>
+        <option value="DI Yogyakarta">DI Yogyakarta</option>
+        <option value="Jawa Timur">Jawa Timur</option>
+        <option value="Bali">Bali</option>
+        <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
+        <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
+        <option value="Kalimantan Barat">Kalimantan Barat</option>
+        <option value="Kalimantan Tengah">Kalimantan Tengah</option>
+        <option value="Kalimantan Selatan">Kalimantan Selatan</option>
+        <option value="Kalimantan Timur">Kalimantan Timur</option>
+        <option value="Kalimantan Utara">Kalimantan Utara</option>
+        <option value="Sulawesi Utara">Sulawesi Utara</option>
+        <option value="Gorontalo">Gorontalo</option>
+        <option value="Sulawesi Tengah">Sulawesi Tengah</option>
+        <option value="Sulawesi Barat">Sulawesi Barat</option>
+        <option value="Sulawesi Selatan">Sulawesi Selatan</option>
+        <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
+        <option value="Maluku">Maluku</option>
+        <option value="Maluku Utara">Maluku Utara</option>
+        <option value="Papua">Papua</option>
+        <option value="Papua Barat">Papua Barat</option>
+        <option value="Papua Selatan">Papua Selatan</option>
+        <option value="Papua Tengah">Papua Tengah</option>
+        <option value="Papua Pegunungan">Papua Pegunungan</option>
+        <option value="Papua Barat Daya">Papua Barat Daya</option>
+      </select>
+    </div>
+
+    <!-- Nomor Contact / HP -->
+    <div class="alumni-form-group">
+      <label for="contact_hp">No. WhatsApp / HP:</label>
+      <input type="tel" id="contact_hp" name="contact_hp" placeholder="08123456789" required>
+    </div>
+
+    <!-- Domisili Saat Ini -->
+    <div class="alumni-form-group">
+      <label for="domisili">Domisili Saat Ini:</label>
+      <input type="text" id="domisili" name="domisili" placeholder="Kota/Kabupaten domisili sekarang" required>
+    </div>
+
+    <!-- Insert Foto 2x3 -->
+    <div class="alumni-form-group">
+      <label for="foto_alumni">Upload Foto Profil (Ukuran 2x3):</label>
+      <input type="file" id="foto_alumni" name="foto_alumni" accept="image/*" required>
+      <small>Format: JPG, PNG. Pastikan rasio pasfoto 2x3.</small>
+    </div>
+
+    <button type="submit" class="alumni-btn-submit">Kirim Data Alumni</button>
+  </form>
+</div>
